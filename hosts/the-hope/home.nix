@@ -22,10 +22,8 @@
     zsh-powerlevel10k
 
     # Gaming
-    steam
     discord
     lutris
-    gamemode
     prismlauncher
     inputs.suyu-emu.packages.x86_64-linux.suyu-mainline
 

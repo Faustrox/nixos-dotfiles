@@ -189,14 +189,23 @@
 
   ];
 
-  # ZSH
-  programs.zsh.enable = true;
+  # System programs config
+  programs = {
+    zsh.enable = true;
 
-  # 1password initial settings
-  programs._1password.enable = true;
-  programs._1password-gui = {
-    enable = true;
-    polkitPolicyOwners = [ "faustrox" ];
+    _1password.enable = true;
+    _1password-gui = {
+      enable = true;
+      polkitPolicyOwners = [ "faustrox" ];
+    };
+
+    steam = {
+      enable = true;
+      remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+      dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+      gamescopeSession.enable = true;
+    };
+    gamemode.enable = true;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
