@@ -1,0 +1,100 @@
+{
+  "height": 50, 
+  "layer": "top",
+  "position": "top",
+  "output": "DP-1",
+  "spacing": 7,
+  "modules-left": ["custom/launcher", "cpu", "temperature", "memory"],
+  "modules-center": ["hyprland/workspaces"],
+  "modules-right": ["pulseaudio", "network", "clock", "custom/powermenu"],
+
+  "hyprland/workspaces": {
+      "disable-scroll": true,
+      "on-click": "activate",
+      "persistent_workspaces": {
+        "DP-1": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+  },
+  
+  "custom/launcher": {
+      "interval": "once",
+      "format": "",
+      "on-click": "wofi --show drun --columns 2 -I",
+      "tooltip": false
+    },
+
+  "cpu": {
+    "interval": 10,
+    "format": "  {usage}%",
+    "max-length": 10,
+    "tooltip": false
+  },
+
+  "temperature": {
+    "hwmon-path": "/sys/devices/platform/PNP0C14:02/wmi_bus/wmi_bus-PNP0C14:02/466747A0-70EC-11DE-8A39-0800200C9A66/hwmon/hwmon3/temp1_input",
+    "format": " {temperatureC}°C",
+    "thermal-zone": 0,
+    "tooltip": false
+  },
+
+  "memory": {
+    "interval": 30,
+    "format": "  {}%",
+    "format-alt":"  {used:0.1f}G",
+    "max-length": 10,
+    "tooltip": false
+},
+
+  "pulseaudio": {
+    "format": "{icon}   {volume}%",
+    "format-bluetooth": "{icon} {volume}% {format_source}",
+    "format-bluetooth-muted": " {icon} {format_source}",
+    "format-muted": " ",
+    "format-icons": {
+        "default": ["", "", ""]
+    },
+    "on-click-right": "pavucontrol",
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "tooltip": false
+  },
+
+  "network": {
+      "format-wifi": "直  {signalStrength}%",
+      "format-ethernet": "󰈀  {ipaddr}",
+      "format-disconnected": "󰈂 Disconnected",
+      "on-click-right": "bash ~/.config/waybar/scripts/get-ipv4.sh",
+      "tooltip": false
+  },
+
+  "clock": {
+    "format": "  {:%I:%M %B %d, %Y}",
+    "format-alt": "{:%A, %B %d, %Y (%r)} 󰥔 ",
+    "calendar": {
+      "mode"          : "year",
+      "mode-mon-col"  : 3,
+      "weeks-pos"     : "right",
+      "on-scroll"     : 1,
+      "on-click-right": "mode",
+      "format": {
+        "months":     "<span color='#ffead3'><b>{}</b></span>",
+        "days":       "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
+        "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    },
+    "tooltip": false
+},
+
+  "custom/powermenu": {
+      "format": "",
+      "on-click": "wlogout --css .config/wlogout/style.css",
+      "tooltip": false
+  }
+}

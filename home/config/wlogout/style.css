@@ -1,0 +1,58 @@
+* {
+    font-size: 24px;
+    font-weight: 400;
+}
+
+window {
+    font-family: monospace;
+    font-size: 14pt;
+    color: white; /* text */
+    background-color: rgba(30, 30, 46, 0.5);
+}
+
+button {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+    border-radius: 0px;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    outline-style: none;
+    background-color: #181825;
+    margin: 0px;
+    transition: all 0.3s;
+}
+
+#logout {
+    margin: 200px 0px 200px 200px;
+    border-radius: 8px 0px 0px 8px;
+    background-image: image(url("./icons/logout.png"));
+}
+#logout:hover {
+    background-color: #eba0ac;
+    border-radius: 16px;
+    margin: 100px 0px 100px 100px;
+}
+
+#shutdown {
+    margin: 200px 0px 200px 0px;
+    border-radius: 0px;
+    background-image: image(url("./icons/power.png"));
+}
+#shutdown:hover {
+    background-color: #f38ba8;
+    border-radius: 16px;
+    margin: 100px 0px 100px 0px;
+}
+
+#reboot {
+    margin: 200px 200px 200px 0px;
+    border-radius: 0px 8px 8px 0px;
+    background-image: image(url("./icons/restart.png"));
+}
+#reboot:hover {
+    background-color: #fab387;
+    border-radius: 16px;
+    margin: 100px 100px 100px 0px;
+}

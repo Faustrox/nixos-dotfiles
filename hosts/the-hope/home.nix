@@ -1,14 +1,25 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
 
-  imports = [
-    ../../modules/programs
-    ../../modules/gtk-themes/adw-gtk3.nix
-  ];
+  catppuccin = {
+    flavor = "mocha";
+    accent = "sapphire";
+  };
+
+  # --- Home Manager Settings ---
 
   home.username = "faustrox";
   home.homeDirectory = "/home/faustrox";
+
+  # This value determines the home Manager release that your
+  # configuration is compatible with. This helps avoid breakage
+  # when a new home Manager release introduces backwards
+  # incompatible changes.
+  home.stateVersion = "24.05";
+  
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
 
   nixpkgs = {
     config = {
@@ -16,53 +27,121 @@
       allowUnfreePredicate = (_: true);
     };
   };
+
+  # --- Desktop Settings ---
+
+  dconf.setup = false;
+  hyprland.setup = true;
+
+  # --- Programs Settings ---
+
+  git.setup = true;
+  zsh.setup = true;
+  wlogout.setup = true;
+
+  programs = {
+    vscode.enable = true;
+    obs-studio.enable = true;
+
+    btop = {
+      enable = true;
+      catppuccin.enable = true;
+    };
+    cava = {
+      enable = true;
+      catppuccin.enable = true;
+    };
+    kitty = {
+      enable = true;
+      shellIntegration.enableZshIntegration = true;
+      catppuccin.enable = true;
+    };
+    neovim = {
+      enable = true;
+      vimAlias = true;
+      catppuccin.enable = true;
+    };
+    rofi = {
+      enable = true;
+      catppuccin.enable = true;
+    };
+  };
   
   home.packages = with pkgs; [
+
     # Terminal
     zsh-powerlevel10k
 
-    # Gaming
-    steam
-    discord
-    lutris
-    gamemode
-
     # Social media
-    telegram-desktop
-    whatsapp-for-linux
+    telegram-desktop_git
 
-    # GTK theme, cursor and icons
+    # Multimedia
+    stremio
+    ani-cli
+    mpv
+    celluloid
+    ffmpeg-full
+
+    # Themes, cursors and icons
     adw-gtk3
-    simp1e-cursors
-    papirus-icon-theme
-
-    # Gnome Extensions
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.tray-icons-reloaded
-    gnomeExtensions.gamemode-indicator-in-system-settings
+    adwsteamgtk
 
     # Browsers
     google-chrome
 
     # Developer
-    vscode
     nodejs_20
+    yarn
+    python3
+    
+    # Dependencies
+    spirv-headers
+    glslang
+    libgcc
+    pinentry-gnome3
 
     # Utils
+    httpie
+    vrrtest
+    qalculate-gtk
     dconf
+    jq
+    gimp
+    usbimager
+
+    # Others
+    fragments
+    uget
+    
   ];
 
-  # This value determines the home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update home Manager without changing this value. See
-  # the home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "23.11";
+  xdg = {
+    enable = true;
+    desktopEntries = {
+      code = {
+        name = "Visual Studio Code";
+        exec = "code --disable-gpu-compositing %F";
+        terminal = false;
+        genericName = "Text Editor";
+        type = "Application";
+        icon = "vscode";
+        categories = [
+          "Utility"
+          "TextEditor"
+          "Development"
+          "IDE"
+        ];
+        mimeType = [
+          "text/plain"
+        ];
+      };
+    };
+  };
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  # Others Settings
+
+  gaming.setup = true;
+
+  theming.setup = true;
 
 }
