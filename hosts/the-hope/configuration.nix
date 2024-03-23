@@ -8,23 +8,41 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ../../modules/nixos/nvidia.nix
+      ./nixos-config/nvidia.nix
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Bootloader.
   # boot.loader.systemd-boot.enable = true;
-  boot.loader = {
-    efi.canTouchEfiVariables = true;
-    grub = {
-      enable = true;
-      devices = [ "nodev" ];
-      efiSupport = true;
-      useOSProber = true;
-      timeoutStyle = "hidden";
-      default = "2";
+  boot = {
+    plymouth.enable = true;
+
+    # Silent boot
+    consoleLogLevel = 0;
+    kernelParams = [
+      "quiet"
+      "splash"
+      "vga=current"
+      "rd.systemd.show_status=false"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
+    ];
+    initrd.verbose = false;
+    
+    # Bootloader config
+    loader = {
+      efi.canTouchEfiVariables = true;
+      grub = {
+        enable = true;
+        devices = [ "nodev" ];
+        efiSupport = true;
+        useOSProber = true;
+        timeoutStyle = "hidden";
+        default = "0";
+      };
     };
+    
+    kernelPackages = pkgs.linuxPackages_zen;
   };
 
   networking.hostName = "the-hope"; # Define your hostname.
@@ -36,6 +54,9 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+
+  # Disable IPv6
+  networking.enableIPv6  = false;
 
   # Set your time zone.
   time.timeZone = "America/Santo_Domingo";
@@ -58,30 +79,50 @@
   # Configure keymap in X11
   services.xserver = {
     xkb.layout = "us";
-    xkb.variant = "altgr-intl";
+    xkb.variant = "alt-intl";
   };
+
+  # Enable DNSmasq
+  services.dnsmasq.enable = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  # Remove Xterm
+  services.xserver.excludePackages = [ pkgs.xterm ];
+  services.xserver.desktopManager.xterm.enable = false;
+
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # services.xserver.displayManager.gdm.enable = true;
+  # services.xserver.desktopManager.gnome.enable = true;
+
+  # Enable the Plasma 6 Dekstop Environment.
+  services.xserver.displayManager.sddm.enable = true;
+  services.desktopManager.plasma6.enable = true;
+
+  # Set up KDE Wallet 
+  security.pam.services.kwallet = {
+    name = "kwallet";
+    enableKwallet = true;
+  };
+
+  # Disable Wayland for Plasma.
+  services.xserver.displayManager.defaultSession = "plasmax11";
 
   # Enable Security Polkit
   security.polkit.enable = true;
 
   # Ozone wayland support
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  # environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # Exclude base gnome packages
-  services.xserver.desktopManager.xterm.enable = false;
-  environment.gnome.excludePackages = (with pkgs; [
-    xterm
-    gnome-tour
-  ]) ++ (with pkgs.gnome; [
-    epiphany # web browser
-  ]);
+  # services.xserver.desktopManager.xterm.enable = false;
+  # environment.gnome.excludePackages = (with pkgs; [
+  #  xterm
+  #  gnome-tour
+  # ]) ++ (with pkgs.gnome; [
+  #  epiphany # web browser
+  # ]);
 
   # Enable Xbox controllers
   hardware.xone.enable = true;
@@ -132,7 +173,8 @@
     git
     wget
     curl
-    gnome.gnome-tweaks
+    kdePackages.partitionmanager
+    # gnome.gnome-tweaks
     _1password
     _1password-gui
 
@@ -141,6 +183,10 @@
     
     # Others
     zsh
+    bat
+    fzf
+    neofetch
+
   ];
 
   # ZSH

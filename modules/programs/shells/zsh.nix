@@ -5,7 +5,7 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    enableAutosuggestions = true;
+    autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
     oh-my-zsh = {
       enable = true;
@@ -27,7 +27,7 @@
       ll = "ls -l";
       rebuild = "sudo nixos-rebuild switch --flake ~/.dotfiles/#the-hope";
       update = "nix flake update ~/.dotfiles";
-      remove-old = "sudo nix-collect-garbage -d && sudo nixos-rebuild switch --flake ~/.dotfiles/#the-hope";
+      remove-old = "sudo nix-collect-garbage -d && nix-collet-garbage -d && nix-store -gc";
     };
   };
 

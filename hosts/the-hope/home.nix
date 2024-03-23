@@ -1,10 +1,10 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, inputs, ... }:
 
 {
 
   imports = [
     ../../modules/programs
-    ../../modules/gtk-themes/adw-gtk3.nix
+    ../../modules/themes/adw-gtk3.nix
   ];
 
   home.username = "faustrox";
@@ -26,10 +26,16 @@
     discord
     lutris
     gamemode
+    prismlauncher
+    inputs.suyu-emu.packages.x86_64-linux.suyu-mainline
 
     # Social media
     telegram-desktop
     whatsapp-for-linux
+
+    # Multimedia
+    stremio
+    spotify
 
     # GTK theme, cursor and icons
     adw-gtk3
@@ -37,9 +43,9 @@
     papirus-icon-theme
 
     # Gnome Extensions
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.tray-icons-reloaded
-    gnomeExtensions.gamemode-indicator-in-system-settings
+    # gnomeExtensions.blur-my-shell
+    # gnomeExtensions.tray-icons-reloaded
+    # gnomeExtensions.gamemode-indicator-in-system-settings
 
     # Browsers
     google-chrome
@@ -47,6 +53,7 @@
     # Developer
     vscode
     nodejs_20
+    jdk17
 
     # Utils
     dconf
