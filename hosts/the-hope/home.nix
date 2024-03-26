@@ -25,6 +25,7 @@
     discord
     lutris
     prismlauncher
+    mangohud
     inputs.suyu-emu.packages.x86_64-linux.suyu-mainline
 
     # Social media
@@ -34,8 +35,9 @@
     # Multimedia
     stremio
     spotify
+    obs-studio
 
-    # GTK theme, cursor and icons
+    # Themes, cursors and icons
     adw-gtk3
     simp1e-cursors
     papirus-icon-theme

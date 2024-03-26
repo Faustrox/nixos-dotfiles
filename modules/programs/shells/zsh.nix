@@ -27,7 +27,7 @@
       ll = "ls -l";
       rebuild = "sudo nixos-rebuild switch --flake ~/.dotfiles/#the-hope";
       update = "nix flake update ~/.dotfiles";
-      remove-old = "sudo nix-collect-garbage -d && nix-collet-garbage -d && nix-store -gc";
+      remove-old = "sudo nix-collect-garbage -d && nix-collect-garbage -d && nix-store --gc";
     };
   };
 

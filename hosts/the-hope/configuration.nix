@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./nixos-config/nvidia.nix
+      ./desktops/plasma.nix
     ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -41,6 +42,15 @@
         default = "0";
       };
     };
+
+    binfmt.registrations.appimage = {
+      wrapInterpreterInShell = false;
+      interpreter = "${pkgs.appimage-run}/bin/appimage-run";
+      recognitionType = "magic";
+      offset = 0;
+      mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
+      magicOrExtension = ''\x7fELF....AI\x02'';
+    };
     
     kernelPackages = pkgs.linuxPackages_zen;
   };
@@ -60,6 +70,9 @@
 
   # Set your time zone.
   time.timeZone = "America/Santo_Domingo";
+
+  # Set local time
+  services.localtimed.enable = true;
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -92,37 +105,11 @@
   services.xserver.excludePackages = [ pkgs.xterm ];
   services.xserver.desktopManager.xterm.enable = false;
 
-  # Enable the GNOME Desktop Environment.
-  # services.xserver.displayManager.gdm.enable = true;
-  # services.xserver.desktopManager.gnome.enable = true;
-
-  # Enable the Plasma 6 Dekstop Environment.
-  services.xserver.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
-
-  # Set up KDE Wallet 
-  security.pam.services.kwallet = {
-    name = "kwallet";
-    enableKwallet = true;
-  };
-
-  # Disable Wayland for Plasma.
-  services.xserver.displayManager.defaultSession = "plasmax11";
-
   # Enable Security Polkit
   security.polkit.enable = true;
 
   # Ozone wayland support
   # environment.sessionVariables.NIXOS_OZONE_WL = "1";
-
-  # Exclude base gnome packages
-  # services.xserver.desktopManager.xterm.enable = false;
-  # environment.gnome.excludePackages = (with pkgs; [
-  #  xterm
-  #  gnome-tour
-  # ]) ++ (with pkgs.gnome; [
-  #  epiphany # web browser
-  # ]);
 
   # Enable Xbox controllers
   hardware.xone.enable = true;
@@ -159,10 +146,6 @@
   services.xserver.displayManager.autoLogin.enable = true;
   services.xserver.displayManager.autoLogin.user = "faustrox";
 
-  # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -170,10 +153,12 @@
   environment.systemPackages = with pkgs; [
 
     # Utils
+    appimage-run
     git
     wget
     curl
     kdePackages.partitionmanager
+    kdePackages.ktorrent
     # gnome.gnome-tweaks
     _1password
     _1password-gui
@@ -182,7 +167,6 @@
     (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
     
     # Others
-    zsh
     bat
     fzf
     neofetch
