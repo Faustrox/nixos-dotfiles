@@ -2,13 +2,13 @@
 
 {
 
-  imports = [
-    ../../modules/programs
-    ../../modules/themes/adw-gtk3.nix
-  ];
-
   home.username = "faustrox";
   home.homeDirectory = "/home/faustrox";
+  home.pointerCursor = {
+    package = pkgs.simp1e-cursors;
+    name = "Simp1e-Adw-Dark";
+    size = 24;
+  };
 
   nixpkgs = {
     config = {
@@ -16,6 +16,9 @@
       allowUnfreePredicate = (_: true);
     };
   };
+
+  git.userName = "Fausto Jáquez";
+  git.userEmail = "Faustojr03@gmail.com";
   
   home.packages = with pkgs; [
     # Terminal
@@ -34,7 +37,8 @@
 
     # Multimedia
     stremio
-    spotify
+    # spotify
+    nur.repos.nltch.spotify-adblock
     obs-studio
 
     # Themes, cursors and icons

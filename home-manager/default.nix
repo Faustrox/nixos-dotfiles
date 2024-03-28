@@ -1,0 +1,11 @@
+{ ... }:
+
+{
+
+  imports = [
+    ./programs
+    ./shells
+    ./themes
+  ];
+
+}

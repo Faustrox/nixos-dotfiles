@@ -9,9 +9,10 @@
     };
 
     suyu-emu.url = "github:Noodlez1232/suyu-flake";
+    nur.url = "github:nix-community/NUR";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, nur, ... }@inputs:
     let
       lib = nixpkgs.lib;
     in {
@@ -21,6 +22,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hosts/the-hope/configuration.nix
+          ./nixos
           home-manager.nixosModules.home-manager 
           {
             home-manager = {
@@ -28,10 +30,16 @@
               useUserPackages = true;
               extraSpecialArgs = { inherit inputs; };
               users = {
-                faustrox = import ./hosts/the-hope/home.nix;
+                faustrox = {
+                  imports = [
+                    ./hosts/the-hope/home.nix
+                    ./home-manager
+                  ];
+                };
               };
             };
           }
+          { nixpkgs.overlays = [ nur.overlay ]; }
         ];
       };
     };

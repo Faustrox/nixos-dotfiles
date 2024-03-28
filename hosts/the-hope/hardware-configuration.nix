@@ -12,31 +12,39 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+  boot.supportedFilesystems = [ "ntfs" ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/1959a2e3-5f1e-4cc6-a2dd-2babac18197b";
+    { 
+      device = "/dev/disk/by-uuid/1959a2e3-5f1e-4cc6-a2dd-2babac18197b";
       fsType = "btrfs";
       options = [ "subvol=@" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/29C5-2E37";
+    { 
+      device = "/dev/disk/by-uuid/29C5-2E37";
       fsType = "vfat";
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/867b69df-9f7d-46be-a34a-628b26dc373b";
+    { 
+      device = "/dev/disk/by-uuid/867b69df-9f7d-46be-a34a-628b26dc373b";
       fsType = "btrfs";
     };
 
-  fileSystems."/gaming" =
-    { device = "/dev/disk/by-uuid/1096cdad-d278-4304-bc2f-a6d97304b59d";
-      options = [ "users" ];
-      fsType = "btrfs";
+  fileSystems."/mnt/games" =
+    { 
+      device = "/dev/disk/by-uuid/015F403910444266";
+      fsType = "ntfs-3g";
+      options = [ "rw" "uid=1000"];
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/3a51e9f9-d6ac-4767-8804-ac5f896bdd5c"; }
+    [ 
+      { 
+        device = "/dev/disk/by-uuid/3a51e9f9-d6ac-4767-8804-ac5f896bdd5c"; 
+      }
     ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
