@@ -6,6 +6,7 @@
     main-user.enable =
       lib.mkEnableOption "Enables main user";
     main-user.userName = lib.mkOption {
+      default = "faustrox";
       description = ''
         username
       '';
@@ -17,7 +18,7 @@
     # Set up user
     users.users.${config.main-user.userName} = {
       isNormalUser = true;
-      description = "main user";
+      description = config.main-user.userName;
       extraGroups = [ "networkmanager" "wheel" ];
       shell = pkgs.zsh;
     };
@@ -33,7 +34,7 @@
       _1password.enable = true;
       _1password-gui = {
         enable = true;
-        polkitPolicyOwners = [ "faustrox" ];
+        polkitPolicyOwners = [ config.main-user.userName ];
       };
     };
 

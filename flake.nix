@@ -10,6 +10,7 @@
 
     suyu-emu.url = "github:Noodlez1232/suyu-flake";
     nur.url = "github:nix-community/NUR";
+    nix-gaming.url = "github:fufexan/nix-gaming";
   };
 
   outputs = { self, nixpkgs, home-manager, nur, ... }@inputs:

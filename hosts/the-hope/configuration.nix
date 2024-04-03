@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
 
@@ -41,8 +41,8 @@
   # Nvidia open drivers
   nvidia.open = true;
 
-  # Ozone wayland support
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  # Force X11 and disable Wayland for plasma 6
+  plasma.forceX11 = false;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -56,17 +56,27 @@
   main-user.enable = true;
   main-user.userName = "faustrox";
 
+  # Set up docker for nixos
+  docker.enable = true;
+  docker.userName = "faustrox";
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  services.fstrim.enable = lib.mkDefault true;
 
   # List packages installed in system profile. To search, run:
   environment.systemPackages = with pkgs; [
 
     # Utils
+    p7zip
     rar
     zip
     unrar
     unzip
+    toybox
+    mesa-demos
+    vulkan-tools
     appimage-run
     git
     wget
@@ -79,7 +89,7 @@
 
     # Fonts
     (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
-    
+
     # Others
     bat
     fzf

@@ -35,9 +35,8 @@
 
   fileSystems."/mnt/games" =
     { 
-      device = "/dev/disk/by-uuid/015F403910444266";
-      fsType = "ntfs-3g";
-      options = [ "rw" "uid=1000"];
+      device = "/dev/disk/by-uuid/df022cf4-ed2f-4883-8da1-b5161367a8ea";
+      fsType = "btrfs";
     };
 
   swapDevices =

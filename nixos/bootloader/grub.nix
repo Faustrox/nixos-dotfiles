@@ -49,7 +49,6 @@
         magicOrExtension = ''\x7fELF....AI\x02'';
       };
       
-      kernelPackages = pkgs.linuxPackages_zen;
     };
   };
   

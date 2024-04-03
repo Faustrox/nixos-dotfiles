@@ -20,7 +20,12 @@
   git.userName = "Fausto Jáquez";
   git.userEmail = "Faustojr03@gmail.com";
   
-  home.packages = with pkgs; [
+  home.packages = with pkgs; 
+  let
+    gamePkgs = inputs.nix-gaming.packages.x86_64-linux;
+    suyu-emu = inputs.suyu-emu.packages.x86_64-linux;
+  in
+  [
     # Terminal
     zsh-powerlevel10k
 
@@ -29,17 +34,21 @@
     lutris
     prismlauncher
     mangohud
-    inputs.suyu-emu.packages.x86_64-linux.suyu-mainline
+    suyu-emu.suyu-mainline
+    winetricks
+    protonup-qt
+    vkbasalt
+    steamPackages.steamcmd
 
     # Social media
     telegram-desktop
-    whatsapp-for-linux
+    zapzap
 
     # Multimedia
     stremio
     # spotify
     nur.repos.nltch.spotify-adblock
-    obs-studio
+    ffmpeg-full
 
     # Themes, cursors and icons
     adw-gtk3
@@ -57,11 +66,19 @@
     # Developer
     vscode
     nodejs_20
-    jdk17
 
     # Utils
     dconf
+    jq
+    
   ];
+
+  programs = {
+    obs-studio = {
+      enable = true;
+      plugins = [ pkgs.obs-studio-plugins.obs-vaapi ];
+    };
+  };
 
   # This value determines the home Manager release that your
   # configuration is compatible with. This helps avoid breakage
