@@ -10,7 +10,13 @@
   config = lib.mkIf config.grub.enable {
     # Boot settings (loader, pymouth and more)
     boot = {
-      plymouth.enable = true;
+      plymouth = {
+        enable = true;
+        themePackages = with pkgs; [
+          catppuccin-plymouth
+        ];
+        theme = "catppuccin-macchiato";
+      };
 
       # Silent boot
       consoleLogLevel = 0;
@@ -36,6 +42,7 @@
           useOSProber = true;
           timeoutStyle = "hidden";
           default = "0";
+          catppuccin.enable = true;
         };
       };
       

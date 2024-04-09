@@ -1,6 +1,8 @@
-{ pkgs, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
+
+  catppuccin.flavour = "mocha";
 
   home.username = "faustrox";
   home.homeDirectory = "/home/faustrox";
@@ -117,6 +119,11 @@
       icon = "org.suyu_emu.suyu";
       mimeType = [ "application/x-nx-nro" "application/x-nx-nso" "application/x-nx-nsp" "application/x-nx-xci" ];
     };
+  };
+
+  gtk = {
+    enable = true;
+    catppuccin.enable = true;
   };
 
   # This value determines the home Manager release that your

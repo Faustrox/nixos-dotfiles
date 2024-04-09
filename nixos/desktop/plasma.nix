@@ -23,7 +23,7 @@
         
         services.xserver.displayManager.sddm = {
           enable = true;
-          theme = "catppuccin-sddm-corners";
+          theme = "catppuccin";
         };
         services.xserver.displayManager.defaultSession = 
         if config.plasma6.forceX11 
