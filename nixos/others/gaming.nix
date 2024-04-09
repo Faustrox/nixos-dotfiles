@@ -50,6 +50,19 @@
 
     programs.steam.platformOptimizations.enable = true;
 
+    environment.sessionVariables = {
+      __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
+      WINEFSYNC = "1";
+      WINEESYNC = "1";
+      DXVK_ENABLE_NVAPI = "1";
+      DXVK_ASYNC = "1";
+      DXVK_HUD = "compiler";
+      ENABLE_VKBASALT = "0";
+      PULSE_LATENCY_MSEC = "60";
+      PROTON_ENABLE_NGX_UPDATER = "1";
+      PROTON_FORCE_LARGE_ADDRESS_AWARE = "1";
+    };
+
     boot.kernel.sysctl = {
       "fs.file-max" = 524288;
     };

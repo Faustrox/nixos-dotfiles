@@ -14,6 +14,10 @@
   # Enable Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # Optimize store
+  nix.optimise.automatic = true;
+  nix.settings.auto-optimise-store = true;
+
   # Network and Time settings
   network.host = "the-hope";
 
@@ -39,10 +43,15 @@
   security.polkit.enable = true;
 
   # Nvidia open drivers
-  nvidia.open = true;
+  nvidia.open = false;
 
-  # Force X11 and disable Wayland for plasma 6
-  plasma.forceX11 = false;
+  # Enable Plasma 6
+  plasma6.enable = true;
+  plasma6.forceX11 = true;
+  portals.enable = true;
+
+  # Kwallet Set up
+  kwallet.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -53,12 +62,21 @@
   # Tweaks and system config for NixOs Gaming
   gaming.setup = true;
 
+  # Setup main user
   main-user.enable = true;
   main-user.userName = "faustrox";
 
   # Set up docker for nixos
   docker.enable = true;
   docker.userName = "faustrox";
+
+  # Set up XDG Portals
+  # portals.enable = true;
+  # portals.extraPortals = with pkgs; [
+  #   xdg-desktop-portal-gtk
+  #   libsForQt5.xdg-desktop-portal-kde # For Plasma 5
+  #   # kdePackages.xdg-desktop-portal-kde # For Plasma 6
+  # ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -67,6 +85,9 @@
 
   # List packages installed in system profile. To search, run:
   environment.systemPackages = with pkgs; [
+
+    # Themes
+    catppuccin-sddm-corners
 
     # Utils
     p7zip
@@ -77,13 +98,9 @@
     toybox
     mesa-demos
     vulkan-tools
-    appimage-run
     git
     wget
     curl
-    kdePackages.partitionmanager
-    kdePackages.ktorrent
-    # gnome.gnome-tweaks
     _1password
     _1password-gui
 

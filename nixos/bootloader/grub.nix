@@ -24,7 +24,7 @@
       
       # Nvidia drivers at boot
       initrd.kernelModules = [ "nvidia" ];
-      extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+      # extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
 
       # Bootloader config
       loader = {
@@ -37,16 +37,6 @@
           timeoutStyle = "hidden";
           default = "0";
         };
-      };
-      
-      # Run appimage with appimage-run
-      binfmt.registrations.appimage = {
-        wrapInterpreterInShell = false;
-        interpreter = "${pkgs.appimage-run}/bin/appimage-run";
-        recognitionType = "magic";
-        offset = 0;
-        mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
-        magicOrExtension = ''\x7fELF....AI\x02'';
       };
       
     };

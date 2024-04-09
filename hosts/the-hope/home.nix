@@ -6,7 +6,7 @@
   home.homeDirectory = "/home/faustrox";
   home.pointerCursor = {
     package = pkgs.simp1e-cursors;
-    name = "Simp1e-Adw-Dark";
+    name = "Simp1e-Catppuccin-Mocha";
     size = 24;
   };
 
@@ -32,11 +32,15 @@
     # Gaming
     discord
     lutris
-    prismlauncher
+    heroic
     mangohud
+    egl-wayland
+    prismlauncher
     suyu-emu.suyu-mainline
+    wineWowPackages.stable
     winetricks
     protonup-qt
+    protontricks
     vkbasalt
     steamPackages.steamcmd
 
@@ -53,7 +57,7 @@
     # Themes, cursors and icons
     adw-gtk3
     simp1e-cursors
-    papirus-icon-theme
+    catppuccin-papirus-folders
 
     # Gnome Extensions
     # gnomeExtensions.blur-my-shell
@@ -68,6 +72,8 @@
     nodejs_20
 
     # Utils
+    vrrtest
+    kdePackages.kalk
     dconf
     jq
     
@@ -76,7 +82,40 @@
   programs = {
     obs-studio = {
       enable = true;
-      plugins = [ pkgs.obs-studio-plugins.obs-vaapi ];
+    };
+  };
+
+  home.sessionVariables = {
+    SCRIPTS_FOLDER = "$HOME/.scripts";
+    GAMES_DRIVE = "/mnt/games";
+    STEAM_ROOT = "$GAMES_DRIVE/Libreries/Steam";
+  };
+
+  home.sessionPath = [
+    "$SCRIPTS_FOLDER"
+  ];
+
+  xdg.desktopEntries = {
+    "net.lutris.Lutris" = {
+      name = "Lutris";
+      comment = "Video Game Preservation Platform";
+      exec = "WEBKIT_DISABLE_COMPOSITING_MODE=1 lutris";
+      terminal = false;
+      type = "Application";
+      categories = [ "Game" ];
+      icon = "lutris";
+      mimeType = [ "x-scheme-handler/lutris" ];
+    };
+    "org.suyu_emu.suyu" = {
+      name = "suyu";
+      genericName = "Switch Emulator";
+      comment = "Nintendo Switch video game console emulator";
+      exec = "gamemoderun suyu %f";
+      terminal = false;
+      type = "Application";
+      categories = [ "Game" "Emulator" ];
+      icon = "org.suyu_emu.suyu";
+      mimeType = [ "application/x-nx-nro" "application/x-nx-nso" "application/x-nx-nsp" "application/x-nx-xci" ];
     };
   };
 

@@ -3,9 +3,10 @@
 {
 
   imports = [
+    ./docker.nix
     ./gaming.nix
     ./main-user.nix
-    ./docker.nix
+    ./portals.nix
   ];
 
 }

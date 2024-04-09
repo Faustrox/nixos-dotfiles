@@ -8,42 +8,28 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
-  boot.supportedFilesystems = [ "ntfs" ];
 
   fileSystems."/" =
-    { 
-      device = "/dev/disk/by-uuid/1959a2e3-5f1e-4cc6-a2dd-2babac18197b";
-      fsType = "btrfs";
-      options = [ "subvol=@" ];
+    { device = "/dev/disk/by-uuid/a4f9a88c-e512-4a81-85ef-6e515b1b0183";
+      fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { 
-      device = "/dev/disk/by-uuid/29C5-2E37";
+    { device = "/dev/disk/by-uuid/62F6-B40D";
       fsType = "vfat";
     };
 
-  fileSystems."/home" =
-    { 
-      device = "/dev/disk/by-uuid/867b69df-9f7d-46be-a34a-628b26dc373b";
-      fsType = "btrfs";
-    };
-
   fileSystems."/mnt/games" =
-    { 
-      device = "/dev/disk/by-uuid/df022cf4-ed2f-4883-8da1-b5161367a8ea";
+    { device = "/dev/disk/by-uuid/df022cf4-ed2f-4883-8da1-b5161367a8ea";
       fsType = "btrfs";
     };
 
   swapDevices =
-    [ 
-      { 
-        device = "/dev/disk/by-uuid/3a51e9f9-d6ac-4767-8804-ac5f896bdd5c"; 
-      }
+    [ { device = "/dev/disk/by-uuid/7f57c140-431c-489e-9986-959fb5f540f9"; }
     ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
@@ -52,6 +38,7 @@
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp4s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlp2s0f0u3.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

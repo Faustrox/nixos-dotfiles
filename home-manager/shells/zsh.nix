@@ -38,7 +38,7 @@
         rebuild = "sudo nixos-rebuild switch --flake ~/.dotfiles/#the-hope";
         update = "nix flake update ~/.dotfiles";
         remove-old = "sudo nix-collect-garbage -d && nix-collect-garbage -d && nix-store --gc";
-        dayz-launch = "STEAM_ROOT=/mnt/games/Libreries/Steam ./dayz-launcher.sh";
+        dayz-launch = "STEAM_ROOT=/mnt/games/Libreries/Steam /mnt/games/Libreries/Others/DayZ\ Linux\ Launcher/dayz-launcher.sh";
       };
       
     };
