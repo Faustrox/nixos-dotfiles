@@ -24,8 +24,10 @@
     };
 
     # Enable automatic login for the user.
-    services.xserver.displayManager.autoLogin.enable = true;
-    services.xserver.displayManager.autoLogin.user = config.main-user.userName;
+    services.displayManager.autoLogin = {
+      enable = true;
+      user = config.main-user.userName;
+    };
 
     # System programs config
     programs = {

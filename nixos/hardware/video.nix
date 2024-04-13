@@ -12,11 +12,23 @@
 
   config = lib.mkIf config.nvidia.enable {
 
+    environment.systemPackages = with pkgs; [
+      vulkan-loader
+      vulkan-validation-layers
+      vulkan-tools
+      vulkan-headers
+    ];
+
     # Enable OpenGL
     hardware.opengl = {
       enable = true;
       driSupport = true;
       driSupport32Bit = true;
+      extraPackages = with pkgs; [
+        vaapiVdpau
+        libvdpau-va-gl
+        nvidia-vaapi-driver
+      ];
     };
 
     # Load nvidia driver for Xorg and Wayland
@@ -42,11 +54,12 @@
       package = config.boot.kernelPackages.nvidiaPackages.stable;
     };
 
-    environment.sessionVariables = {
-      GBM_BACKEND = "nvidia-drm";
-      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      LIBVA_DRIVER_NAME = "nvidia";
-    };
+    # environment.sessionVariables = {
+    #   GBM_BACKEND = "nvidia-drm";
+    #   __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    #   LIBVA_DRIVER_NAME = "nvidia";
+    # };
+  
   };
   
 

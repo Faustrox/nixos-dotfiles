@@ -47,12 +47,13 @@
   nvidia.open = false;
 
   # Enable Plasma 6
-  plasma6.enable = true;
-  plasma6.forceX11 = true;
-  portals.enable = true;
+  # plasma6.enable = true;
+  # plasma6.wayland = false;
 
-  # Kwallet Set up
-  kwallet.enable = true;
+  # Enable Gnome
+  gnome.enable = true;
+  gnome.wayland = false;
+  portals.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -65,30 +66,22 @@
 
   # Setup main user
   main-user.enable = true;
-  main-user.userName = "faustrox";
 
   # Set up docker for nixos
   docker.enable = true;
-  docker.userName = "faustrox";
 
-  # Set up XDG Portals
-  # portals.enable = true;
-  # portals.extraPortals = with pkgs; [
-  #   xdg-desktop-portal-gtk
-  #   libsForQt5.xdg-desktop-portal-kde # For Plasma 5
-  #   # kdePackages.xdg-desktop-portal-kde # For Plasma 6
-  # ];
+  # Ollama Setup
+  ollama.enable = true;
+  # open-webui.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  services.fstrim.enable = lib.mkDefault true;
+  # Recommended for SSD
+  services.fstrim.enable = true;
 
   # List packages installed in system profile. To search, run:
   environment.systemPackages = with pkgs; [
-
-    # Themes
-    catppuccin-sddm-corners
 
     # Utils
     p7zip

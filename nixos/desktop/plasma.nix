@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
 
@@ -7,8 +7,8 @@
       lib.mkEnableOption "Enable and configure Plasma";
     plasma6.enable = 
       lib.mkEnableOption "Enable Plasma 6";
-    plasma6.forceX11 =
-      lib.mkEnableOption "Force X11 to plasma";
+    plasma6.wayland =
+      lib.mkEnableOption "Enable Wayland on Plasma 6 and sddm";
     kwallet.enable = 
       lib.mkEnableOption "Enable and configure Kwallet";
   };
@@ -19,54 +19,57 @@
         then pkgs.kdePackages
       else pkgs.libsForQt5;
   in lib.mkMerge [
-      (lib.mkIf config.plasma.enable {
+    (lib.mkIf config.plasma.enable {
         
-        services.xserver.displayManager.sddm = {
-          enable = true;
-          theme = "catppuccin";
+      services.xserver.displayManager.sddm = {
+        enable = true;
+        settings = {
+          Theme = {
+            Current = "catppuccin-mocha";
+            ThemeDir = "/sddm-themes";
+          };
         };
-        services.xserver.displayManager.defaultSession = 
-        if config.plasma6.forceX11 
-          then "plasmax11" 
-        else "plasma";
-        
-        services.xserver.desktopManager.plasma5.enable = !config.plasma6.enable;
-        services.desktopManager.plasma6.enable = config.plasma6.enable;
+      };
 
+      services.xserver.displayManager.defaultSession = 
+      if config.plasma6.wayland 
+        then "plasma" 
+      else "plasmax11";
+      
+      services.xserver.desktopManager.plasma5.enable = !config.plasma6.enable;
+      services.desktopManager.plasma6.enable = config.plasma6.enable;
 
-        # Enable the Plasma 6 Dekstop Environment.
-        services.xserver.displayManager.sddm.wayland.enable = 
-        if config.plasma6.forceX11 
-          then false 
-        else 
-          if config.plasma6.enable 
-            then true
-        else false;
+      # Enable the Plasma 6 Dekstop Environment.
+      services.xserver.displayManager.sddm.wayland.enable = 
+      if config.plasma6.wayland 
+        then if config.plasma6.enable 
+          then true 
+        else false
+      else false;
 
-        environment.systemPackages = with pkgs; [
-            plasmaPkgs.partitionmanager
-            plasmaPkgs.ktorrent
-          ];
-
-      }
-    )
-    (lib.mkIf config.plasma6.enable {
-        environment.sessionVariables = 
-        if config.plasma6.forceX11 
-        then {} 
-        else {
-          NIXOS_OZONE_WL = "1";
-          QT_QPA_PLATFORM = "wayland";
-          MOZ_ENABLE_WAYLAND = "1";
-        };
-      }
-    )
-    (lib.mkIf config.kwallet.enable {
-      # Set up KDE Wallet 
       security.pam.services.kwallet = {
         name = "kwallet";
         enableKwallet = true;
       };
+
+      environment.systemPackages = with pkgs; [
+        plasmaPkgs.partitionmanager
+        plasmaPkgs.ktorrent
+        kdePackages.sddm-kcm
+      ];
+
+    })
+    (lib.mkIf config.plasma6.enable {
+
+      environment.sessionVariables = 
+      if config.plasma6.forceX11 
+      then {} 
+      else {
+        NIXOS_OZONE_WL = "1";
+        QT_QPA_PLATFORM = "wayland";
+        MOZ_ENABLE_WAYLAND = "1";
+      };
+
     })
   ];
 

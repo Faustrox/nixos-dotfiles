@@ -35,6 +35,7 @@
     discord
     lutris
     heroic
+    bottles
     mangohud
     egl-wayland
     prismlauncher
@@ -52,8 +53,7 @@
 
     # Multimedia
     stremio
-    # spotify
-    nur.repos.nltch.spotify-adblock
+    spotify
     ffmpeg-full
 
     # Themes, cursors and icons
@@ -72,6 +72,12 @@
     # Developer
     vscode
     nodejs_20
+    yarn
+    
+    # Dependencies
+    spirv-headers
+    glslang
+    libgcc
 
     # Utils
     vrrtest

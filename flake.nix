@@ -8,6 +8,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sddm-catppuccin = {
+      url = "github:khaneliman/sddm-catppuccin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     catppuccin.url = "github:catppuccin/nix";
     suyu-emu.url = "github:Noodlez1232/suyu-flake";
     nur.url = "github:nix-community/NUR";
@@ -43,7 +48,25 @@
               };
             };
           }
-          { nixpkgs.overlays = [ nur.overlay ]; }
+          { 
+            nixpkgs.config.allowAliases = false;
+            nixpkgs.overlays = [ 
+              nur.overlay
+              # Dynamic triple buffering Gnome
+              (final: prev: {
+                gnome = prev.gnome.overrideScope' (gnomeFinal: gnomePrev: {
+                  mutter = gnomePrev.mutter.overrideAttrs ( old: {
+                    src = nixpkgs.legacyPackages.x86_64-linux.fetchgit {
+                      url = "https://gitlab.gnome.org/vanvugt/mutter.git";
+                      # GNOME 45: triple-buffering-v4-45
+                      rev = "0b896518b2028d9c4d6ea44806d093fd33793689";
+                      sha256 = "sha256-mzNy5GPlB2qkI2KEAErJQzO//uo8yO0kPQUwvGDwR4w=";
+                    };
+                  } );
+                });
+              })
+            ];
+          }
         ];
       };
     };
