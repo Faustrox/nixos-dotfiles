@@ -6,11 +6,6 @@
 
   home.username = "faustrox";
   home.homeDirectory = "/home/faustrox";
-  home.pointerCursor = {
-    package = pkgs.simp1e-cursors;
-    name = "Simp1e-Catppuccin-Mocha";
-    size = 24;
-  };
 
   nixpkgs = {
     config = {
@@ -18,34 +13,11 @@
       allowUnfreePredicate = (_: true);
     };
   };
-
-  git.userName = "Fausto Jáquez";
-  git.userEmail = "Faustojr03@gmail.com";
   
-  home.packages = with pkgs; 
-  let
-    gamePkgs = inputs.nix-gaming.packages.x86_64-linux;
-    suyu-emu = inputs.suyu-emu.packages.x86_64-linux;
-  in
-  [
+  home.packages = with pkgs; [
+
     # Terminal
     zsh-powerlevel10k
-
-    # Gaming
-    discord
-    lutris
-    heroic
-    bottles
-    mangohud
-    egl-wayland
-    prismlauncher
-    suyu-emu.suyu-mainline
-    wineWowPackages.stable
-    winetricks
-    protonup-qt
-    protontricks
-    vkbasalt
-    steamPackages.steamcmd
 
     # Social media
     telegram-desktop
@@ -61,11 +33,6 @@
     simp1e-cursors
     catppuccin-papirus-folders
 
-    # Gnome Extensions
-    # gnomeExtensions.blur-my-shell
-    # gnomeExtensions.tray-icons-reloaded
-    # gnomeExtensions.gamemode-indicator-in-system-settings
-
     # Browsers
     google-chrome
 
@@ -80,6 +47,7 @@
     libgcc
 
     # Utils
+    menulibre
     vrrtest
     kdePackages.kalk
     dconf
@@ -87,50 +55,15 @@
     
   ];
 
-  programs = {
-    obs-studio = {
-      enable = true;
-    };
-  };
-
   home.sessionVariables = {
     SCRIPTS_FOLDER = "$HOME/.scripts";
-    GAMES_DRIVE = "/mnt/games";
-    STEAM_ROOT = "$GAMES_DRIVE/Libreries/Steam";
+    FLAKE = "$HOME/.dotfiles";
+    WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # Fixes problems for logins in Lutris and other apps
   };
 
   home.sessionPath = [
     "$SCRIPTS_FOLDER"
   ];
-
-  xdg.desktopEntries = {
-    "net.lutris.Lutris" = {
-      name = "Lutris";
-      comment = "Video Game Preservation Platform";
-      exec = "WEBKIT_DISABLE_COMPOSITING_MODE=1 lutris";
-      terminal = false;
-      type = "Application";
-      categories = [ "Game" ];
-      icon = "lutris";
-      mimeType = [ "x-scheme-handler/lutris" ];
-    };
-    "org.suyu_emu.suyu" = {
-      name = "suyu";
-      genericName = "Switch Emulator";
-      comment = "Nintendo Switch video game console emulator";
-      exec = "gamemoderun suyu %f";
-      terminal = false;
-      type = "Application";
-      categories = [ "Game" "Emulator" ];
-      icon = "org.suyu_emu.suyu";
-      mimeType = [ "application/x-nx-nro" "application/x-nx-nso" "application/x-nx-nsp" "application/x-nx-xci" ];
-    };
-  };
-
-  gtk = {
-    enable = true;
-    catppuccin.enable = true;
-  };
 
   # This value determines the home Manager release that your
   # configuration is compatible with. This helps avoid breakage

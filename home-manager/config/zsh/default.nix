@@ -35,9 +35,9 @@
 
       shellAliases = {
         ll = "ls -l";
-        rebuild = "sudo nixos-rebuild switch --flake ~/.dotfiles/#the-hope";
-        update = "nix flake update ~/.dotfiles";
-        remove-old = "sudo nix-collect-garbage -d && nix-collect-garbage -d && nix-store --gc";
+        rebuild = "nh os switch";
+        update = "nh os switch --update";
+        remove-old = "nh clean all --keep 5 --dry";
         dayz-launch = "STEAM_ROOT=/mnt/games/Libreries/Steam /mnt/games/Libreries/Others/DayZ\ Linux\ Launcher/dayz-launcher.sh";
       };
       

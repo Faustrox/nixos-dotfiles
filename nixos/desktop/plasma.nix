@@ -58,13 +58,7 @@
         kdePackages.sddm-kcm
       ];
 
-    })
-    (lib.mkIf config.plasma6.enable {
-
-      environment.sessionVariables = 
-      if config.plasma6.forceX11 
-      then {} 
-      else {
+      environment.sessionVariables = lib.mkIf config.plasma6.wayland {
         NIXOS_OZONE_WL = "1";
         QT_QPA_PLATFORM = "wayland";
         MOZ_ENABLE_WAYLAND = "1";

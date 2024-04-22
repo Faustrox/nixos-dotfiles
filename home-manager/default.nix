@@ -1,11 +1,10 @@
-{ ... }:
+{ lib, ... }:
 
 {
 
   imports = [
-    ./programs
-    ./shells
-    ./themes
+    ./config
+    ./others
   ];
 
 }

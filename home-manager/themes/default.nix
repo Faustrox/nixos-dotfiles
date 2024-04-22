@@ -1,9 +1,0 @@
-{ lib, ... }:
-
-{
-
-  imports = [
-    ./dconf.nix
-  ];
-
-}

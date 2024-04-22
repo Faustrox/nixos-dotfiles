@@ -7,15 +7,13 @@
       lib.mkEnableOption "Enables and configure git";
     git.userName = 
       lib.mkOption {
-        description = ''
-          git username
-        '';
+        default = "Fausto Jáquez";
+        description = "git username";
       };
     git.userEmail = 
       lib.mkOption {
-        description = ''
-          git email
-        '';
+        default = "Faustojr03@gmail.com";
+        description = "git email";
       };
   };
 
@@ -23,12 +21,12 @@
 
     programs.git = {
       enable = true;
-      userName  = "Fausto Jáquez";
-      userEmail = "Faustojr03@gmail.com";
+      userName  = config.git.userName;
+      userEmail = config.git.userEmail;
       aliases = {
         a = "add";
-        ci = "commit";
-        co = "checkout";
+        cm = "commit -m";
+        ck = "checkout";
         l = "log --oneline";  
         s = "status";
         st = "stash";

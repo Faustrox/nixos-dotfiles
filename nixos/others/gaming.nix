@@ -31,6 +31,7 @@
         enable = true;
         remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
         dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+        gamescopeSession.enable = true;
       };
       
       gamemode.enable = true;
@@ -44,20 +45,22 @@
     programs.steam.platformOptimizations.enable = true;
 
     environment.sessionVariables = {
+      __GL_SHADER_DISK_CACHE_PATH = "/home/faustrox/.shaders";
       __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
       VKBASALT_CONFIG_FILE = "/mnt/games/Reshade/vkBasalt.conf";
-      ENABLE_VKBASALT = "1";
-      WINEFSYNC = "1";
-      WINEESYNC = "1";
       DXVK_ENABLE_NVAPI = "1";
       DXVK_ASYNC = "1";
       DXVK_HUD = "compiler";
       PULSE_LATENCY_MSEC = "60";
-      PROTON_ENABLE_NGX_UPDATER = "1";
-      PROTON_FORCE_LARGE_ADDRESS_AWARE = "1";
     };
 
     boot.kernelPackages = pkgs.linuxPackages_zen;
+
+    # NixOS configuration for Star Citizen requirements
+    boot.kernel.sysctl = {
+      # "vm.max_map_count" = 16777216;
+      "fs.file-max" = 524288;
+    };
 
   };
 

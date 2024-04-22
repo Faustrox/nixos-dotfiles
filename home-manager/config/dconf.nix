@@ -7,6 +7,7 @@
       lib.mkEnableOption "Enables and configure dconf";
     dconf.colorScheme = 
       lib.mkOption {
+        default = "prefer-dark";
         description = "Color scheme";
       };
   };

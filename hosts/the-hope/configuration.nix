@@ -12,6 +12,16 @@
   
   catppuccin.flavour = "mocha";
 
+  # Register AppImage files as a binary type to binfmt_misc
+  boot.binfmt.registrations.appimage = {
+    wrapInterpreterInShell = false;
+    interpreter = "${pkgs.appimage-run}/bin/appimage-run";
+    recognitionType = "magic";
+    offset = 0;
+    mask = ''\xff\xff\xff\xff\x00\x00\x00\x00\xff\xff\xff'';
+    magicOrExtension = ''\x7fELF....AI\x02'';
+  };
+
   # Enable Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -19,32 +29,11 @@
   nix.optimise.automatic = true;
   nix.settings.auto-optimise-store = true;
 
-  # Network and Time settings
+  # Network Settings
   network.host = "the-hope";
-
-  time.zone = "America/Santo_Domingo";
-  time.defaultLocale = "en_US.UTF-8";
-  time.extraLocale = {
-    LC_ADDRESS = "es_DO.UTF-8";
-    LC_IDENTIFICATION = "es_DO.UTF-8";
-    LC_MEASUREMENT = "es_DO.UTF-8";
-    LC_MONETARY = "es_DO.UTF-8";
-    LC_NAME = "es_DO.UTF-8";
-    LC_NUMERIC = "es_DO.UTF-8";
-    LC_PAPER = "es_DO.UTF-8";
-    LC_TELEPHONE = "es_DO.UTF-8";
-    LC_TIME = "es_DO.UTF-8";
-  };
-  x11.keymap = {
-    xkb.layout = "us";
-    xkb.variant = "alt-intl";
-  };
 
   # Enable Security Polkit
   security.polkit.enable = true;
-
-  # Nvidia open drivers
-  nvidia.open = false;
 
   # Enable Plasma 6
   # plasma6.enable = true;
@@ -71,7 +60,7 @@
   docker.enable = true;
 
   # Ollama Setup
-  ollama.enable = true;
+  ollama.enable = false;
   # open-webui.enable = true;
 
   # Allow unfree packages
@@ -90,22 +79,27 @@
     unrar
     unzip
     toybox
-    mesa-demos
-    vulkan-tools
     git
     wget
     curl
     _1password
     _1password-gui
-
-    # Fonts
-    (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
-
-    # Others
+    appimage-run
     bat
     fzf
     neofetch
     glxinfo
+    nh
+    gtop
+
+    # Dependencies
+    mesa-demos
+    vulkan-tools
+
+    # Fonts
+    (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
+
+    kitty
 
   ];
 
