@@ -8,6 +8,9 @@
   };
 
   config = lib.mkIf config.sound.setup {
+
+    # Noise Supression microphone
+    programs.noisetorch.enable = true;
     
     # Enable sound with pipewire.
     sound.enable = true;

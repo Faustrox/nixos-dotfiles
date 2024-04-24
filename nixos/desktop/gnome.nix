@@ -42,10 +42,11 @@
       nixpkgs.config.allowAliases = false;
 
       environment.systemPackages = (with pkgs; [
-        gparted
+        celluloid
         fragments
         gnome.gnome-themes-extra
         gnome.gnome-tweaks
+        gparted
       ]) ++ (with pkgs.gnomeExtensions; [
         appindicator
         compiz-windows-effect

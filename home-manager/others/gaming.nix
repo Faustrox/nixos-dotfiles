@@ -29,7 +29,6 @@
       heroic
       lutris
       mangohud
-      egl-wayland
       prismlauncher
       suyu-emu.suyu-mainline
       wineWowPackages.stable
@@ -38,6 +37,9 @@
       protontricks
       vkbasalt
       steamPackages.steamcmd
+
+      # Theming
+      adwsteamgtk
 
     ];
 

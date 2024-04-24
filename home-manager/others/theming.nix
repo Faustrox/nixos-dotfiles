@@ -50,18 +50,18 @@
       catppuccin.enable = config.theming.catppuccin;
     };
 
-    qt = {
-      enable = true;
-      platformTheme = config.theming.qt.platformTheme;
-      style = {
-        name = if config.theming.catppuccin 
-                then "Catppuccin-Mocha" 
-              else config.theming.qt.styleName;
-        package = if config.theming.catppuccin
-                    then pkgs.catppuccin-qt5ct
-                  else config.theming.qt.stylePkg;
-      };
-    };
+    # qt = {
+    #   enable = true;
+    #   platformTheme = config.theming.qt.platformTheme;
+    #   style = {
+    #     name = if config.theming.catppuccin 
+    #             then "Catppuccin-Mocha" 
+    #           else config.theming.qt.styleName;
+    #     package = if config.theming.catppuccin
+    #                 then pkgs.catppuccin-qt5ct
+    #               else config.theming.qt.stylePkg;
+    #   };
+    # };
 
   };
 

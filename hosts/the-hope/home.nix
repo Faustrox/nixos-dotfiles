@@ -65,6 +65,27 @@
     "$SCRIPTS_FOLDER"
   ];
 
+  xdg.desktopEntries = {
+    "nvidia.load.settings" = {
+      name = "NVIDIA Load Settings";
+      genericName = "NVIDIA";
+      comment = "Load NVIDIA settings without gui";
+      exec = "nvidia-settings --load-config-only";
+      terminal = false;
+      type = "Application";
+      icon = "nvidia";
+    };
+    "noisetorch.load.input" = {
+      name = "NoiseTorch Load Input";
+      genericName = "NoiseTorch";
+      comment = "Load NoiseTorch suppressor for input";
+      exec = "noisetorch -i";
+      terminal = false;
+      type = "Application";
+      icon = "noisetorch";
+    };
+  };
+
   # This value determines the home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new home Manager release introduces backwards
