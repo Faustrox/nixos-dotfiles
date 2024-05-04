@@ -14,9 +14,10 @@
     };
 
     catppuccin.url = "github:catppuccin/nix";
-    suyu-emu.url = "github:Noodlez1232/suyu-flake";
-    nur.url = "github:nix-community/NUR";
     nix-gaming.url = "github:fufexan/nix-gaming";
+    nur.url = "github:nix-community/NUR";
+    suyu-emu.url = "github:Noodlez1232/suyu-flake";
+    spicetify-nix.url = "github:the-argus/spicetify-nix";
   };
 
   outputs = { self, nixpkgs, home-manager, nur, catppuccin, ... }@inputs:

@@ -77,6 +77,12 @@
         gnome-40-ui-improvements
       ]);
 
+      # Fragments allow ports
+      networking.firewall = {
+        allowedUDPPorts = [ 51413 ];
+        allowedTCPPorts = [ 51413 ];
+      };
+
       environment.sessionVariables = lib.mkIf config.gnome.wayland {
         NIXOS_OZONE_WL = "1";
         QT_QPA_PLATFORM = "wayland";

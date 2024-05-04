@@ -21,11 +21,9 @@
 
     # Social media
     telegram-desktop
-    zapzap
 
     # Multimedia
     stremio
-    spotify
     ffmpeg-full
 
     # Themes, cursors and icons
@@ -58,7 +56,6 @@
   home.sessionVariables = {
     SCRIPTS_FOLDER = "$HOME/.scripts";
     FLAKE = "$HOME/.dotfiles";
-    WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # Fixes problems for logins in Lutris and other apps
   };
 
   home.sessionPath = [
@@ -97,7 +94,7 @@
   # You can update home Manager without changing this value. See
   # the home Manager release notes for a list of state version
   # changes in each release.
-  home.stateVersion = "23.11";
+  home.stateVersion = "24.05";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

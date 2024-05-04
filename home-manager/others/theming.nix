@@ -50,18 +50,25 @@
       catppuccin.enable = config.theming.catppuccin;
     };
 
-    # qt = {
-    #   enable = true;
-    #   platformTheme = config.theming.qt.platformTheme;
-    #   style = {
-    #     name = if config.theming.catppuccin 
-    #             then "Catppuccin-Mocha" 
-    #           else config.theming.qt.styleName;
-    #     package = if config.theming.catppuccin
-    #                 then pkgs.catppuccin-qt5ct
-    #               else config.theming.qt.stylePkg;
-    #   };
-    # };
+    home.packages = with pkgs; [
+      (catppuccin-kvantum.override {
+        variant = "Mocha";
+        accent = "Sapphire";
+      })
+      # The following is a Qt theme engine, which can be configured with kvantummanager
+      libsForQt5.qtstyleplugin-kvantum
+    ];
+
+    home.sessionVariables = {
+        # This will become a global environment variable
+      QT_STYLE_OVERRIDE = "kvantum";
+    };
+
+    qt = {
+      enable = true;
+      platformTheme = "qtct";
+      style.name = "kvantum";
+    };
 
   };
 

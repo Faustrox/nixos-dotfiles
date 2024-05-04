@@ -7,6 +7,7 @@
     ./dconf.nix
     ./git.nix
     ./obs.nix
+    ./spicetify.nix
   ];
 
   dconf.enable = lib.mkDefault true;

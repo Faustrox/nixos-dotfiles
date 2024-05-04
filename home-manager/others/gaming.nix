@@ -5,18 +5,9 @@
   options = {
     gaming.setup = 
       lib.mkEnableOption "Configure and install gaming packages";
-    gaming.steamRoot = 
-      lib.mkOption {
-        default = "/mnt/games/Libreries/Steam";
-        description = "Where steam libreary is located";
-      };
   };
 
   config = lib.mkIf config.gaming.setup {
-
-    home.sessionVariables = {
-      STEAM_ROOT = config.gaming.steamRoot;
-    };
 
     home.packages = with pkgs;
     let
@@ -24,13 +15,20 @@
       suyu-emu = inputs.suyu-emu.packages.x86_64-linux;
     in [
 
-      # Gaming
+      # Social
       discord
-      heroic
-      lutris
-      mangohud
-      prismlauncher
+
+      # Emulators
       suyu-emu.suyu-mainline
+
+      # Launchers
+      lutris
+      prismlauncher
+      heroic
+
+      # Utils
+      mangohud
+      goverlay
       wineWowPackages.stable
       winetricks
       protonup-qt
@@ -44,7 +42,7 @@
     ];
 
     xdg.desktopEntries = {
-      suyu = {
+      "dev.suyu_emu.suyu" = {
         name = "Suyu";
         genericName = "Switch Emulator";
         comment = "Nintendo Switch video game console emulator";
@@ -52,7 +50,7 @@
         terminal = false;
         type = "Application";
         categories = [ "Game" "Emulator" ];
-        icon = "org.suyu_emu.suyu";
+        icon = "dev.suyu_emu.suyu";
         mimeType = [ "application/x-nx-nro" "application/x-nx-nso" "application/x-nx-nsp" "application/x-nx-xci" ];
       };
     };
