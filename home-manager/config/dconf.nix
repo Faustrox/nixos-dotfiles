@@ -20,6 +20,9 @@
         "org/gnome/desktop/interface" = {
           color-scheme = config.dconf.colorScheme;
         };
+        "org/gnome/mutter" = {
+          experimental-features = [ "variable-refresh-rate" ];
+        };
       };
     };
 

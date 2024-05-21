@@ -10,7 +10,7 @@
     ./spicetify.nix
   ];
 
-  dconf.enable = lib.mkDefault true;
+  dconf.enable = lib.mkDefault false;
 
   git.enable = lib.mkDefault true;
   

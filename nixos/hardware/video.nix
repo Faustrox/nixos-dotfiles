@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
 
@@ -12,13 +12,6 @@
 
   config = lib.mkIf config.nvidia.enable {
 
-    environment.systemPackages = with pkgs; [
-      vulkan-loader
-      vulkan-validation-layers
-      vulkan-tools
-      vulkan-headers
-    ];
-
     # Enable OpenGL
     hardware.opengl = {
       enable = true;
@@ -26,13 +19,26 @@
       driSupport32Bit = true;
       extraPackages = with pkgs; [
         vaapiVdpau
-        libvdpau-va-gl
-        nvidia-vaapi-driver
       ];
     };
 
     # Load nvidia driver for Xorg and Wayland
     services.xserver.videoDrivers = [ "nvidia" ];
+
+    boot = {
+      blacklistedKernelModules = lib.mkDefault [ "nouveau" ];
+      kernelModules = [ "nvidia" ];
+      initrd.kernelModules = [ "nvidia" ];
+    };
+
+    services.xserver.deviceSection = ''
+      Option "VariableRefresh" "true"
+      Option "AsyncFlipSecondaries" "true"
+    '';
+
+    services.xserver.screenSection = ''
+      Option "metamodes" "DP-4: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}, DP-0: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On}"
+    '';
 
     hardware.nvidia = {
 
@@ -50,29 +56,26 @@
       # Enable the Nvidia settings menu,
       nvidiaSettings = true;
 
+      nvidiaPersistenced = true;
+
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
+      package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+        version = "555.42.02";
+        sha256_64bit = "sha256-k7cI3ZDlKp4mT46jMkLaIrc2YUx1lh1wj/J4SVSHWyk=";
+        settingsSha256 = "sha256-rtDxQjClJ+gyrCLvdZlT56YyHQ4sbaL+d5tL4L4VfkA=";
+        persistencedSha256 = "sha256-3ae31/egyMKpqtGEqgtikWcwMwfcqMv2K4MVFa70Bqs=";
+      };
     };
 
     nixpkgs.config.nvidia.acceptLicense = true;
 
-    boot.extraModprobeConfig =
-      "options nvidia "
-      + lib.concatStringsSep " " [
-        # nvidia assume that by default your CPU does not support PAT,
-        # but this is effectively never the case in 2023
-        "NVreg_UsePageAttributeTable=1"
-        # This may be a noop, but it's somewhat uncertain
-        "NVreg_EnablePCIeGen3=1"
-        # This is sometimes needed for ddc/ci support, see
-        # https://www.ddcutil.com/nvidia/
-        #
-        # Current monitor does not support it, but this is useful for
-        # the future
-        "NVreg_RegistryDwords=RMUseSwI2c=0x01;RMI2cSpeed=100"
-        # When (if!) I get another nvidia GPU, check for resizeable bar
-        # settings
-      ];
+    environment.variables = {
+      GBM_BACKEND = "nvidia-drm";
+      # NVD_BACKEND = "direct";
+      # LIBVA_DRIVER_NAME = "nvidia";
+      __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+      WLR_NO_HARDWARE_CURSORS = "1";
+    };
   
   };
   

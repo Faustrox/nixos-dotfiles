@@ -47,7 +47,13 @@
 
     gtk = {
       enable = true;
-      catppuccin.enable = config.theming.catppuccin;
+      catppuccin = {
+        enable = config.theming.catppuccin;
+        flavour = "mocha";
+        accent = "sapphire";
+        size = "standard";
+        tweaks = [ "rimless" ];
+      };
     };
 
     home.packages = with pkgs; [
@@ -60,13 +66,13 @@
     ];
 
     home.sessionVariables = {
-        # This will become a global environment variable
+      GTK_THEME = "Catppuccin-Mocha-Standard-Sapphire-Dark";
       QT_STYLE_OVERRIDE = "kvantum";
     };
 
     qt = {
       enable = true;
-      platformTheme = "qtct";
+      platformTheme.name = "qtct";
       style.name = "kvantum";
     };
 

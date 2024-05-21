@@ -3,8 +3,6 @@
 {
 
   imports = [
-    inputs.nix-gaming.nixosModules.pipewireLowLatency
-    inputs.nix-gaming.nixosModules.platformOptimizations
   ];
 
   options = {
@@ -21,21 +19,19 @@
 
     environment.sessionVariables = {
       STEAM_ROOT = config.gaming.steamRoot;
+      __GL_SHADER_DISK_CACHE = "1";
       __GL_SHADER_DISK_CACHE_PATH = "/home/faustrox/.shaders";
       __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
       VKBASALT_CONFIG_FILE = "/mnt/games/Reshade/vkBasalt.conf";
-      VKD3D_CONFIG = "dxr11,dxr";
+      VKD3D_CONFIG = "dxr";
       PROTON_ENABLE_NVAPI = "1";
       PROTON_ENABLE_NGX_UPDATER = "1";
+      PROTON_HIDE_NVIDIA_GPU = "0";
+      DXVK_ENABLE_NVAPI = "1";
       DXVK_ASYNC = "1";
       DXVK_HUD = "compiler";
       WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # Fixes problems for logins in Lutris and other apps
       # PULSE_LATENCY_MSEC = "60";
-    };
-
-    nix.settings = {
-      substituters = ["https://nix-gaming.cachix.org"];
-      trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="];
     };
 
     # Enable Xbox controllers
@@ -47,10 +43,9 @@
         enable = true;
         remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
         dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-        gamescopeSession.enable = true;
-        platformOptimizations.enable = true;
       };
       
+      gamescope.enable = true;
       gamemode.enable = true;
 
       java = {
@@ -63,7 +58,7 @@
 
     # NixOS configuration for Star Citizen requirements
     boot.kernel.sysctl = {
-      # "vm.max_map_count" = 16777216;
+      "vm.max_map_count" = 16777216;
       "fs.file-max" = 524288;
     };
 

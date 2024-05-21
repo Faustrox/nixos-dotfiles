@@ -12,16 +12,14 @@
     boot = {
       plymouth = {
         enable = true;
-        themePackages = with pkgs; [
-          catppuccin-plymouth
-        ];
-        theme = "catppuccin-macchiato";
+        catppuccin.enable = true;
       };
 
       # Silent boot
       consoleLogLevel = 0;
       kernelParams = [
         "quiet"
+        "splash"
         "vga=current"
         "udev.log_level=3"
         "udev.log_priority=3"
@@ -35,12 +33,13 @@
       # Bootloader config
       loader = {
         efi.canTouchEfiVariables = true;
+        timeout = 2;
         grub = {
           enable = true;
           devices = [ "nodev" ];
           efiSupport = true;
           useOSProber = true;
-          timeoutStyle = "hidden";
+          timeoutStyle = "menu";
           default = "0";
           catppuccin.enable = true;
         };

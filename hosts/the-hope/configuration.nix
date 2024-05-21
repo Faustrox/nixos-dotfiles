@@ -41,8 +41,7 @@
 
   # Enable Gnome
   gnome.enable = true;
-  gnome.wayland = false;
-  portals.enable = true;
+  gnome.wayland = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -88,7 +87,7 @@
     appimage-run
     bat
     fzf
-    neofetch
+    fastfetch
     glxinfo
     nh
     gtop
@@ -105,6 +104,7 @@
   ];
 
   services.udev.extraRules = builtins.readFile ./rules-file;
+  powerManagement.cpuFreqGovernor = "performance";
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -118,6 +118,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "23.11"; # Did you read the comment?
 
 }
