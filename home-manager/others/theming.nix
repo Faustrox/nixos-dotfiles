@@ -45,6 +45,16 @@
       size = 24;
     };
 
+    home.packages = with pkgs; [
+      (catppuccin-kvantum.override {
+        variant = "Mocha";
+        accent = "Sapphire";
+      })
+      # The following is a Qt theme engine, which can be configured with kvantummanager
+      libsForQt5.qtstyleplugin-kvantum
+      libsForQt5.qt5ct
+    ];
+    
     gtk = {
       enable = true;
       catppuccin = {
@@ -54,20 +64,17 @@
         size = "standard";
         tweaks = [ "rimless" ];
       };
-    };
-
-    home.packages = with pkgs; [
-      (catppuccin-kvantum.override {
-        variant = "Mocha";
-        accent = "Sapphire";
-      })
-      # The following is a Qt theme engine, which can be configured with kvantummanager
-      libsForQt5.qtstyleplugin-kvantum
-    ];
-
-    home.sessionVariables = {
-      GTK_THEME = "Catppuccin-Mocha-Standard-Sapphire-Dark";
-      QT_STYLE_OVERRIDE = "kvantum";
+      iconTheme = {
+        name = "Papirus-Dark";
+        package = pkgs.catppuccin-papirus-folders.override {
+          flavor = "mocha";
+          accent = "sapphire";
+        };
+      };
+      cursorTheme = {
+        name = "Simp1e-Catppuccin-Mocha";
+        package = pkgs.simp1e-cursors;
+      };
     };
 
     qt = {
@@ -75,6 +82,16 @@
       platformTheme.name = "qtct";
       style.name = "kvantum";
     };
+
+    xdg.configFile."Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini { }).generate "kvantum.kvconfig" {
+      General.theme = "Catppuccin-Mocha-Sapphire";
+    };
+
+    home.sessionVariables = {
+      GTK_THEME = "Catppuccin-Mocha-Standard-Sapphire-Dark";
+      QT_STYLE_OVERRIDE = "kvantum";
+    };
+
 
   };
 

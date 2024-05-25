@@ -31,13 +31,8 @@
       initrd.kernelModules = [ "nvidia" ];
     };
 
-    services.xserver.deviceSection = ''
-      Option "VariableRefresh" "true"
-      Option "AsyncFlipSecondaries" "true"
-    '';
-
     services.xserver.screenSection = ''
-      Option "metamodes" "DP-4: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}, DP-0: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On}"
+      Option "metamodes" "DP-0: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On} DP-2: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}"
     '';
 
     hardware.nvidia = {
@@ -74,7 +69,6 @@
       # NVD_BACKEND = "direct";
       # LIBVA_DRIVER_NAME = "nvidia";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      WLR_NO_HARDWARE_CURSORS = "1";
     };
   
   };

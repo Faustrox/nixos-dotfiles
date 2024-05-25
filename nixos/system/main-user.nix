@@ -15,11 +15,13 @@
 
   config = lib.mkIf config.main-user.enable {
 
+    hardware.i2c.enable = true;
+
     # Set up user
     users.users.${config.main-user.userName} = {
       isNormalUser = true;
       description = config.main-user.userName;
-      extraGroups = [ "networkmanager" "wheel" "audio" ];
+      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" ];
       shell = pkgs.zsh;
     };
 

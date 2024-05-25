@@ -42,6 +42,7 @@
   # Enable Gnome
   gnome.enable = true;
   gnome.wayland = true;
+  portals.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -73,7 +74,6 @@
 
     # Utils
     rivalcfg
-    p7zip
     rar
     zip
     unrar
@@ -82,6 +82,10 @@
     git
     wget
     curl
+    meson
+    pkg-config
+    cmake
+    ninja
     _1password
     _1password-gui
     appimage-run
@@ -90,15 +94,19 @@
     fastfetch
     glxinfo
     nh
-    gtop
+    zenmonitor
 
     # Dependencies
+    gcc
+    gtop
+    p7zip
     mesa-demos
     vulkan-tools
 
     # Fonts
     (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
 
+    # Other
     kitty
 
   ];

@@ -4,6 +4,7 @@
 
   imports = [
     ./config
+    ./desktop
     ./others
   ];
 

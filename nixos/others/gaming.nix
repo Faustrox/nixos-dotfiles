@@ -26,8 +26,6 @@
       VKD3D_CONFIG = "dxr";
       PROTON_ENABLE_NVAPI = "1";
       PROTON_ENABLE_NGX_UPDATER = "1";
-      PROTON_HIDE_NVIDIA_GPU = "0";
-      DXVK_ENABLE_NVAPI = "1";
       DXVK_ASYNC = "1";
       DXVK_HUD = "compiler";
       WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # Fixes problems for logins in Lutris and other apps

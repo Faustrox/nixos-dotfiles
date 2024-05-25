@@ -31,8 +31,6 @@
 
     # Themes, cursors and icons
     adw-gtk3
-    simp1e-cursors
-    catppuccin-papirus-folders
 
     # Browsers
     google-chrome
@@ -54,6 +52,7 @@
     kdePackages.kalk
     dconf
     jq
+    gimp
     
   ];
 
@@ -69,15 +68,15 @@
   xdg = {
     enable = true;
     desktopEntries = {
-      "nvidia.load.settings" = {
-        name = "NVIDIA Load Settings";
-        genericName = "NVIDIA";
-        comment = "Load NVIDIA settings without gui";
-        exec = "nvidia-settings --load-config-only";
-        terminal = false;
-        type = "Application";
-        icon = "nvidia";
-      };
+      # "nvidia.load.settings" = {
+      #   name = "NVIDIA Load Settings";
+      #   genericName = "NVIDIA";
+      #   comment = "Load NVIDIA settings without gui";
+      #   exec = "nvidia-settings --load-config-only";
+      #   terminal = false;
+      #   type = "Application";
+      #   icon = "nvidia";
+      # };
       "noisetorch.load.input" = {
         name = "NoiseTorch Load Input";
         genericName = "NoiseTorch";

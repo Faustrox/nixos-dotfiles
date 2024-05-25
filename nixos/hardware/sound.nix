@@ -75,24 +75,24 @@ in {
             "stream.properties" = {
               "default.clock.allowed-rates" = [ 44100 48000 82000 96000 ];
               "default.clock.min-quantum" = 32;
-              "default.clock.quantum" = 1024;
-              "default.clock.max-quantum" = 2048;
+              "default.clock.quantum" = 256;
+              "default.clock.max-quantum" = 1024;
             };
           };
         };
         pipewire-pulse = {
           "92-pulse-conf" = {
             "pulse.properties" = {
-              "pulse.min.req" = "32/48000";
-              "pulse.default.req" = "1024/48000";
-              "pulse.min.frag" = "32/48000";
-              "pulse.default.frag" = "1024/48000";
-              "pulse.default.tlength" = "1024/48000";
+              "pulse.min.req" = "128/48000";
+              "pulse.default.req" = "960/48000";
+              "pulse.min.frag" = "128/48000";
+              "pulse.default.frag" = "96000/48000";
+              "pulse.default.tlength" = "96000/48000";
               "pulse.min.quantum" = "128/48000";
               # "pulse.default.format"   = S24;
             };
             "stream.properties" = {
-              "node.latency" = "32/48000";
+              "node.latency" = "128/48000";
               "resample.quality" = 1;
             };
           };

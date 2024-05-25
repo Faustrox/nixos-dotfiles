@@ -22,7 +22,7 @@
         extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
         extraGSettingsOverrides = ''
           [org/gnome/mutter]
-            experimental-features="['variable-refresh-rate']"
+            experimental-features="['variable-refresh-rate', 'kms-modifiers']"
           [org/gnome/desktop/interface]
             color-scheme="prefer-dark"
         '';
@@ -73,26 +73,14 @@
 
     programs.dconf.enable = true;
 
-    environment.systemPackages = (with pkgs; [
+    environment.systemPackages = with pkgs; [
       celluloid
       fragments
       gnome.gnome-themes-extra
       gnome.gnome-tweaks
       gnome.dconf-editor
       gparted
-    ]) ++ (with pkgs.gnomeExtensions; [
-      appindicator
-      burn-my-windows
-      compiz-windows-effect
-      gamemode-indicator-in-system-settings
-      gnome-40-ui-improvements
-      headsetcontrol
-      just-perfection
-      pano
-      quick-settings-tweaker
-      tiling-assistant
-      top-bar-organizer
-    ]);
+    ];
 
     # Fragments allow ports
     networking.firewall = {
@@ -108,6 +96,10 @@
         NIXOS_OZONE_WL = "1";
         QT_QPA_PLATFORM = "wayland";
         MOZ_ENABLE_WAYLAND = "1";
+        # MUTTER_DEBUG_FORCE_KMS_MODE = "simple";
+        # CLUTTER_PAINT = "disable-dynamic-max-render-time";
+        __GL_SYNC_TO_VBLANK = "0";
+        WLR_NO_HARDWARE_CURSORS = "1";
       })
     ]; 
 
