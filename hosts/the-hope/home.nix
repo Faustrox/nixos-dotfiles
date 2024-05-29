@@ -3,7 +3,7 @@
 {
 
   catppuccin = {
-    flavour = "mocha";
+    flavor = "mocha";
     accent = "sapphire";
   };
 
@@ -53,12 +53,14 @@
     dconf
     jq
     gimp
+
+    # Others
+    fragments
     
   ];
 
   home.sessionVariables = {
     SCRIPTS_FOLDER = "$HOME/.scripts";
-    FLAKE = "$HOME/.dotfiles";
   };
 
   home.sessionPath = [

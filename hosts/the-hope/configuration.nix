@@ -10,7 +10,7 @@
     ./hardware-configuration.nix
   ];
   
-  catppuccin.flavour = "mocha";
+  catppuccin.flavor = "mocha";
 
   # Register AppImage files as a binary type to binfmt_misc
   boot.binfmt.registrations.appimage = {
@@ -40,8 +40,10 @@
   # plasma6.wayland = false;
 
   # Enable Gnome
-  gnome.enable = true;
-  gnome.wayland = true;
+  gnome.enable = false;
+  gnome.wayland = false;
+  
+  hyprland.enable = true;
   portals.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -68,6 +70,12 @@
 
   # Recommended for SSD
   services.fstrim.enable = true;
+
+  # Fragments allow ports
+  networking.firewall = {
+    allowedUDPPorts = [ 51413 ];
+    allowedTCPPorts = [ 51413 ];
+  };
 
   # List packages installed in system profile. To search, run:
   environment.systemPackages = with pkgs; [
@@ -103,16 +111,20 @@
     mesa-demos
     vulkan-tools
 
-    # Fonts
-    (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
-
-    # Other
-    kitty
-
   ];
 
+  fonts.packages = with pkgs; [
+    (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
+  ];
+
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep 3";
+    flake = "/home/faustrox/.dotfiles";
+  };
+
   services.udev.extraRules = builtins.readFile ./rules-file;
-  powerManagement.cpuFreqGovernor = "performance";
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

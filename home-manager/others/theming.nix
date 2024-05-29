@@ -45,21 +45,18 @@
       size = 24;
     };
 
-    home.packages = with pkgs; [
-      (catppuccin-kvantum.override {
-        variant = "Mocha";
-        accent = "Sapphire";
-      })
-      # The following is a Qt theme engine, which can be configured with kvantummanager
-      libsForQt5.qtstyleplugin-kvantum
-      libsForQt5.qt5ct
-    ];
+    # GTK Theming
+
+    dconf = {
+      enable = true;
+      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+    };
     
     gtk = {
       enable = true;
       catppuccin = {
         enable = config.theming.catppuccin;
-        flavour = "mocha";
+        flavor = "mocha";
         accent = "sapphire";
         size = "standard";
         tweaks = [ "rimless" ];
@@ -77,19 +74,52 @@
       };
     };
 
+    # QT Theming
+
+    home.packages = with pkgs; [
+      # The following is a Qt theme engine, which can be configured with kvantummanager
+      kdePackages.qtstyleplugin-kvantum
+    ];
+
+    xdg.configFile."kdeglobals".source = "${(pkgs.catppuccin-kde.override {
+      flavour = ["mocha"];
+      accents = ["sapphire"];
+      winDecStyles = ["modern"];
+    })}/share/color-schemes/CatppuccinMochaSapphire.colors";
+
     qt = {
       enable = true;
       platformTheme.name = "qtct";
-      style.name = "kvantum";
+      style = {
+        package = pkgs.catppuccin-kde;
+        name = "kvantum";
+      };
     };
 
-    xdg.configFile."Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini { }).generate "kvantum.kvconfig" {
-      General.theme = "Catppuccin-Mocha-Sapphire";
+    xdg.configFile."Kvantum/catppuccin/catppuccin.kvconfig".source = builtins.fetchurl {
+      url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Peach/Catppuccin-Mocha-Peach.kvconfig";
+      sha256 = "bf6e3ad5df044e7efd12c8bf707a67a69dd42c9effe36abc7eaa5eac12cd0a3c";
     };
+    xdg.configFile."Kvantum/catppuccin/catppuccin.svg".source = builtins.fetchurl {
+      url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Peach/Catppuccin-Mocha-Peach.svg";
+      sha256 = "fbd5c968afdd08812f55cfb5ad9eafb526a09d8c027e6c4378e16679e5ae44ae";
+    };
+    xdg.configFile."Kvantum/kvantum.kvconfig".text = "theme=catppuccin";
+
+    home.file = {
+      ".config/kitty/kitty.conf".source = ./config/kitty-catppuccin-mocha.conf;
+      # ".config/Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini { }).generate "kvantum.kvconfig" {
+      #   theme = "catppuccin";
+      # };
+    };
+
+    wayland.windowManager.hyprland.catppuccin.enable = true;
+    services.dunst.catppuccin.enable = true;
 
     home.sessionVariables = {
       GTK_THEME = "Catppuccin-Mocha-Standard-Sapphire-Dark";
-      QT_STYLE_OVERRIDE = "kvantum";
+      QT_AUTO_SCREEN_SCALE_FACTOR = "1";
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     };
 
 

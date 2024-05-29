@@ -35,7 +35,7 @@
       # Utils
       mangohud
       goverlay
-      wineWow64Packages.full
+      wineWowPackages.unstable
       winetricks
       protonup-qt
       protonup-ng
@@ -51,7 +51,7 @@
         name = "Suyu";
         genericName = "Switch Emulator";
         comment = "Nintendo Switch video game console emulator";
-        exec = "gamemoderun suyu %f";
+        exec = "ENABLE_VKBASALT=1 gamemoderun suyu %f";
         terminal = false;
         type = "Application";
         categories = [ "Game" "Emulator" ];

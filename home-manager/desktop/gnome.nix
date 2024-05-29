@@ -18,6 +18,7 @@
       appindicator
       burn-my-windows
       compiz-windows-effect
+      clipboard-indicator
       gnome-40-ui-improvements
       tiling-assistant
     ];
@@ -36,23 +37,25 @@
 
         # Wallpaper
         "org/gnome/desktop/screensaver" = {
-          picture-uri = "file://$HOME/.dotfiles/assets/wallpapers/nix-black-4k.png";
+          picture-uri = "file:///home/faustrox/.dotfiles/assets/wallpapers/nix-black-4k.png";
         };
         "org/gnome/desktop/background" = {
-          picture-uri = "file://$HOME/.dotfiles/assets/wallpapers/nix-black-4k.png";
-          picture-uri-dark = "file://$HOME/.dotfiles/assets/wallpapers/nix-black-4k.png";
+          picture-uri = "file:///home/faustrox/.dotfiles/assets/wallpapers/nix-black-4k.png";
+          picture-uri-dark = "file:///home/faustrox/.dotfiles/assets/wallpapers/nix-black-4k.png";
         };
 
         # Mutter, extensions and apps on dock
         "org/gnome/mutter" = {
-          dynamic-workspace = false;
+          attach-modal-dialogs = false;
+          dynamic-workspaces = false;
           workspaces-only-on-primary = false;
-          experimental-features = [ "variable-refresh-rate" "kms-modifiers" ];
+          experimental-features = [ "variable-refresh-rate" "kms-modifier" ];
         };
         "org/gnome/shell" = {
           enabled-extensions = [
             "burn-my-windows@schneegans.github.com"
             "compiz-windows-effect@hermes83.github.com"
+            "clipboard-indicator@tudmotu.com"
             "gnome-ui-tune@itstime.tech"
             "launch-new-instance@gnome-shell-extensions.gcampax.github.com"
             "native-window-placement@gnome-shell-extensions.gcampax.github.com"
@@ -74,22 +77,34 @@
           icon-size = 17;
           
         };
+        "org/gnome/shell/extensions/clipboard-indicator" = {
+          toggle-menu = [ "<Super>v" ];
+        };
         "org/gnome/shell/extensions/user-theme" = {
           name = "Catppuccin-Mocha-Standard-Sapphire-Dark";
         };
-        "org/gnome/shell/extensions/burn-my-window" = {
-          active-profile = "./config/burn-my-window.conf";
+        "org/gnome/shell/extensions/burn-my-windows" = {
+          active-profile = "/home/faustrox/.dotfiles/home-manager/desktop/config/burn-my-windows.conf";
         };
         "org/gnome/shell/extensions/com/github/hermes83/compiz-windows-effect" = {
           resize-effect = true;
           speedup-factor-divider = 4.9;
         };
+        "org/gnome/shell/extensions/tiling-assistant" = {
+          enable-tiling-popup = false;
+          single-screen-gap = 12;
+          window-gap = 8;
+        };
 
         # Keybindings
         "org/gnome/desktop/wm/keybindings" = {
           close = [ "<Super>q" ];
-          switch-to-workspace-left = [ "<Controls><Super>Left" ];
-          switch-to-workspace-right = [ "<Controls><Super>Right" ];
+          switch-to-workspace-left = [ "<Control><Super>Left" ];
+          switch-to-workspace-right = [ "<Control><Super>Right" ];
+          switch-input-source = [];
+          switch-input-source-backward = [];
+          move-to-workspace-down = [];
+          move-to-workspace-up = [];
         };
         "org/gnome/settings-daemon/plugins/media-keys" = {
           calculator = [ "<Super>c" ];
@@ -117,7 +132,7 @@
 
         # Miscs
         "org/gnome/desktop/input-sources" = {
-          sources = [ "('xkb' 'us+intl')" ];
+          xkb-options = [ "terminate:ctrl_alt_bksp" ];
         };
         "org/gnome/desktop/applications/terminal" = {
           exec = "kitty";

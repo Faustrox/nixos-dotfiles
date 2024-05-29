@@ -37,8 +37,7 @@
         ll = "ls -l";
         rebuild = "nh os switch";
         update = "nh os switch --update";
-        remove-old = "nh clean all --keep 3 --dry";
-        dayz-launch = "STEAM_ROOT=/mnt/games/Libreries/Steam /mnt/games/Libreries/Others/DayZ\ Linux\ Launcher/dayz-launcher.sh";
+        dayz-launch = "STEAM_ROOT=/mnt/games/Libreries/Steam /home/faustrox/.scripts/dayz-launcher.sh";
         bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
       };
       

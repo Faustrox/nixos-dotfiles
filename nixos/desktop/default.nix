@@ -2,8 +2,9 @@
 
 {
   imports = [ 
-    ./plasma.nix
     ./gnome.nix
+    ./hyprland.nix
+    ./plasma.nix
   ];
 
   plasma6.enable = lib.mkDefault false;

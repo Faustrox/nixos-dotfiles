@@ -23,11 +23,10 @@
       __GL_SHADER_DISK_CACHE_PATH = "/home/faustrox/.shaders";
       __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
       VKBASALT_CONFIG_FILE = "/mnt/games/Reshade/vkBasalt.conf";
-      VKD3D_CONFIG = "dxr";
       PROTON_ENABLE_NVAPI = "1";
       PROTON_ENABLE_NGX_UPDATER = "1";
-      DXVK_ASYNC = "1";
       DXVK_HUD = "compiler";
+      DXVK_ASYNC = "1";
       WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # Fixes problems for logins in Lutris and other apps
       # PULSE_LATENCY_MSEC = "60";
     };

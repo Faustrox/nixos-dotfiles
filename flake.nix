@@ -9,9 +9,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    sddm-catppuccin = {
-      url = "github:khaneliman/sddm-catppuccin";
-      inputs.nixpkgs.follows = "nixpkgs";
+    hyprland = {
+      type = "git";
+      url = "https://github.com/hyprwm/Hyprland";
+      submodules = true;
     };
 
     catppuccin.url = "github:catppuccin/nix";

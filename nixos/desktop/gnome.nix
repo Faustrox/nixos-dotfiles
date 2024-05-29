@@ -19,13 +19,7 @@
       };
       desktopManager.gnome = {
         enable = true;
-        extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
-        extraGSettingsOverrides = ''
-          [org/gnome/mutter]
-            experimental-features="['variable-refresh-rate', 'kms-modifiers']"
-          [org/gnome/desktop/interface]
-            color-scheme="prefer-dark"
-        '';
+        # extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
       };
     };
 
@@ -82,12 +76,6 @@
       gparted
     ];
 
-    # Fragments allow ports
-    networking.firewall = {
-      allowedUDPPorts = [ 51413 ];
-      allowedTCPPorts = [ 51413 ];
-    };
-
     environment.sessionVariables = lib.mkMerge [
       {
         GTK_THEME = "Catppuccin-Mocha-Standard-Sapphire-Dark";
@@ -96,10 +84,8 @@
         NIXOS_OZONE_WL = "1";
         QT_QPA_PLATFORM = "wayland";
         MOZ_ENABLE_WAYLAND = "1";
-        # MUTTER_DEBUG_FORCE_KMS_MODE = "simple";
-        # CLUTTER_PAINT = "disable-dynamic-max-render-time";
-        __GL_SYNC_TO_VBLANK = "0";
-        WLR_NO_HARDWARE_CURSORS = "1";
+        MUTTER_DEBUG_DISABLE_HW_CURSORS = "1";
+        CLUTTER_PAINT = "disable-dynamic-max-render-time";
       })
     ]; 
 

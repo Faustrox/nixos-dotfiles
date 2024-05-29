@@ -4,8 +4,9 @@
   
   imports = [
     ./gnome.nix
+    ./hyprland.nix
   ];
 
-  dconf.setup = lib.mkDefault true;
+  hyprland.setup = lib.mkDefault true;
 
 }
