@@ -17,12 +17,12 @@
 
     catppuccin.url = "github:catppuccin/nix";
     nix-gaming.url = "github:fufexan/nix-gaming";
-    nur.url = "github:nix-community/NUR";
+    # nur.url = "github:nix-community/NUR";
     suyu-emu.url = "github:Noodlez1232/suyu-flake";
     spicetify-nix.url = "github:the-argus/spicetify-nix";
   };
 
-  outputs = { self, nixpkgs, home-manager, nur, catppuccin, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, catppuccin, ... }@inputs:
     let
       lib = nixpkgs.lib;
     in {
@@ -53,7 +53,7 @@
           }
           { 
             nixpkgs.config.allowAliases = false;
-            nixpkgs.overlays = [ nur.overlay ];
+            # nixpkgs.overlays = [ nur.overlay ];
           }
         ];
       };

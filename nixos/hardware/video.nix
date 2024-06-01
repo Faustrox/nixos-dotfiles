@@ -17,16 +17,21 @@
       enable = true;
       driSupport = true;
       driSupport32Bit = true;
-      extraPackages = with pkgs; [
-        nvidia-vaapi-driver
-      ];
     };
 
     # Load nvidia driver for Xorg and Wayland
     services.xserver.videoDrivers = [ "nvidia" ];
 
+    boot = {
+      blacklistedKernelModules = lib.mkDefault [ "nouveau" ];
+      kernelParams = [ 
+        "nvidia_drm.modeset=1"
+        "nvidia_drm.fbdev=1"
+      ];
+    };
+
     services.xserver.screenSection = ''
-      Option "metamodes" "DP-1: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On} DP-2: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}"
+      Option "metamodes" "DP-2: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On} DP-1: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}"
     '';
 
     hardware.nvidia = {
@@ -55,13 +60,29 @@
       };
     };
 
+    boot.extraModprobeConfig =
+    "options nvidia "
+    + lib.concatStringsSep " " [
+      # nvidia assume that by default your CPU does not support PAT,
+      # but this is effectively never the case in 2023
+      "NVreg_UsePageAttributeTable=1"
+      # This may be a noop, but it's somewhat uncertain
+      "NVreg_EnablePCIeGen3=1"
+      # This is sometimes needed for ddc/ci support, see
+      # Current monitor does not support it, but this is useful for
+      # the future
+      "NVreg_RegistryDwords=RMUseSwI2c=0x01;RMI2cSpeed=100"
+      # Message Signaled Interrupts
+      "NVreg_EnableMSI=1"
+    ];
+
     nixpkgs.config.nvidia.acceptLicense = true;
 
     environment.variables = {
       GBM_BACKEND = "nvidia-drm";
       LIBVA_DRIVER_NAME = "nvidia";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      NVD_BACKEND = "direct";
+      __GL_GSYNC_ALLOWED = "1";
     };
   
   };

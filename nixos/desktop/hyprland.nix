@@ -19,24 +19,18 @@
       package = inputs.hyprland.packages.x86_64-linux.hyprland;
     };
 
-    services.xserver.displayManager.sddm = {
-      enable = true;
-      wayland.enable = true;
-      theme = "catppuccin-sddm-corners";
+    services.xserver.displayManager = { 
+      sddm = {
+        enable = true;
+        wayland.enable = true;
+        theme = "catppuccin-sddm-corners";
+      };
     };
 
     environment.systemPackages = with pkgs; [
-
-      copyq
+      
+      wlr-randr
       wl-clipboard
-      cliphist
-      grim
-      slurp
-      gnome.nautilus
-      dunst
-      libnotify
-      swww
-      rofi-wayland
       networkmanagerapplet
       catppuccin-sddm-corners
       

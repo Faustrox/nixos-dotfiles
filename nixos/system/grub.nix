@@ -19,16 +19,9 @@
       consoleLogLevel = 0;
       kernelParams = [
         "quiet"
-        "splash"
-        "vga=current"
         "udev.log_level=3"
-        "udev.log_priority=3"
       ];
       initrd.verbose = false;
-      
-      # Nvidia drivers at boot
-      initrd.kernelModules = [ "nvidia" ];
-      # extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
 
       # Bootloader config
       loader = {
@@ -38,7 +31,7 @@
           enable = true;
           devices = [ "nodev" ];
           efiSupport = true;
-          useOSProber = true;
+          useOSProber = false;
           timeoutStyle = "menu";
           default = "0";
           catppuccin.enable = true;

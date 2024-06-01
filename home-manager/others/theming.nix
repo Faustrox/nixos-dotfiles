@@ -82,9 +82,9 @@
     ];
 
     xdg.configFile."kdeglobals".source = "${(pkgs.catppuccin-kde.override {
-      flavour = ["mocha"];
-      accents = ["sapphire"];
-      winDecStyles = ["modern"];
+      flavour = [ "mocha" ];
+      accents = [ "sapphire" ];
+      winDecStyles = [ "modern" ];
     })}/share/color-schemes/CatppuccinMochaSapphire.colors";
 
     qt = {
@@ -97,24 +97,18 @@
     };
 
     xdg.configFile."Kvantum/catppuccin/catppuccin.kvconfig".source = builtins.fetchurl {
-      url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Peach/Catppuccin-Mocha-Peach.kvconfig";
-      sha256 = "bf6e3ad5df044e7efd12c8bf707a67a69dd42c9effe36abc7eaa5eac12cd0a3c";
+      url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Sapphire/Catppuccin-Mocha-Sapphire.kvconfig";
+      sha256 = "0n9f5hysr4k1sf9fd3sgd9fvqwrxrpcvj6vajqmb5c5ji8nv2w3c";
     };
     xdg.configFile."Kvantum/catppuccin/catppuccin.svg".source = builtins.fetchurl {
-      url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Peach/Catppuccin-Mocha-Peach.svg";
-      sha256 = "fbd5c968afdd08812f55cfb5ad9eafb526a09d8c027e6c4378e16679e5ae44ae";
+      url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Sapphire/Catppuccin-Mocha-Sapphire.svg";
+      sha256 = "1hq9h34178h0d288hgwb0ngqnixz24m9lk0ahc4dahwqn77fndwf";
     };
     xdg.configFile."Kvantum/kvantum.kvconfig".text = "theme=catppuccin";
 
     home.file = {
       ".config/kitty/kitty.conf".source = ./config/kitty-catppuccin-mocha.conf;
-      # ".config/Kvantum/kvantum.kvconfig".source = (pkgs.formats.ini { }).generate "kvantum.kvconfig" {
-      #   theme = "catppuccin";
-      # };
     };
-
-    wayland.windowManager.hyprland.catppuccin.enable = true;
-    services.dunst.catppuccin.enable = true;
 
     home.sessionVariables = {
       GTK_THEME = "Catppuccin-Mocha-Standard-Sapphire-Dark";
