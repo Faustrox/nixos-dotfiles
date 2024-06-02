@@ -1,13 +1,14 @@
 { lib, ... }:
 
 {
-  
+
   imports = [
     ./git.nix
     ./kitty.nix
     ./obs.nix
     ./spicetify.nix
-    ./zsh
+    ./waybar.nix
+    ./zsh.nix
   ];
 
   git.enable = lib.mkDefault true;
@@ -17,4 +18,5 @@
   obs.enable = lib.mkDefault true;
 
   zsh.enable = lib.mkDefault true;
+
 }

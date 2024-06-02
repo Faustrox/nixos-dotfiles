@@ -44,7 +44,7 @@
                 faustrox = {
                   imports = [
                     ./hosts/the-hope/home.nix
-                    ./home-manager
+                    ./home
                     catppuccin.homeManagerModules.catppuccin
                   ];
                 };

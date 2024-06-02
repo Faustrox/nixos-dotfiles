@@ -3,8 +3,8 @@
 {
   
   imports = [
-    ./gnome
-    ./hyprland
+    ./gnome.nix
+    ./hyprland.nix
   ];
 
   hyprland.setup = lib.mkDefault true;

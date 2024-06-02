@@ -3,9 +3,9 @@
 {
 
   imports = [
-    ./config
     ./desktop
     ./others
+    ./programs
   ];
 
 }

@@ -84,7 +84,7 @@
           name = "Catppuccin-Mocha-Standard-Sapphire-Dark";
         };
         "org/gnome/shell/extensions/burn-my-windows" = {
-          active-profile = "/home/faustrox/.dotfiles/home-manager/desktop/gnome/config/burn-my-windows.conf";
+          active-profile = "/home/faustrox/.dotfiles/home/config/gnome/burn-my-windows.conf";
         };
         "org/gnome/shell/extensions/com/github/hermes83/compiz-windows-effect" = {
           resize-effect = true;
