@@ -20,6 +20,8 @@
       "clock#calendar"
     ],
     "modules-right": [
+      "gamemode",
+      "tray",
       "group/misc"
       // "custom/logout_menu"
     ],
@@ -63,7 +65,7 @@
       "format": "{:%h}"
     },
     "clock#calendar": {
-      "format": "{:%F}",
+      "format": "{:%d-%m-%Y}",
       "tooltip-format": "<tt><small>{calendar}</small></tt>",
       "actions": {
         "on-click-right": "mode"
@@ -84,7 +86,7 @@
       }
     },
     "clock": {
-      "format": "{:%I:%M %p | %a • %h | %F}",
+      "format": "{:%I:%M %p | %a • %h | %d-%m-%Y}",
       "format-alt": "{:%I:%M %p}",
       "tooltip-format": "<tt><small>{calendar}</small></tt>",
       "actions": {
@@ -105,23 +107,6 @@
         }
       }
     },
-    "custom/media": {
-      "format": "{icon}󰎈",
-      "restart-interval": 2,
-      "return-type": "json",
-      "format-icons": {
-        "Playing": "",
-        "Paused": ""
-      },
-      "max-length": 35,
-      "exec": "",
-      "on-click": "playerctl play-pause",
-      "on-click-right": "playerctl next",
-      "on-click-middle": "playerctl prev",
-      "on-scroll-up": "playerctl volume 0.05-",
-      "on-scroll-down": "playerctl volume 0.05+",
-      "smooth-scrolling-threshold": "0.1"
-    },
     "network": {
       "format": "󰤭",
       "format-wifi": "{icon}({signalStrength}%){essid}",
@@ -140,6 +125,22 @@
       "on-click": "",
       "on-click-right": "wezterm start nmtui"
     },
+    "tray": {
+      "icon-size": 18,
+      "spacing": 8
+    },
+    "gamemode": {
+      "format": "{glyph}",
+      "format-alt": "{glyph}",
+      "glyph": "",
+      "hide-not-running": true,
+      "use-icon": true,
+      "icon-name": "input-gaming-symbolic",
+      "icon-spacing": 8,
+      "icon-size": 18,
+      "tooltip": false,
+      "tooltip-format": "Games running: {count}"
+    },
     "group/misc": {
       "orientation": "horizontal",
       "modules": [
@@ -152,7 +153,7 @@
     },
     "privacy": {
       "icon-spacing": 1,
-      "icon-size": 12,
+      "icon-size": 18,
       "transition-duration": 250,
       "modules": [
         {
@@ -175,17 +176,22 @@
       "exec": "",
       "return-type": "json"
     },
-    "custom/airplane_mode": {
+    "custom/media": {
+      "format": "{icon}󰎈",
+      "restart-interval": 2,
       "return-type": "json",
-      "interval": 1,
+      "format-icons": {
+        "Playing": "",
+        "Paused": ""
+      },
+      "max-length": 35,
       "exec": "",
-      "on-click": ""
-    },
-    "custom/night_mode": {
-      "return-type": "json",
-      "interval": 1,
-      "exec": "",
-      "on-click": ""
+      "on-click": "playerctl play-pause",
+      "on-click-right": "playerctl next",
+      "on-click-middle": "playerctl prev",
+      "on-scroll-up": "playerctl volume 0.05-",
+      "on-scroll-down": "playerctl volume 0.05+",
+      "smooth-scrolling-threshold": "0.1"
     },
     "custom/dunst": {
       "return-type": "json",

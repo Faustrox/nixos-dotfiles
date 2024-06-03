@@ -107,7 +107,7 @@
     xdg.configFile."Kvantum/kvantum.kvconfig".text = "theme=catppuccin";
 
     home.file = {
-      ".config/kitty/kitty.conf".source = ./config/kitty-catppuccin-mocha.conf;
+      ".config/kitty/kitty.conf".source = ../config/kitty/kitty.conf;
     };
 
     home.sessionVariables = {
@@ -115,7 +115,6 @@
       QT_AUTO_SCREEN_SCALE_FACTOR = "1";
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     };
-
 
   };
 

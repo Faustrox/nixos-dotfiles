@@ -3,6 +3,7 @@
 {
 
   imports = [
+    ./dunst.nix
     ./git.nix
     ./kitty.nix
     ./obs.nix

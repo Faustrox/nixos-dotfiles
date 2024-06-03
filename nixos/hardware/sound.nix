@@ -75,8 +75,8 @@ in {
             "stream.properties" = {
               "default.clock.allowed-rates" = [ 44100 48000 82000 96000 ];
               "default.clock.min-quantum" = 32;
-              "default.clock.quantum" = 256;
-              "default.clock.max-quantum" = 1024;
+              "default.clock.quantum" = 1024;
+              "default.clock.max-quantum" = 2048;
             };
           };
         };
@@ -92,7 +92,7 @@ in {
               # "pulse.default.format"   = S24;
             };
             "stream.properties" = {
-              "node.latency" = "128/48000";
+              "node.latency" = "1024/48000";
               "resample.quality" = 1;
             };
           };

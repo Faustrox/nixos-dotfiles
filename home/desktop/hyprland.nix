@@ -16,15 +16,14 @@
       grim
       slurp
       gnome.nautilus
-      dunst
       libnotify
       swww
       rofi-wayland
-      waybar
 
     ];
 
     waybar.setup = true;
+    dunst.setup = true;
 
     home.file = {
 
