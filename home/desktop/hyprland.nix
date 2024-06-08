@@ -11,7 +11,6 @@
 
     home.packages = with pkgs; [
 
-      copyq
       cliphist
       grim
       slurp

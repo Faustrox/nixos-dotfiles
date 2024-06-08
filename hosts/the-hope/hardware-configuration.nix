@@ -17,11 +17,7 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  zramSwap = {
-    enable = true;
-    priority = 100;
-    memoryPercent = 100;
-  };
+  zramSwap.enable = true;
   boot.kernel.sysctl = { 
     "vm.swappiness" = 180;
     "vm.watermark_boost_factor" = 0;

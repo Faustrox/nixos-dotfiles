@@ -23,7 +23,6 @@
       "gamemode",
       "tray",
       "group/misc"
-      // "custom/logout_menu"
     ],
     "hyprland/workspaces": {
       "on-click": "activate",

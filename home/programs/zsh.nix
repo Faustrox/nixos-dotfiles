@@ -3,11 +3,11 @@
 {
 
   options = {
-    zsh.enable = 
+    zsh.setup = 
       lib.mkEnableOption "Enables and configure zsh";
   };
 
-  config = lib.mkIf config.zsh.enable {
+  config = lib.mkIf config.zsh.setup {
 
     programs.zsh = {
       enable = true;
@@ -29,18 +29,26 @@
         {
           name = "powerlevel10k-config";
           src = ../scripts;
-          file = "./p10k.zsh";
+          file = "./p10k-config.zsh";
         }
       ];
 
       shellAliases = {
         ll = "ls -l";
-        rebuild = "nh os switch";
-        update = "nh os switch --update";
-        dayz-launch = "STEAM_ROOT=/mnt/games/Libreries/Steam /home/faustrox/.scripts/dayz-launcher.sh";
+        nix-switch = "nh os switch";
+        nix-boot = "nh os boot";
+        nix-switch-update = "nh os switch --update";
+        nix-boot-update = "nh os boot --update";
+        nix-clean = "nh clean all";
+        dayz-launch = "/home/faustrox/.scripts/dayz-launcher.sh";
         bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
       };
       
+    };
+
+    programs.zoxide = {
+      enable = true;
+      enableZshIntegration = true;
     };
 
   };

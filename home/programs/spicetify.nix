@@ -1,6 +1,6 @@
 { pkgs, lib, inputs, ... }:
 let
-  spicePkgs = inputs.spicetify-nix.packages.x86_64-linux.default;
+  spicetifyPkgs = inputs.spicetify-nix.packages.x86_64-linux.default;
 in
 {
   # allow spotify to be installed if you don't have unfree enabled already
@@ -15,10 +15,10 @@ in
   programs.spicetify =
     {
       enable = true;
-      theme = spicePkgs.themes.catppuccin;
+      theme = spicetifyPkgs.themes.catppuccin;
       colorScheme = "mocha";
 
-      enabledExtensions = with spicePkgs.extensions; [
+      enabledExtensions = with spicetifyPkgs.extensions; [
         fullAppDisplay
         shuffle # shuffle+ (special characters are sanitized out of ext names)
         hidePodcasts

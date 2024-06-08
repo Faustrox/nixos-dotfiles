@@ -10,8 +10,8 @@
   config = lib.mkIf config.hyprland.enable {
 
     nix.settings = {
-      substituters = lib.mkBefore [ "https://hyprland.cachix.org" ];
-      trusted-public-keys = lib.mkBefore [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
+      substituters = [ "https://hyprland.cachix.org" ];
+      trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
     };
 
     programs.hyprland = {
@@ -19,7 +19,7 @@
       package = inputs.hyprland.packages.x86_64-linux.hyprland;
     };
 
-    services.xserver.displayManager = { 
+    services.displayManager = { 
       sddm = {
         enable = true;
         wayland.enable = true;
@@ -31,13 +31,14 @@
       
       wlr-randr
       wl-clipboard
+      wl-clip-persist
       networkmanagerapplet
       catppuccin-sddm-corners
       
     ];
 
     environment.sessionVariables = {
-      # NIXOS_OZONE_WL = "1";
+      NIXOS_OZONE_WL = "1";
       # ELECTRON_OZONE_PLATFORM_HINT = "auto";
       MOZ_ENABLE_WAYLAND = "1";
       QT_QPA_PLATFORM = "wayland;xcb";

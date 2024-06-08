@@ -7,14 +7,47 @@
     accent = "sapphire";
   };
 
+  # --- Home Manager Settings ---
+
   home.username = "faustrox";
   home.homeDirectory = "/home/faustrox";
 
+  home.sessionVariables = {
+    SCRIPTS_FOLDER = "$HOME/.scripts";
+  };
+
+  home.sessionPath = [
+    "$SCRIPTS_FOLDER"
+  ];
+
+  # This value determines the home Manager release that your
+  # configuration is compatible with. This helps avoid breakage
+  # when a new home Manager release introduces backwards
+  # incompatible changes.
+  home.stateVersion = "23.11";
+
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
+  
   nixpkgs = {
     config = {
       allowUnfree = true;
       allowUnfreePredicate = (_: true);
     };
+  };
+
+  # --- Desktop Settings ---
+
+  hyprland.setup = true;
+
+  # --- Programs Settings ---
+
+  git.setup = true;
+
+  zsh.setup = true;
+
+  programs = {
+    obs-studio.enable = true;
   };
   
   home.packages = with pkgs; [
@@ -59,14 +92,6 @@
     
   ];
 
-  home.sessionVariables = {
-    SCRIPTS_FOLDER = "$HOME/.scripts";
-  };
-
-  home.sessionPath = [
-    "$SCRIPTS_FOLDER"
-  ];
-
   xdg = {
     enable = true;
     desktopEntries = {
@@ -91,17 +116,11 @@
     };
   };
 
-  # This value determines the home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update home Manager without changing this value. See
-  # the home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "23.11";
+  # Others Settings
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  gaming.setup = true;
+
+  theming.setup = true;
+  theming.catppuccin = true;
 
 }

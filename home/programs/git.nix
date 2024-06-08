@@ -3,7 +3,7 @@
 {
   
   options = {
-    git.enable = 
+    git.setup = 
       lib.mkEnableOption "Enables and configure git";
     git.userName = 
       lib.mkOption {
@@ -17,7 +17,7 @@
       };
   };
 
-  config = lib.mkIf config.git.enable {
+  config = lib.mkIf config.git.setup {
 
     programs.git = {
       enable = true;

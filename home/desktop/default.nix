@@ -7,6 +7,4 @@
     ./hyprland.nix
   ];
 
-  hyprland.setup = lib.mkDefault true;
-
 }

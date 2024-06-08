@@ -5,27 +5,25 @@
   options = {
     gaming.setup = 
       lib.mkEnableOption "Configure and install gaming packages";
+    gaming.steamRoot = 
+      lib.mkOption {
+        default = "/mnt/games/Libreries/Steam";
+        description = "Where steam libreary is located";
+      };
   };
 
   config = lib.mkIf config.gaming.setup {
-    
-    # nix.settings = {
-    #   substituters = lib.mkBefore ["https://nix-gaming.cachix.org"];
-    #   trusted-public-keys = lib.mkBefore ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="];
-    # };
-
 
     home.packages = with pkgs;
     let
-      game-pkgs = inputs.nix-gaming.packages.x86_64-linux;
-      suyu-emu = inputs.suyu-emu.packages.x86_64-linux;
+      suyu = inputs.suyu.packages.x86_64-linux;
     in [
 
       # Social
       discord
 
       # Emulators
-      suyu-emu.suyu-mainline
+      suyu.suyu
 
       # Launchers
       lutris
@@ -44,20 +42,19 @@
       steamPackages.steamcmd
 
     ];
-    
 
-    xdg.desktopEntries = {
-      "dev.suyu_emu.suyu" = {
-        name = "Suyu";
-        genericName = "Switch Emulator";
-        comment = "Nintendo Switch video game console emulator";
-        exec = "ENABLE_VKBASALT=1 gamemoderun suyu %f";
-        terminal = false;
-        type = "Application";
-        categories = [ "Game" "Emulator" ];
-        icon = "dev.suyu_emu.suyu";
-        mimeType = [ "application/x-nx-nro" "application/x-nx-nso" "application/x-nx-nsp" "application/x-nx-xci" ];
-      };
+    home.sessionVariables = {
+      STEAM_ROOT = config.gaming.steamRoot;
+      __GL_SHADER_DISK_CACHE = "1";
+      __GL_SHADER_DISK_CACHE_PATH = "/home/faustrox/.shaders";
+      __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
+      VKBASALT_CONFIG_FILE = "/mnt/games/Reshade/vkBasalt.conf";
+      PROTON_ENABLE_NVAPI = "1";
+      PROTON_HIDE_NVIDIA_GPU = "0";
+      DXVK_HUD = "compiler";
+      DXVK_ASYNC = "1";
+      WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # Fixes problems for logins in Lutris and other apps
+      # PULSE_LATENCY_MSEC = "60";
     };
 
   };

@@ -44,7 +44,7 @@
     programs.ssh.startAgent = true;
     
     # To Dynamic Triple Buffering to work
-    nixpkgs.config.allowAliases = false;
+    # nixpkgs.config.allowAliases = false;
 
     nixpkgs.overlays = [
       (final: prev: {
@@ -64,8 +64,6 @@
         });
       })
     ];
-
-    programs.dconf.enable = true;
 
     environment.systemPackages = with pkgs; [
       celluloid
