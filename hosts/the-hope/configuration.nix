@@ -42,14 +42,16 @@
   # Recommended for SSD
   services.fstrim.enable = true;
 
+  # Handle process when out of memory
+  services.earlyoom.enable = true;
+
   # Fragments allow ports
   networking.firewall = {
     allowedUDPPorts = [ 51413 ];
     allowedTCPPorts = [ 51413 ];
   };
 
-  boot.kernelPackages = pkgs.linuxPackages_cachyos;
-  chaotic.scx.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
 
   # Import udev rules
   services.udev.extraRules = builtins.readFile ./rules-file;
@@ -72,6 +74,7 @@
 
   # --- Desktop Settings ---
 
+  gnome.enable = false;
   hyprland.enable = true;
   portals.enable = true;
 
@@ -101,6 +104,7 @@
     fastfetch
     glxinfo
     zenmonitor
+    lm_sensors
 
     # Dependencies
     gcc

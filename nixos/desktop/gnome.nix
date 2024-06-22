@@ -46,24 +46,24 @@
     # To Dynamic Triple Buffering to work
     # nixpkgs.config.allowAliases = false;
 
-    nixpkgs.overlays = [
-      (final: prev: {
-        gnome = prev.gnome.overrideScope (gnomeFinal: gnomePrev: {
-          mutter = gnomePrev.mutter.overrideAttrs ( old: {
-            patches = (old.patches or []) ++ [
-              (prev.fetchpatch { # Dynamic Tripple Buffering v4
-                url = "https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/1441.patch";
-                hash = "sha256-Ngs05xlIN27Rf0XDAhXGMh8bgfryiw4QueHlJA2dJY4=";
-              })
-              (prev.fetchpatch { # Increase default deadline evasion to 1000 microseconds
-                url = "https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/3373.patch";
-                hash = "sha256-EC4YcCEQD38ilZ/pHhf18kVkAd5tNZr4PzbqJxNID9Y=";
-              })
-            ];
-          } );
-        });
-      })
-    ];
+    # nixpkgs.overlays = [
+    #   (final: prev: {
+    #     gnome = prev.gnome.overrideScope (gnomeFinal: gnomePrev: {
+    #       mutter = gnomePrev.mutter.overrideAttrs ( old: {
+    #         patches = (old.patches or []) ++ [
+    #           (prev.fetchpatch { # Dynamic Tripple Buffering v4
+    #             url = "https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/1441.patch";
+    #             hash = "sha256-kAWSSuRLmf0GHr/XET+cDUXcIcBnivRfBRfKSSGd/94=";
+    #           })
+    #           (prev.fetchpatch { # Increase default deadline evasion to 1000 microseconds
+    #             url = "https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/3373.patch";
+    #             hash = "sha256-EC4YcCEQD38ilZ/pHhf18kVkAd5tNZr4PzbqJxNID9Y=";
+    #           })
+    #         ];
+    #       } );
+    #     });
+    #   })
+    # ];
 
     environment.systemPackages = with pkgs; [
       celluloid

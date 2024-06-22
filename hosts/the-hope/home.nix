@@ -38,6 +38,7 @@
 
   # --- Desktop Settings ---
 
+  dconf.setup = false;
   hyprland.setup = true;
 
   # --- Programs Settings ---
@@ -67,6 +68,7 @@
 
     # Browsers
     google-chrome
+    firefox
 
     # Developer
     vscode
@@ -89,6 +91,7 @@
 
     # Others
     fragments
+    uget
     
   ];
 

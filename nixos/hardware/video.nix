@@ -31,7 +31,7 @@
     };
 
     services.xserver.screenSection = ''
-      Option "metamodes" "DP-2: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On} DP-1: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}"
+      Option "metamodes" "DP-1: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On} DP-2: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}"
     '';
 
     hardware.nvidia = {
@@ -74,6 +74,10 @@
       "NVreg_RegistryDwords=RMUseSwI2c=0x01;RMI2cSpeed=100"
       # Message Signaled Interrupts
       "NVreg_EnableMSI=1"
+      # Disable GSP Firmware.
+      # Nvidia 555 beta enables it by default
+      # This can't be change in open nvidia drivers
+      "NVreg_EnableGpuFirmware=0"
     ];
 
     nixpkgs.config.nvidia.acceptLicense = true;

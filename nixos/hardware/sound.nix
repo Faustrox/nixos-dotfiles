@@ -1,8 +1,12 @@
-{ config, lib, pkgs, ... }: let
+{ config, lib, pkgs, inputs, ... }: let
 
   quantumRate = "${toString config.sound.quantum}/${toString config.sound.rate}";
 
 in {
+
+  imports = [
+    inputs.nix-gaming.nixosModules.pipewireLowLatency
+  ];
   
   options = {
     sound.setup =
@@ -13,6 +17,7 @@ in {
 
     programs.noisetorch.enable = true;   
     environment.systemPackages = with pkgs; [
+      easyeffects
       pavucontrol
       headsetcontrol
       helvum
@@ -58,7 +63,6 @@ in {
                   update-props = {
                     audio.format = "S24LE"
                     audio.rate = "96000"
-                    api.alsa.disable-batch = true
                     session.suspend-timeout-seconds = 0
                     api.alsa.period-size   = 256
                     api.alsa.headroom      = 1024
@@ -74,7 +78,7 @@ in {
           "92-pipewire-conf" = {
             "stream.properties" = {
               "default.clock.allowed-rates" = [ 44100 48000 82000 96000 ];
-              "default.clock.min-quantum" = 32;
+              "default.clock.min-quantum" = 1024;
               "default.clock.quantum" = 1024;
               "default.clock.max-quantum" = 2048;
             };
@@ -83,12 +87,12 @@ in {
         pipewire-pulse = {
           "92-pulse-conf" = {
             "pulse.properties" = {
-              "pulse.min.req" = "128/48000";
-              "pulse.default.req" = "960/48000";
-              "pulse.min.frag" = "128/48000";
+              "pulse.min.req" = "1024/48000";
+              "pulse.default.req" = "1024/48000";
+              "pulse.min.frag" = "1024/48000";
               "pulse.default.frag" = "96000/48000";
               "pulse.default.tlength" = "96000/48000";
-              "pulse.min.quantum" = "128/48000";
+              "pulse.min.quantum" = "1024/48000";
               # "pulse.default.format"   = S24;
             };
             "stream.properties" = {

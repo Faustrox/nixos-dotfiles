@@ -2,9 +2,6 @@
 
 {
 
-  imports = [
-  ];
-
   options = {
     gaming.setup = 
       lib.mkEnableOption "Configure some tweaks and programs for NixOs gaming";

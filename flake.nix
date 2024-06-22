@@ -4,11 +4,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    
-    chaotic = {
-      url =  "github:chaotic-cx/nyx/nyxpkgs-unstable";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -27,10 +22,11 @@
     };
 
     catppuccin.url = "github:catppuccin/nix";
+    nix-gaming.url = "github:fufexan/nix-gaming";
     spicetify-nix.url = "github:the-argus/spicetify-nix";
   };
 
-  outputs = { self, nixpkgs, home-manager, catppuccin, chaotic, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, catppuccin, ... }@inputs:
     let
       lib = nixpkgs.lib;
     in {
@@ -41,9 +37,8 @@
         modules = [
           ./hosts/the-hope/configuration.nix
           ./nixos
-          chaotic.nixosModules.default
           catppuccin.nixosModules.catppuccin
-          home-manager.nixosModules.home-manager 
+          home-manager.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;

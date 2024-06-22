@@ -1,39 +1,20 @@
-[
-  {
-    "name": "top_bar",
-    "layer": "top",
-    "position": "top",
-    "output": "DP-2",
-    "height": 36,
-    "spacing": 4,
-    "modules-left": [
-      "hyprland/workspaces",
-      "hyprland/submap"
-    ],
-    "modules-center": [
-      "clock#time",
-      "custom/separator",
-      "clock#week",
-      "custom/separator_dot",
-      "clock#month",
-      "custom/separator",
-      "clock#calendar"
-    ],
-    "modules-right": [
-      "gamemode",
-      "tray",
-      "group/misc"
-    ],
-    "hyprland/workspaces": {
+{
+  "height": 50, 
+  "layer": "top",
+  "position": "top",
+  "output": "DP-1",
+  "spacing": 7,
+  "modules-left": ["custom/launcher", "cpu", "temperature", "memory"],
+  "modules-center": ["hyprland/workspaces"],
+  "modules-right": ["pulseaudio", "network", "clock", "custom/powermenu"],
+
+  "hyprland/workspaces": {
+      "disable-scroll": true,
       "on-click": "activate",
-      "format": "{icon}",
-      "format-icons": {
-        "active": "",
-        "default": "",
-        "empty": ""
-      },
+      "on-scroll-up": "hyprctl dispatch workspace e+1",
+      "on-scroll-down": "hyprctl dispatch workspace e-1",
       "persistent_workspaces": {
-        "DP-2": [
+        "DP-1": [
           1,
           2,
           3,
@@ -41,168 +22,85 @@
           5
         ]
       }
-    },
-    "hyprland/submap": {
-      "format": "<span color='#a6da95'>Mode:</span> {}",
-      "tooltip": false
-    },
-    "clock#time": {
-      "format": "{:%I:%M %p}"
-    },
-    "custom/separator": {
-      "format": "|",
-      "tooltip": false
-    },
-    "custom/separator_dot": {
-      "format": "•",
-      "tooltip": false
-    },
-    "clock#week": {
-      "format": "{:%a}"
-    },
-    "clock#month": {
-      "format": "{:%h}"
-    },
-    "clock#calendar": {
-      "format": "{:%d-%m-%Y}",
-      "tooltip-format": "<tt><small>{calendar}</small></tt>",
-      "actions": {
-        "on-click-right": "mode"
-      },
-      "calendar": {
-        "mode": "month",
-        "mode-mon-col": 3,
-        "weeks-pos": "right",
-        "on-scroll": 1,
-        "on-click-right": "mode",
-        "format": {
-          "months": "<span color='#f4dbd6'><b>{}</b></span>",
-          "days": "<span color='#cad3f5'><b>{}</b></span>",
-          "weeks": "<span color='#c6a0f6'><b>W{}</b></span>",
-          "weekdays": "<span color='#a6da95'><b>{}</b></span>",
-          "today": "<span color='#8bd5ca'><b><u>{}</u></b></span>"
-        }
-      }
-    },
-    "clock": {
-      "format": "{:%I:%M %p | %a • %h | %d-%m-%Y}",
-      "format-alt": "{:%I:%M %p}",
-      "tooltip-format": "<tt><small>{calendar}</small></tt>",
-      "actions": {
-        "on-click-right": "mode"
-      },
-      "calendar": {
-        "mode": "month",
-        "mode-mon-col": 3,
-        "weeks-pos": "right",
-        "on-scroll": 1,
-        "on-click-right": "mode",
-        "format": {
-          "months": "<span color='#f4dbd6'><b>{}</b></span>",
-          "days": "<span color='#cad3f5'><b>{}</b></span>",
-          "weeks": "<span color='#c6a0f6'><b>W{}</b></span>",
-          "weekdays": "<span color='#a6da95'><b>{}</b></span>",
-          "today": "<span color='#8bd5ca'><b><u>{}</u></b></span>"
-        }
-      }
-    },
-    "network": {
-      "format": "󰤭",
-      "format-wifi": "{icon}({signalStrength}%){essid}",
-      "format-icons": [
-        "󰤯",
-        "󰤟",
-        "󰤢",
-        "󰤥",
-        "󰤨"
-      ],
-      "format-disconnected": "󰤫 Disconnected",
-      "tooltip-format": "wifi <span color='#ee99a0'>off</span>",
-      "tooltip-format-wifi": "SSID: {essid}({signalStrength}%), {frequency} MHz\nInterface: {ifname}\nIP: {ipaddr}\nGW: {gwaddr}\n\n<span color='#a6da95'>{bandwidthUpBits}</span>\t<span color='#ee99a0'>{bandwidthDownBits}</span>\t<span color='#c6a0f6'>󰹹{bandwidthTotalBits}</span>",
-      "tooltip-format-disconnected": "<span color='#ed8796'>disconnected</span>",
-      "max-length": 35,
-      "on-click": "",
-      "on-click-right": "wezterm start nmtui"
-    },
-    "tray": {
-      "icon-size": 18,
-      "spacing": 8
-    },
-    "gamemode": {
-      "format": "{glyph}",
-      "format-alt": "{glyph}",
-      "glyph": "",
-      "hide-not-running": true,
-      "use-icon": true,
-      "icon-name": "input-gaming-symbolic",
-      "icon-spacing": 8,
-      "icon-size": 18,
-      "tooltip": false,
-      "tooltip-format": "Games running: {count}"
-    },
-    "group/misc": {
-      "orientation": "horizontal",
-      "modules": [
-        "privacy",
-        "custom/recording",
-        "custom/geo",
-        "custom/media",
-        "custom/dunst"
-      ]
-    },
-    "privacy": {
-      "icon-spacing": 1,
-      "icon-size": 18,
-      "transition-duration": 250,
-      "modules": [
-        {
-          "type": "audio-in"
-        },
-        {
-          "type": "screenshare"
-        }
-      ]
-    },
-    "custom/recording": {
-      "interval": 1,
-      "exec-if": "pgrep wl-screenrec",
-      "exec": "",
-      "return-type": "json"
-    },
-    "custom/geo": {
-      "interval": 1,
-      "exec-if": "pgrep geoclue",
-      "exec": "",
-      "return-type": "json"
-    },
-    "custom/media": {
-      "format": "{icon}󰎈",
-      "restart-interval": 2,
-      "return-type": "json",
-      "format-icons": {
-        "Playing": "",
-        "Paused": ""
-      },
-      "max-length": 35,
-      "exec": "",
-      "on-click": "playerctl play-pause",
-      "on-click-right": "playerctl next",
-      "on-click-middle": "playerctl prev",
-      "on-scroll-up": "playerctl volume 0.05-",
-      "on-scroll-down": "playerctl volume 0.05+",
-      "smooth-scrolling-threshold": "0.1"
-    },
-    "custom/dunst": {
-      "return-type": "json",
-      "exec": "",
-      "on-click": "dunstctl set-paused toggle",
-      "restart-interval": 1
-    },
-    "custom/logout_menu": {
-      "return-type": "json",
-      "exec": "echo '{ \"text\":\"󰐥\", \"tooltip\": \"logout menu\" }'",
+  },
+  
+  "custom/launcher": {
       "interval": "once",
-      "on-click": ""
-    }
+      "format": "",
+      "on-click": "wofi --show drun --columns 2 -I",
+      "tooltip": false
+    },
+
+  "cpu": {
+    "interval": 10,
+    "format": "  {usage}%",
+    "max-length": 10,
+    "tooltip": false
+  },
+
+  "temperature": {
+    "format": " {temperatureC}°C",
+    "thermal-zone": 0,
+    "tooltip": false
+  },
+
+  "memory": {
+    "interval": 30,
+    "format": "  {}%",
+    "format-alt":"  {used:0.1f}G",
+    "max-length": 10,
+    "tooltip": false
+},
+
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-bluetooth": "{icon} {volume}% {format_source}",
+    "format-bluetooth-muted": " {icon} {format_source}",
+    "format-muted": "婢",
+    "format-icons": {
+        "headphone": "",
+        "hands-free": "",
+        "headset": "",
+        "phone": "",
+        "portable": "",
+        "car": "",
+        "default": ["", "", ""]
+    },
+    "on-click-right": "pavucontrol",
+    "tooltip": false
+  },
+
+  "network": {
+      "format-wifi": "直  {signalStrength}%",
+      "format-ethernet": "󰈀  {ipaddr}",
+      "format-disconnected": "󰈂 Disconnected",
+      "on-click-right": "bash ~/.config/waybar/scripts/get-ipv4.sh",
+      "tooltip": false
+  },
+
+  "clock": {
+    "format": "  {:%I:%M %B %d, %Y}",
+    "format-alt": "{:%A, %B %d, %Y (%r)} 󰥔 ",
+    "calendar": {
+      "mode"          : "year",
+      "mode-mon-col"  : 3,
+      "weeks-pos"     : "right",
+      "on-scroll"     : 1,
+      "on-click-right": "mode",
+      "format": {
+        "months":     "<span color='#ffead3'><b>{}</b></span>",
+        "days":       "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
+        "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    },
+    "tooltip": false
+},
+
+  "custom/powermenu": {
+      "format": "",
+      "on-click": "bash ~/.config/wofi/powermenu.sh",
+      "tooltip": false
   }
-]
+}

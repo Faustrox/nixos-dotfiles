@@ -12,9 +12,7 @@
     programs.waybar.enable = true;
 
     home.file = {
-      ".config/waybar/config".source = ../config/waybar/config;
-      ".config/waybar/style.css".source = ../config/waybar/style.css;
-      ".config/waybar/mocha.css".source = ../config/waybar/mocha.css;
+      ".config/waybar".source = ../config/waybar;
     };
 
   };
