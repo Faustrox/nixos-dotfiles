@@ -13,10 +13,13 @@
   config = lib.mkIf config.nvidia.enable {
 
     # Enable OpenGL
-    hardware.opengl = {
+    hardware.graphics = {
       enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
+      enable32Bit = true;
+      extraPackages = with pkgs; [
+        vaapiVdpau
+        nvidia-vaapi-driver
+      ];
     };
 
     # Load nvidia driver for Xorg and Wayland
@@ -52,10 +55,10 @@
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-        version = "555.52.04";
-        sha256_64bit = "sha256-nVOubb7zKulXhux9AruUTVBQwccFFuYGWrU1ZiakRAI=";
-        openSha256 = "";
-        settingsSha256 = "sha256-PMh5efbSEq7iqEMBr2+VGQYkBG73TGUh6FuDHZhmwHk=";
+        version = "555.58";
+        sha256_64bit = "sha256-bXvcXkg2kQZuCNKRZM5QoTaTjF4l2TtrsKUvyicj5ew=";
+        openSha256 = "sha256-hEAmFISMuXm8tbsrB+WiUcEFuSGRNZ37aKWvf0WJ2/c=";
+        settingsSha256 = "sha256-vWnrXlBCb3K5uVkDFmJDVq51wrCoqgPF03lSjZOuU8M=";
         persistencedSha256 = "";
       };
     };
@@ -77,7 +80,7 @@
       # Disable GSP Firmware.
       # Nvidia 555 beta enables it by default
       # This can't be change in open nvidia drivers
-      "NVreg_EnableGpuFirmware=0"
+      # "NVreg_EnableGpuFirmware=0"
     ];
 
     nixpkgs.config.nvidia.acceptLicense = true;

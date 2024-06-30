@@ -30,6 +30,9 @@
       prismlauncher
       heroic
 
+      # VR
+      alvr
+
       # Utils
       mangohud
       goverlay
@@ -51,8 +54,10 @@
       VKBASALT_CONFIG_FILE = "/mnt/games/Reshade/vkBasalt.conf";
       PROTON_ENABLE_NVAPI = "1";
       PROTON_HIDE_NVIDIA_GPU = "0";
+      DXVK_ENABLE_NVAPI = "1";
       DXVK_HUD = "compiler";
       DXVK_ASYNC = "1";
+      VKD3D_CONFIG = "dxr";
       WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # Fixes problems for logins in Lutris and other apps
       # PULSE_LATENCY_MSEC = "60";
     };

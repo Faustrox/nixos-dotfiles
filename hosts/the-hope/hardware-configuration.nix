@@ -12,27 +12,28 @@
     ];
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
   boot.supportedFilesystems = [ "ntfs" ];
   boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
 
   zramSwap = {
     enable = true;
     memoryPercent = 100;
     priority = 100;
-    algorithm = "lzo-rle";
   };
+
   boot.kernel.sysctl = { 
+    "vm.vfs_cache_pressure" = 500;
     "vm.swappiness" = 180;
     "vm.watermark_boost_factor" = 0;
     "vm.watermark_scale_factor" = 125;
+    "vm.dirty_background_ratio" = 1;
+    "vm.dirty_ratio" = 50;
     "vm.page-cluster" = 0;
   };
 
-  powerManagement.cpuFreqGovernor = "ondemand";
+  powerManagement.cpuFreqGovernor = "performance";
 
-fileSystems."/" =
+  fileSystems."/" =
     { device = "/dev/disk/by-uuid/dcea99b7-fdd1-416b-8e20-15e63b075747";
       fsType = "ext4";
     };

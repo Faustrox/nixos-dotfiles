@@ -21,7 +21,7 @@
     users.users.${config.main-user.userName} = {
       isNormalUser = true;
       description = config.main-user.userName;
-      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" ];
+      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" "kvm" "adbusers" "gamemode" ];
       shell = pkgs.zsh;
     };
 

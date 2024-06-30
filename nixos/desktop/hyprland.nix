@@ -22,10 +22,13 @@
     services.displayManager = { 
       sddm = {
         enable = true;
+        package = pkgs.kdePackages.sddm;
         wayland.enable = true;
-        theme = "catppuccin-sddm-corners";
+        catppuccin.enable = true;
       };
     };
+
+    services.gvfs.enable = true;
 
     environment.systemPackages = with pkgs; [
       
@@ -33,7 +36,6 @@
       wl-clipboard
       wl-clip-persist
       networkmanagerapplet
-      catppuccin-sddm-corners
       
     ];
 

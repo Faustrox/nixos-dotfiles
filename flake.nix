@@ -22,7 +22,6 @@
     };
 
     catppuccin.url = "github:catppuccin/nix";
-    nix-gaming.url = "github:fufexan/nix-gaming";
     spicetify-nix.url = "github:the-argus/spicetify-nix";
   };
 

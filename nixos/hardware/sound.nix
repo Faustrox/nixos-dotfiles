@@ -3,10 +3,6 @@
   quantumRate = "${toString config.sound.quantum}/${toString config.sound.rate}";
 
 in {
-
-  imports = [
-    inputs.nix-gaming.nixosModules.pipewireLowLatency
-  ];
   
   options = {
     sound.setup =

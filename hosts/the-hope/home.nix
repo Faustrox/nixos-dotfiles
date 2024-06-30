@@ -24,7 +24,7 @@
   # configuration is compatible with. This helps avoid breakage
   # when a new home Manager release introduces backwards
   # incompatible changes.
-  home.stateVersion = "23.11";
+  home.stateVersion = "24.05";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -65,6 +65,7 @@
 
     # Themes, cursors and icons
     adw-gtk3
+    adwsteamgtk
 
     # Browsers
     google-chrome
@@ -124,6 +125,4 @@
   gaming.setup = true;
 
   theming.setup = true;
-  theming.catppuccin = true;
-
 }

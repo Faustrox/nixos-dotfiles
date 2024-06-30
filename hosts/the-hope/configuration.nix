@@ -62,7 +62,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.11";
+  system.stateVersion = "unstable";
 
   # --- Hardware Settings ---
 
@@ -70,7 +70,7 @@
   sound.setup = true;
 
   nvidia.enable = true;
-  nvidia.open = false;
+  nvidia.open = true;
 
   # --- Desktop Settings ---
 
@@ -94,6 +94,7 @@
     curl
     meson
     pkg-config
+    gnumake
     cmake
     ninja
     _1password
@@ -128,6 +129,8 @@
     clean.extraArgs = "--keep 3";
     flake = "/home/faustrox/.dotfiles";
   };
+
+  programs.adb.enable = true;
 
   # --- Others Settings ---
 
