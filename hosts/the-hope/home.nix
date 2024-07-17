@@ -48,6 +48,7 @@
   zsh.setup = true;
 
   programs = {
+    vscode.enable = true;
     obs-studio.enable = true;
   };
   
@@ -72,7 +73,6 @@
     firefox
 
     # Developer
-    vscode
     nodejs_20
     yarn
     python3

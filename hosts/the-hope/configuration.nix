@@ -47,6 +47,7 @@
 
   # Fragments allow ports
   networking.firewall = {
+    enable = true;
     allowedUDPPorts = [ 51413 ];
     allowedTCPPorts = [ 51413 ];
   };
@@ -67,16 +68,17 @@
   # --- Hardware Settings ---
 
   bluetooth.enable = true;
-  sound.setup = true;
+  hardware.sound.setup = true;
 
   nvidia.enable = true;
-  nvidia.open = true;
+  nvidia.open = false;
 
   # --- Desktop Settings ---
 
   gnome.enable = false;
   hyprland.enable = true;
   portals.enable = true;
+  portals.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   # --- System wide programs ---
 
@@ -126,7 +128,6 @@
   programs.nh = {
     enable = true;
     clean.enable = true;
-    clean.extraArgs = "--keep 3";
     flake = "/home/faustrox/.dotfiles";
   };
 

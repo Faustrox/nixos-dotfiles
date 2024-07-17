@@ -15,8 +15,10 @@
       grim
       slurp
       gnome.nautilus
+      gnome.gnome-system-monitor
       libnotify
       swww
+      waypaper
       wofi
       hyprpicker
 
@@ -33,6 +35,19 @@
 
     };
 
+    xdg = {
+      enable = true;
+      mimeApps = {
+        enable = true;
+        defaultApplications = {
+          "inode/directory" = [ "org.gnome.Nautilus.desktop" ];
+        };
+        associations.removed = {
+          "inode/directory" = "code.desktop";
+        };
+      };
+    };
+    
   };
 
 }

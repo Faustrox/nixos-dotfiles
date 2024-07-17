@@ -5,11 +5,11 @@
 in {
   
   options = {
-    sound.setup =
+    hardware.sound.setup =
       lib.mkEnableOption "Enables and configure sound.";
   };
 
-  config = lib.mkIf config.sound.setup {
+  config = lib.mkIf config.hardware.sound.setup {
 
     programs.noisetorch.enable = true;   
     environment.systemPackages = with pkgs; [
@@ -21,7 +21,6 @@ in {
 
     services.udev.packages = with pkgs; [ headsetcontrol ];
 
-    sound.enable = false;
     hardware.pulseaudio.enable = false;
     security.rtkit.enable = true;
     services.pipewire = {
@@ -73,23 +72,21 @@ in {
         pipewire = {
           "92-pipewire-conf" = {
             "stream.properties" = {
-              "default.clock.allowed-rates" = [ 44100 48000 82000 96000 ];
-              "default.clock.min-quantum" = 1024;
+              "default.clock.allowed-rates" = [ 44100 48000 96000 ];
+              "default.clock.min-quantum" = 512;
               "default.clock.quantum" = 1024;
-              "default.clock.max-quantum" = 2048;
+              "default.clock.max-quantum" = 1024;
             };
           };
         };
         pipewire-pulse = {
           "92-pulse-conf" = {
             "pulse.properties" = {
-              "pulse.min.req" = "1024/48000";
+              "pulse.min.req" = "512/48000";
               "pulse.default.req" = "1024/48000";
-              "pulse.min.frag" = "1024/48000";
-              "pulse.default.frag" = "96000/48000";
-              "pulse.default.tlength" = "96000/48000";
-              "pulse.min.quantum" = "1024/48000";
-              # "pulse.default.format"   = S24;
+              "pulse.max.req" = "1024/48000";
+              "pulse.min.quantum" = "512/48000";
+              "pulse.max.quantum" = "1024/48000";
             };
             "stream.properties" = {
               "node.latency" = "1024/48000";

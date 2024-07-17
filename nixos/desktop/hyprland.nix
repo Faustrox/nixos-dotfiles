@@ -19,16 +19,40 @@
       package = inputs.hyprland.packages.x86_64-linux.hyprland;
     };
 
-    services.displayManager = { 
-      sddm = {
-        enable = true;
-        package = pkgs.kdePackages.sddm;
-        wayland.enable = true;
-        catppuccin.enable = true;
+    nixpkgs.overlays = [
+      (final: prev: {
+        xwayland = prev.xwayland.overrideAttrs ({
+          patches = [
+            (prev.fetchpatch {
+              url = "https://raw.githubusercontent.com/Nobara-Project/rpm-sources/main/baseos/xorg-x11-server-Xwayland/xwayland-pointer-warp-fix.patch";
+              hash = "sha256-Qfee2M7Js0tnqR417BIJ3sa+gnARsF8UBx6ynPGOYAw=";
+            })
+          ];
+        });
+      })
+    ];
+
+    services = {
+      displayManager = { 
+        sddm = {
+          enable = true;
+          package = pkgs.kdePackages.sddm;
+          wayland.enable = true;
+          catppuccin.enable = true;
+        };
       };
+      gvfs.enable = true;
     };
 
-    services.gvfs.enable = true;
+    xdg.mime = {
+      enable = true;
+      defaultApplications = {
+        "inode/directory" = [ "org.gnome.Nautilus.desktop" ];
+      };
+      removedAssociations = {
+        "inode/directory" = "code.desktop";
+      };
+    };
 
     environment.systemPackages = with pkgs; [
       

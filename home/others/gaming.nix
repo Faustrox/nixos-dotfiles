@@ -30,21 +30,25 @@
       prismlauncher
       heroic
 
-      # VR
-      alvr
+      # Wine
+      wineWowPackages.stableFull
+      winetricks
+      bottles
 
       # Utils
+      wlx-overlay-s
       mangohud
       goverlay
-      wineWowPackages.unstable
-      winetricks
       protonup-qt
       protonup-ng
-      protontricks
       vkbasalt
       steamPackages.steamcmd
 
     ];
+
+    programs = {
+      java.enable = true;
+    };
 
     home.sessionVariables = {
       STEAM_ROOT = config.gaming.steamRoot;
@@ -52,14 +56,10 @@
       __GL_SHADER_DISK_CACHE_PATH = "/home/faustrox/.shaders";
       __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
       VKBASALT_CONFIG_FILE = "/mnt/games/Reshade/vkBasalt.conf";
-      PROTON_ENABLE_NVAPI = "1";
       PROTON_HIDE_NVIDIA_GPU = "0";
-      DXVK_ENABLE_NVAPI = "1";
       DXVK_HUD = "compiler";
       DXVK_ASYNC = "1";
-      VKD3D_CONFIG = "dxr";
       WEBKIT_DISABLE_COMPOSITING_MODE = "1"; # Fixes problems for logins in Lutris and other apps
-      # PULSE_LATENCY_MSEC = "60";
     };
 
   };

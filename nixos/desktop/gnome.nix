@@ -75,9 +75,6 @@
     ];
 
     environment.sessionVariables = lib.mkMerge [
-      {
-        GTK_THEME = "Catppuccin-Mocha-Standard-Sapphire-Dark";
-      }
       (lib.mkIf config.gnome.wayland {
         NIXOS_OZONE_WL = "1";
         QT_QPA_PLATFORM = "wayland";

@@ -21,11 +21,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     catppuccin.url = "github:catppuccin/nix";
-    spicetify-nix.url = "github:the-argus/spicetify-nix";
   };
 
-  outputs = { self, nixpkgs, home-manager, catppuccin, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, catppuccin, spicetify-nix, ... }@inputs:
     let
       lib = nixpkgs.lib;
     in {
@@ -49,6 +53,7 @@
                     ./hosts/the-hope/home.nix
                     ./home
                     catppuccin.homeManagerModules.catppuccin
+                    spicetify-nix.homeManagerModules.default
                   ];
                 };
               };

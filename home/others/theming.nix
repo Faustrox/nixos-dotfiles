@@ -16,7 +16,10 @@
 
     # GTK Theming
 
-    dconf.enable = true;
+    dconf = {
+      enable = true;
+      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
+    };
     
     gtk = {
       enable = true;
@@ -44,6 +47,7 @@
 
     home.packages = with pkgs; [
       # The following is a Qt theme engine, which can be configured with kvantummanager
+      libsForQt5.qtstyleplugin-kvantum
       kdePackages.qtstyleplugin-kvantum
     ];
 
@@ -62,15 +66,18 @@
       };
     };
 
-    xdg.configFile."Kvantum/catppuccin/catppuccin.kvconfig".source = builtins.fetchurl {
-      url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Sapphire/Catppuccin-Mocha-Sapphire.kvconfig";
-      sha256 = "0n9f5hysr4k1sf9fd3sgd9fvqwrxrpcvj6vajqmb5c5ji8nv2w3c";
+    xdg.configFile = {
+      "Kvantum/catppuccin/catppuccin.kvconfig".source = builtins.fetchurl {
+        url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/themes/catppuccin-mocha-sapphire/catppuccin-mocha-sapphire.kvconfig";
+        sha256 = "0y4whyz3vj1bjyzwj0qm4d8p60ljxa5r8kg1bk8crlk8ksrk3rbs";
+      };
+      "Kvantum/catppuccin/catppuccin.svg".source = builtins.fetchurl {
+        url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/themes/catppuccin-mocha-sapphire/catppuccin-mocha-sapphire.svg";
+        sha256 = "1hq9h34178h0d288hgwb0ngqnixz24m9lk0ahc4dahwqn77fndwf";
+      };
+      "Kvantum/kvantum.kvconfig".text = "[General]\ntheme=catppuccin";
     };
-    xdg.configFile."Kvantum/catppuccin/catppuccin.svg".source = builtins.fetchurl {
-      url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Sapphire/Catppuccin-Mocha-Sapphire.svg";
-      sha256 = "1hq9h34178h0d288hgwb0ngqnixz24m9lk0ahc4dahwqn77fndwf";
-    };
-    xdg.configFile."Kvantum/kvantum.kvconfig".text = "theme=catppuccin";
+
 
     home.file = {
       ".config/kitty/kitty.conf".source = ../config/kitty/kitty.conf;

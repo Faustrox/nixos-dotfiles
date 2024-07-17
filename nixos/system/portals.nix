@@ -19,6 +19,7 @@
       xdg.portal = {
         enable = true;
         extraPortals = config.portals.extraPortals;
+        xdgOpenUsePortal = true;
       };
     };
 
