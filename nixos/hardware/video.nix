@@ -5,9 +5,6 @@
   options = {
     nvidia.enable = 
       lib.mkEnableOption "Nvidia drivers setup";
-
-    nvidia.open = 
-      lib.mkEnableOption "Nvidia stable Open drivers";
   };
 
   config = lib.mkIf config.nvidia.enable {
@@ -42,7 +39,7 @@
       # Modesetting is required.
       modesetting.enable = true;
 
-      open = config.nvidia.open;
+      open = false;
 
       # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
       powerManagement.enable = false;
@@ -55,12 +52,13 @@
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-        version = "555.58.02";
-        sha256_64bit = "sha256-xctt4TPRlOJ6r5S54h5W6PT6/3Zy2R4ASNFPu8TSHKM=";
-        openSha256 = "sha256-8hyRiGB+m2hL3c9MDA/Pon+Xl6E788MZ50WrrAGUVuY=";
-        settingsSha256 = "sha256-ZpuVZybW6CFN/gz9rx+UJvQ715FZnAOYfHn5jt5Z2C8=";
-        persistencedSha256 = "";
-      };
+          version = "560.28.03";
+          sha256_64bit = "sha256-martv18vngYBJw1IFUCAaYr+uc65KtlHAMdLMdtQJ+Y=";
+          sha256_aarch64 = "sha256-+u0ZolZcZoej4nqPGmZn5qpyynLvu2QSm9Rd3wLdDmM=";
+          openSha256 = "sha256-asGpqOpU0tIO9QqceA8XRn5L27OiBFuI9RZ1NjSVwaM=";
+          settingsSha256 = "sha256-b4nhUMCzZc3VANnNb0rmcEH6H7SK2D5eZIplgPV59c8=";
+          persistencedSha256 = "sha256-MhITuC8tH/IPhCOUm60SrPOldOpitk78mH0rg+egkTE=";
+        };
     };
 
     boot.extraModprobeConfig =
@@ -87,9 +85,10 @@
 
     environment.variables = {
       GBM_BACKEND = "nvidia-drm";
+      NVD_BACKEND = "direct";
       LIBVA_DRIVER_NAME = "nvidia";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      __GL_GSYNC_ALLOWED = "1";
+      __GL_GSYNC_ALLOWED = 1;
     };
   
   };

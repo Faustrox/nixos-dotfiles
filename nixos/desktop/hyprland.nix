@@ -64,10 +64,16 @@
     ];
 
     environment.sessionVariables = {
-      NIXOS_OZONE_WL = "1";
-      # ELECTRON_OZONE_PLATFORM_HINT = "auto";
-      MOZ_ENABLE_WAYLAND = "1";
+      NIXOS_OZONE_WL = 1;
+      MOZ_ENABLE_WAYLAND = 1;
+      GDK_BACKEND = "wayland,x11,*";
       QT_QPA_PLATFORM = "wayland;xcb";
+      QT_QPA_PLATFORMTHEME = "qt5ct";
+      SDL_VIDEODRIVER = "wayland";
+      CLUTTER_BACKEND = "wayland";
+      XDG_CURRENT_DESKTOP = "Hyprland";
+      XDG_SESSION_TYPE = "wayland";
+      XDG_SESSION_DESKTOP = "Hyprland";
     };
 
   };

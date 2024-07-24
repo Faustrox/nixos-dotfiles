@@ -8,11 +8,30 @@
 
   config = lib.mkIf config.theming.setup {
 
-    home.pointerCursor = {
-      package = pkgs.simp1e-cursors;
-      name = "Simp1e-Catppuccin-Mocha";
-      size = 24;
+    home.pointerCursor.size = 24;
+
+    catppuccin.pointerCursor = {
+      enable = true;
+      flavor = "mocha";
+      accent = "dark";
     };
+
+    # FIX inconsistant hyprcursr and xcursor
+    nixpkgs.overlays = [
+      (self: super: {
+        catppuccin-cursors = super.catppuccin-cursors.overrideAttrs ( old: {
+          name = "catppuccin-cursors";
+          version = "0.3.1";
+          src = super.fetchFromGitHub {
+            owner = "catppuccin";
+            repo = "cursors";
+            rev = "v0.3.1";
+            hash = "sha256-CuzD6O/RImFKLWzJoiUv7nlIdoXNvwwl+k5mTeVIY10=";
+          };
+          nativeBuildInputs = old.nativeBuildInputs ++ [ self.xcur2png ];
+        });
+      })
+    ];
 
     # GTK Theming
 
@@ -38,8 +57,8 @@
         };
       };
       cursorTheme = {
-        name = "Simp1e-Catppuccin-Mocha";
-        package = pkgs.simp1e-cursors;
+        name = "catppuccin-mocha-dark-cursors";
+        package = pkgs.catppuccin-cursors;
       };
     };
 
@@ -84,8 +103,8 @@
     };
 
     home.sessionVariables = {
-      QT_AUTO_SCREEN_SCALE_FACTOR = "1";
-      QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+      QT_AUTO_SCREEN_SCALE_FACTOR = 1;
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
     };
 
   };

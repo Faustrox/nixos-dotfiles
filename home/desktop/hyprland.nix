@@ -15,7 +15,7 @@
       grim
       slurp
       gnome.nautilus
-      gnome.gnome-system-monitor
+      mission-center
       libnotify
       swww
       waypaper

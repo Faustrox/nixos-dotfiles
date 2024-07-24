@@ -71,7 +71,6 @@
   hardware.sound.setup = true;
 
   nvidia.enable = true;
-  nvidia.open = false;
 
   # --- Desktop Settings ---
 
@@ -115,6 +114,7 @@
     p7zip
     mesa-demos
     vulkan-tools
+    vulkan-headers
 
     # Terminal
     kitty

@@ -7,6 +7,4 @@
     ./video.nix
   ];
 
-  nvidia.open = lib.mkDefault false;
-
 }

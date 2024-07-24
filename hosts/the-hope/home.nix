@@ -92,6 +92,7 @@
 
     # Others
     fragments
+    celluloid
     uget
     
   ];
@@ -99,23 +100,22 @@
   xdg = {
     enable = true;
     desktopEntries = {
-      # "nvidia.load.settings" = {
-      #   name = "NVIDIA Load Settings";
-      #   genericName = "NVIDIA";
-      #   comment = "Load NVIDIA settings without gui";
-      #   exec = "nvidia-settings --load-config-only";
-      #   terminal = false;
-      #   type = "Application";
-      #   icon = "nvidia";
-      # };
-      "noisetorch.load.input" = {
-        name = "NoiseTorch Load Input";
-        genericName = "NoiseTorch";
-        comment = "Load NoiseTorch suppressor for input";
-        exec = "noisetorch -i";
+      code = {
+        name = "Visual Studio Code";
+        exec = "code %F";
         terminal = false;
+        genericName = "Text Editor";
         type = "Application";
-        icon = "noisetorch";
+        icon = "vscode";
+        categories = [
+          "Utility"
+          "TextEditor"
+          "Development"
+          "IDE"
+        ];
+        mimeType = [
+          "text/plain"
+        ];
       };
     };
   };

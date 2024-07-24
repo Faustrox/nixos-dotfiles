@@ -33,7 +33,7 @@
           efiSupport = true;
           useOSProber = false;
           timeoutStyle = "menu";
-          default = "0";
+          default = 0;
           catppuccin.enable = true;
         };
       };

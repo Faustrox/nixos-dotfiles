@@ -14,6 +14,28 @@
 
     # Setup Steam, Gamescope, gamemode and java
     programs = {
+
+      gamemode = {
+        enable = true;
+        settings = {
+          general = {
+            renice = 0;
+          };
+
+          # Warning: GPU optimisations have the potential to damage hardware
+          gpu = {
+            apply_gpu_optimisations = "accept-responsibility";
+            gpu_device = 0;
+            nv_powermizer_mode = 1;
+          };
+
+          custom = {
+            start = "${pkgs.libnotify}/bin/notify-send 'Gamemode started'";
+            end = "${pkgs.libnotify}/bin/notify-send 'Gamemode ended'";
+          };
+        };
+      };
+      
       steam = {
         enable = true;
         remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
@@ -27,19 +49,10 @@
       };
       
       gamescope.enable = true;
-      gamemode.enable = true;
+
     };
 
-    # Open source OpenXR for VR
 
-    services.monado = {
-      enable = true;
-      defaultRuntime = true;
-    };
-
-    systemd.user.services.monado.environment = {
-      XRT_COMPOSITOR_COMPUTE = "1";
-    };
 
     # NixOS configuration for Star Citizen
     boot.kernel.sysctl = {
