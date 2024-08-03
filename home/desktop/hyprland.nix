@@ -14,8 +14,8 @@
       cliphist
       grim
       slurp
-      gnome.nautilus
-      mission-center
+      nautilus
+      gnome-system-monitor
       libnotify
       swww
       waypaper

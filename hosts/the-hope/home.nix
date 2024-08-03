@@ -62,6 +62,9 @@
 
     # Multimedia
     stremio
+    ani-cli
+    mpv
+    celluloid
     ffmpeg-full
 
     # Themes, cursors and icons
@@ -92,7 +95,6 @@
 
     # Others
     fragments
-    celluloid
     uget
     
   ];

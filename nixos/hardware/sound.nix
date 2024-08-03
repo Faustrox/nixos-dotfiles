@@ -29,45 +29,45 @@ in {
       alsa.support32Bit = true;
       pulse.enable = true;
       # jack.enable = true;
-      wireplumber = {
-        enable = true;
-        configPackages = [
-          (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/alsa.conf" ''
-            monitor.alsa.rules = [
-              {
-                matches = [
-                  {
-                    device.name = "~alsa_card.*"
-                  }
-                ]
-                actions = {
-                  update-props = {
-                    # Device settings
-                    api.alsa.use-acp = true
-                  }
-                }
-              }
-              {
-                matches = [
-                  {
-                    node.name = "alsa_output.usb-SteelSeries_Arctis_Nova_7-00.analog-stereo"
-                  }
-                ]
-                actions = {
-                # Node settings
-                  update-props = {
-                    audio.format = "S24LE"
-                    audio.rate = "96000"
-                    session.suspend-timeout-seconds = 0
-                    api.alsa.period-size   = 256
-                    api.alsa.headroom      = 1024
-                  }
-                }
-              }
-            ]
-          '')
-        ];
-      };
+      # wireplumber = {
+      #   enable = true;
+      #   configPackages = [
+      #     (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/alsa.conf" ''
+      #       monitor.alsa.rules = [
+      #         {
+      #           matches = [
+      #             {
+      #               device.name = "~alsa_card.*"
+      #             }
+      #           ]
+      #           actions = {
+      #             update-props = {
+      #               # Device settings
+      #               api.alsa.use-acp = true
+      #             }
+      #           }
+      #         }
+      #         {
+      #           matches = [
+      #             {
+      #               node.name = "alsa_output.usb-SteelSeries_Arctis_Nova_7-00.analog-stereo"
+      #             }
+      #           ]
+      #           actions = {
+      #           # Node settings
+      #             update-props = {
+      #               audio.format = "S24LE"
+      #               audio.rate = "96000"
+      #               session.suspend-timeout-seconds = 0
+      #               api.alsa.period-size   = 256
+      #               api.alsa.headroom      = 1024
+      #             }
+      #           }
+      #         }
+      #       ]
+      #     '')
+      #   ];
+      # };
       extraConfig = {
         pipewire = {
           "92-pipewire-conf" = {

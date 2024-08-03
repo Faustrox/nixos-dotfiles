@@ -16,7 +16,8 @@
 
     home.packages = with pkgs;
     let
-      suyu = inputs.suyu.packages.x86_64-linux;
+      suyu = inputs.suyu.packages.${pkgs.system};
+      umu = inputs.umu.packages.${pkgs.system};
     in [
 
       # Social
@@ -29,14 +30,14 @@
       lutris
       prismlauncher
       heroic
+      umu.umu
 
       # Wine
       wineWowPackages.stableFull
       winetricks
-      bottles
+      # bottles
 
       # Utils
-      wlx-overlay-s
       mangohud
       goverlay
       protonup-qt
@@ -48,6 +49,12 @@
 
     programs = {
       java.enable = true;
+
+      zsh.shellAliases = {
+        umu-launcher = "ENABLE_VKBASALT=1 gamemoderun mangohud umu-run";
+        dayz-launch = "../scripts/dayz-launcher.sh";
+        bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
+      };
     };
 
     home.sessionVariables = {

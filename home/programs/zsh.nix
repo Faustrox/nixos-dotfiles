@@ -35,13 +35,11 @@
 
       shellAliases = {
         ll = "ls -l";
-        nix-switch = "nh os switch";
-        nix-boot = "nh os boot";
-        nix-switch-update = "nh os switch --update";
-        nix-boot-update = "nh os boot --update";
-        nix-clean = "nh clean all";
-        dayz-launch = "/home/faustrox/.scripts/dayz-launcher.sh";
-        bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
+        nixos-switch = "nh os switch";
+        nixos-boot = "nh os boot";
+        nixos-switch-update = "nh os switch --update";
+        nixos-boot-update = "nh os boot --update";
+        nixos-clean = "nh clean all";
       };
       
     };

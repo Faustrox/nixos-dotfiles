@@ -81,15 +81,11 @@
 
 Also can hold Supr to be able to drag and resize with mouse.
 
-## 🐟 Useful aliases in Fish Shell
-
-This system includes a fish shell configuration file (`/home/.config/fish/config.fish`) that provides various aliases to enhance your experience working with it.
-
 Common commands:
 - `bdiscord-install`: install better discord
-- `dayz-launch`: launch the `dayz-launcher` on .scripts
+- `dayz-launch`: launch `dayz-launcher` on .scripts
 
 NixOS-specific commands:
-- `nix-switch`: rebuild and switch your system using the current flake
-- `nix-switch-update`: rebuild, switch and update your system using the current flake
+- `nix-switch`: rebuild and switch your system using current flake
+- `nix-switch-update`: rebuild, switch and update your system using current flake
 - `nix-clean`: clean system with default configuration (keep 3 generations) 

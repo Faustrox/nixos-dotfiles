@@ -2,7 +2,7 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:Faustrox/nixpkgs/nvidia/560.28.03";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     home-manager = {
@@ -14,6 +14,11 @@
       type = "git";
       url = "https://github.com/hyprwm/Hyprland";
       submodules = true;
+    };
+
+    umu= {
+      url = "git+https://github.com/Open-Wine-Components/umu-launcher/?dir=packaging\/nix&submodules=1";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     suyu = {
@@ -45,6 +50,7 @@
           {
             home-manager = {
               useUserPackages = true;
+              backupFileExtension = "backup";
               extraSpecialArgs = { inherit inputs; };
               users = {
                 faustrox = {

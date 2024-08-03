@@ -30,10 +30,6 @@
       ];
     };
 
-    services.xserver.screenSection = ''
-      Option "metamodes" "DP-1: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On} DP-2: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}"
-    '';
-
     hardware.nvidia = {
 
       # Modesetting is required.
@@ -48,16 +44,15 @@
       powerManagement.finegrained = false;
 
       # Enable the Nvidia settings menu,
-      nvidiaSettings = true;
+      nvidiaSettings = false;
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-          version = "560.28.03";
-          sha256_64bit = "sha256-martv18vngYBJw1IFUCAaYr+uc65KtlHAMdLMdtQJ+Y=";
-          sha256_aarch64 = "sha256-+u0ZolZcZoej4nqPGmZn5qpyynLvu2QSm9Rd3wLdDmM=";
-          openSha256 = "sha256-asGpqOpU0tIO9QqceA8XRn5L27OiBFuI9RZ1NjSVwaM=";
-          settingsSha256 = "sha256-b4nhUMCzZc3VANnNb0rmcEH6H7SK2D5eZIplgPV59c8=";
-          persistencedSha256 = "sha256-MhITuC8tH/IPhCOUm60SrPOldOpitk78mH0rg+egkTE=";
+          version = "555.58.02";
+          sha256_64bit = "sha256-xctt4TPRlOJ6r5S54h5W6PT6/3Zy2R4ASNFPu8TSHKM=";
+          openSha256 = "";
+          settingsSha256 = "";
+          persistencedSha256 = "";
         };
     };
 
@@ -84,11 +79,20 @@
     nixpkgs.config.nvidia.acceptLicense = true;
 
     environment.variables = {
+      NIXOS_OZONE_WL = 1;
+      MOZ_ENABLE_WAYLAND = 1;
+
       GBM_BACKEND = "nvidia-drm";
       NVD_BACKEND = "direct";
+      GDK_BACKEND = "wayland,x11,*";
+      QT_QPA_PLATFORM = "wayland";
+      SDL_VIDEODRIVER = "wayland";
+      CLUTTER_BACKEND = "wayland";
+      XDG_SESSION_TYPE = "wayland";
+      
       LIBVA_DRIVER_NAME = "nvidia";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      __GL_GSYNC_ALLOWED = 1;
+      __GL_MaxFramesAllowed = 1;
     };
   
   };

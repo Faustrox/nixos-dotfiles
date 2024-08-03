@@ -66,17 +66,14 @@
     # ];
 
     environment.systemPackages = with pkgs; [
-      gnome.gnome-themes-extra
-      gnome.gnome-tweaks
-      gnome.dconf-editor
+      gnome-themes-extra
+      gnome-tweaks
+      dconf-editor
       gparted
     ];
 
     environment.sessionVariables = lib.mkMerge [
       (lib.mkIf config.gnome.wayland {
-        NIXOS_OZONE_WL = 1;
-        QT_QPA_PLATFORM = "wayland";
-        MOZ_ENABLE_WAYLAND = 1;
         MUTTER_DEBUG_DISABLE_HW_CURSORS = 1;
         CLUTTER_PAINT = "disable-dynamic-max-render-time";
       })
