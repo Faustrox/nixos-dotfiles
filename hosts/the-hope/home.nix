@@ -12,14 +12,6 @@
   home.username = "faustrox";
   home.homeDirectory = "/home/faustrox";
 
-  home.sessionVariables = {
-    SCRIPTS_FOLDER = "$HOME/.scripts";
-  };
-
-  home.sessionPath = [
-    "$SCRIPTS_FOLDER"
-  ];
-
   # This value determines the home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new home Manager release introduces backwards
@@ -50,6 +42,10 @@
   programs = {
     vscode.enable = true;
     obs-studio.enable = true;
+    kitty = {
+      enable = true;
+      catppuccin.enable = true;
+    };
   };
   
   home.packages = with pkgs; [
@@ -73,7 +69,6 @@
 
     # Browsers
     google-chrome
-    firefox
 
     # Developer
     nodejs_20
@@ -104,7 +99,7 @@
     desktopEntries = {
       code = {
         name = "Visual Studio Code";
-        exec = "code %F";
+        exec = "code --disable-gpu-compositing %F";
         terminal = false;
         genericName = "Text Editor";
         type = "Application";
@@ -127,4 +122,5 @@
   gaming.setup = true;
 
   theming.setup = true;
+
 }

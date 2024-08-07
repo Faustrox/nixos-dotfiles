@@ -28,8 +28,8 @@
         }
         {
           name = "powerlevel10k-config";
-          src = ../scripts;
-          file = "./p10k-config.zsh";
+          src = ./scripts;
+          file = "./p10k-config.sh";
         }
       ];
 

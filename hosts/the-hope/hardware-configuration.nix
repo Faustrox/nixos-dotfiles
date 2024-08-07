@@ -33,7 +33,12 @@
   powerManagement.cpuFreqGovernor = "performance";
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/8718604a-2ae9-4615-8c36-dec114baaab8";
+    { device = "/dev/disk/by-uuid/9aba1545-51c6-4498-88b7-42369de1ecc7";
+      fsType = "ext4";
+    };
+  
+  fileSystems."/nix" =
+    { device = "/dev/disk/by-uuid/7840d753-6f87-4551-8032-d0d097eeffd9";
       fsType = "ext4";
     };
 
@@ -43,7 +48,7 @@
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/738E-A10F";
+    { device = "/dev/disk/by-uuid/77E4-5283";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
     };
@@ -54,7 +59,7 @@
     };
 
   swapDevices = [
-    { device = "/dev/disk/by-uuid/3c6d0642-2796-43bf-8256-cdc0e365fa89"; }
+    { device = "/dev/disk/by-uuid/694a1090-6d7f-4e91-be56-23deaec0bf28"; }
   ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

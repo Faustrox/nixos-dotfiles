@@ -37,6 +37,7 @@
   },
 
   "temperature": {
+    "hwmon-path": "/sys/devices/platform/PNP0C14:02/wmi_bus/wmi_bus-PNP0C14:02/466747A0-70EC-11DE-8A39-0800200C9A66/hwmon/hwmon3/temp1_input",
     "format": " {temperatureC}°C",
     "thermal-zone": 0,
     "tooltip": false
@@ -51,20 +52,15 @@
 },
 
   "pulseaudio": {
-    "format": "{icon}  {volume}%",
+    "format": "{icon}   {volume}%",
     "format-bluetooth": "{icon} {volume}% {format_source}",
     "format-bluetooth-muted": " {icon} {format_source}",
-    "format-muted": "婢",
+    "format-muted": " ",
     "format-icons": {
-        "headphone": "",
-        "hands-free": "",
-        "headset": "",
-        "phone": "",
-        "portable": "",
-        "car": "",
         "default": ["", "", ""]
     },
     "on-click-right": "pavucontrol",
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
     "tooltip": false
   },
 

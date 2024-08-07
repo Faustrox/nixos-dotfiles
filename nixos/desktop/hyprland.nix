@@ -19,19 +19,6 @@
       package = inputs.hyprland.packages.x86_64-linux.hyprland;
     };
 
-    nixpkgs.overlays = [
-      (final: prev: {
-        xwayland = prev.xwayland.overrideAttrs ({
-          patches = [
-            (prev.fetchpatch {
-              url = "https://raw.githubusercontent.com/Nobara-Project/rpm-sources/main/baseos/xorg-x11-server-Xwayland/xwayland-pointer-warp-fix.patch";
-              hash = "sha256-Qfee2M7Js0tnqR417BIJ3sa+gnARsF8UBx6ynPGOYAw=";
-            })
-          ];
-        });
-      })
-    ];
-
     services = {
       displayManager = { 
         sddm = {
@@ -42,6 +29,22 @@
         };
       };
       gvfs.enable = true;
+    };
+    
+    systemd = {
+      user.services.polkit-gnome-authentication-agent-1 = {
+        description = "polkit-gnome-authentication-agent-1";
+        wantedBy = [ "graphical-session.target" ];
+        wants = [ "graphical-session.target" ];
+        after = [ "graphical-session.target" ];
+        serviceConfig = {
+            Type = "simple";
+            ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+            Restart = "on-failure";
+            RestartSec = 1;
+            TimeoutStopSec = 10;
+          };
+      };
     };
 
     xdg.mime = {
@@ -60,6 +63,7 @@
       wl-clipboard
       wl-clip-persist
       networkmanagerapplet
+      polkit_gnome
       
     ];
 

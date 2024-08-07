@@ -7,27 +7,19 @@
       lib.mkEnableOption "Enables and configure time";
     time.zone = 
       lib.mkOption {
-        description = ''
-          timezone
-        '';
+        description = "timezone";
       };
     time.defaultLocale = 
       lib.mkOption {
-        description = ''
-          Default locale
-        '';
+        description = "Default locale";
       };
     time.extraLocale = 
       lib.mkOption {
-        description = ''
-          Extra locale
-        '';
+        description = "Extra locale";
       };
     x11.keymap = 
       lib.mkOption {
-        description = ''
-          Keymap
-        '';
+        description = "Keymap";
       };
   };
 

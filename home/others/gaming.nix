@@ -52,7 +52,7 @@
 
       zsh.shellAliases = {
         umu-launcher = "ENABLE_VKBASALT=1 gamemoderun mangohud umu-run";
-        dayz-launch = "../scripts/dayz-launcher.sh";
+        dayz-launch = "./scripts/dayz-launcher.sh";
         bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
       };
     };

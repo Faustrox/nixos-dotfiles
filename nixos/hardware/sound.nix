@@ -11,10 +11,10 @@ in {
 
   config = lib.mkIf config.hardware.sound.setup {
 
-    programs.noisetorch.enable = true;   
     environment.systemPackages = with pkgs; [
       easyeffects
       pavucontrol
+      pulseaudio
       headsetcontrol
       helvum
     ];

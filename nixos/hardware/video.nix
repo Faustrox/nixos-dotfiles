@@ -22,20 +22,17 @@
     # Load nvidia driver for Xorg and Wayland
     services.xserver.videoDrivers = [ "nvidia" ];
 
-    boot = {
-      blacklistedKernelModules = lib.mkDefault [ "nouveau" ];
-      kernelParams = [ 
-        "nvidia_drm.modeset=1"
-        "nvidia_drm.fbdev=1"
-      ];
-    };
+    # Enable Gsync Compatible on displays that has it 
+    services.xserver.screenSection = ''
+      Option "metamodes" "DP-1: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=On} DP-2: 1920x1080_144 +0+360 {AllowGSYNCCompatible=On}"
+    '';
 
     hardware.nvidia = {
 
       # Modesetting is required.
       modesetting.enable = true;
 
-      open = false;
+      open = true;
 
       # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
       powerManagement.enable = false;
@@ -48,13 +45,17 @@
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-          version = "555.58.02";
-          sha256_64bit = "sha256-xctt4TPRlOJ6r5S54h5W6PT6/3Zy2R4ASNFPu8TSHKM=";
-          openSha256 = "";
+          version = "560.31.02";
+          sha256_64bit = "sha256-0cwgejoFsefl2M6jdWZC+CKc58CqOXDjSi4saVPNKY0=";
+          openSha256 = "sha256-X5UzbIkILvo0QZlsTl9PisosgPj/XRmuuMH+cDohdZQ=";
           settingsSha256 = "";
           persistencedSha256 = "";
         };
     };
+
+    # version = "560.31.02";
+    # sha256_64bit = "sha256-0cwgejoFsefl2M6jdWZC+CKc58CqOXDjSi4saVPNKY0=";
+    # openSha256 = "sha256-X5UzbIkILvo0QZlsTl9PisosgPj/XRmuuMH+cDohdZQ=";
 
     boot.extraModprobeConfig =
     "options nvidia "
@@ -92,6 +93,7 @@
       
       LIBVA_DRIVER_NAME = "nvidia";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+      __GL_GSYNC_ALLOWED = 1;
       __GL_MaxFramesAllowed = 1;
     };
   

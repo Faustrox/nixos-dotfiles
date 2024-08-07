@@ -78,29 +78,17 @@
 
     qt = {
       enable = true;
-      platformTheme.name = "qtct";
+      platformTheme.name = "kvantum";
       style = {
-        package = pkgs.catppuccin-kde;
         name = "kvantum";
+        catppuccin.enable = true;
       };
     };
 
-    xdg.configFile = {
-      "Kvantum/catppuccin/catppuccin.kvconfig".source = builtins.fetchurl {
-        url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/themes/catppuccin-mocha-sapphire/catppuccin-mocha-sapphire.kvconfig";
-        sha256 = "0y4whyz3vj1bjyzwj0qm4d8p60ljxa5r8kg1bk8crlk8ksrk3rbs";
-      };
-      "Kvantum/catppuccin/catppuccin.svg".source = builtins.fetchurl {
-        url = "https://raw.githubusercontent.com/catppuccin/Kvantum/main/themes/catppuccin-mocha-sapphire/catppuccin-mocha-sapphire.svg";
-        sha256 = "1hq9h34178h0d288hgwb0ngqnixz24m9lk0ahc4dahwqn77fndwf";
-      };
-      "Kvantum/kvantum.kvconfig".text = "[General]\ntheme=catppuccin";
-    };
 
-
-    home.file = {
-      ".config/kitty/kitty.conf".source = ../config/kitty/kitty.conf;
-    };
+    # home.file = {
+    #   ".config/kitty/kitty.conf".source = ../config/kitty/kitty.conf;
+    # };
 
     home.sessionVariables = {
       QT_AUTO_SCREEN_SCALE_FACTOR = 1;

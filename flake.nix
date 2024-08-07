@@ -34,7 +34,7 @@
     catppuccin.url = "github:catppuccin/nix";
   };
 
-  outputs = { self, nixpkgs, home-manager, catppuccin, spicetify-nix, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, catppuccin, spicetify-nix, hyprland, ... }@inputs:
     let
       lib = nixpkgs.lib;
     in {
@@ -58,6 +58,7 @@
                     ./hosts/the-hope/home.nix
                     ./home
                     catppuccin.homeManagerModules.catppuccin
+                    hyprland.homeManagerModules.default
                     spicetify-nix.homeManagerModules.default
                   ];
                 };

@@ -35,11 +35,11 @@
     },
     "catppuccin": {
       "locked": {
-        "lastModified": 1721784420,
-        "narHash": "sha256-bgF6fN4Qgk7NErFKGuuqWXcLORsiykTYyqMUFRiAUBY=",
+        "lastModified": 1722997334,
+        "narHash": "sha256-vE5FcKVQ3E0txJKt5w3vOlfcN1XoTAlxK9PnQ/CJavA=",
         "owner": "catppuccin",
         "repo": "nix",
-        "rev": "8bdb55cc1c13f572b6e4307a3c0d64f1ae286a4f",
+        "rev": "66f4ea170093b62f319f41cebd2337a51b225c5a",
         "type": "github"
       },
       "original": {
@@ -71,11 +71,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1722462338,
-        "narHash": "sha256-ss0G8t8RJVDewA3MyqgAlV951cWRK6EtVhVKEZ7J5LU=",
+        "lastModified": 1723015306,
+        "narHash": "sha256-jQnFEtH20/OsDPpx71ntZzGdRlpXhUENSQCGTjn//NA=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6e090576c4824b16e8759ebca3958c5b09659ee8",
+        "rev": "b3d5ea65d88d67d4ec578ed11d4d2d51e3de525e",
         "type": "github"
       },
       "original": {
@@ -125,11 +125,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1722551504,
-        "narHash": "sha256-/N8voFoU8ALTK8C1esM6MM+lj9zZGCG4lbvH0mNBQUE=",
+        "lastModified": 1723043089,
+        "narHash": "sha256-b01LQD32/xakBOFxabj8Mtz37ekvFwrM74VKNssUnko=",
         "ref": "refs/heads/main",
-        "rev": "09bb5658b7fa6c0dc4e2744797e51ad4dd25af42",
-        "revCount": 5041,
+        "rev": "ea728315410e220d73a993f17c83ae9dc9be9015",
+        "revCount": 5067,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -280,11 +280,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1722421184,
-        "narHash": "sha256-/DJBI6trCeVnasdjUo9pbnodCLZcFqnVZiLUfqLH4jA=",
+        "lastModified": 1722813957,
+        "narHash": "sha256-IAoYyYnED7P8zrBFMnmp7ydaJfwTnwcnqxUElC1I26Y=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9f918d616c5321ad374ae6cb5ea89c9e04bf3e58",
+        "rev": "cb9a96f23c491c081b38eab96d22fa958043c9fa",
         "type": "github"
       },
       "original": {
@@ -314,11 +314,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1722485526,
-        "narHash": "sha256-bIO63IKm8Frw9lLCqthj/fYphS0i3oGCfw1Lkh5HkPI=",
+        "lastModified": 1723004010,
+        "narHash": "sha256-9NaGh1bUlIWrRJXY3qTmX5IFa+5xEP2wf8J0DCi/Wxs=",
         "owner": "Gerg-L",
         "repo": "spicetify-nix",
-        "rev": "e42c13fcca982699b5b56da962a474401c109228",
+        "rev": "5a4a301de746e16851165b0da8ab6d38ed37b8dd",
         "type": "github"
       },
       "original": {
@@ -386,11 +386,11 @@
       },
       "locked": {
         "dir": "packaging/nix",
-        "lastModified": 1722542355,
-        "narHash": "sha256-GcYKlfvdCI5ecvZ7S9M+ZJ4N92S7Ss8lZTja6i2/TIw=",
+        "lastModified": 1722710858,
+        "narHash": "sha256-PzMKVcp5ffL4v8+ukuTZRp78DI3kmjUBJUo0Vz5OYC4=",
         "ref": "refs/heads/main",
-        "rev": "8b92302407e518587a6091c05f83acf6cc01eb9b",
-        "revCount": 695,
+        "rev": "babc7214d9bc5007eb6c0d59a720dea59fa694ac",
+        "revCount": 696,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/Open-Wine-Components/umu-launcher/?dir=packaging/nix"
