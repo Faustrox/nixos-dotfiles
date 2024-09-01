@@ -36,8 +36,9 @@
   # --- Programs Settings ---
 
   git.setup = true;
-  zsh.setup = true;
+  neovim.setup = true;
   wlogout.setup = true;
+  zsh.setup = true;
 
   programs = {
     vscode.enable = true;
@@ -54,11 +55,6 @@
     kitty = {
       enable = true;
       shellIntegration.enableZshIntegration = true;
-      catppuccin.enable = true;
-    };
-    neovim = {
-      enable = true;
-      vimAlias = true;
       catppuccin.enable = true;
     };
     rofi = {

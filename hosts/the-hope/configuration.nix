@@ -46,6 +46,13 @@
   # Kernel Version
   boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
 
+  # Chaotic Settings
+
+  chaotic.scx = {
+    enable = true;
+    scheduler = "scx_bpfland";
+  };
+
   # Services
   services = {
     # Handle process when out of memory

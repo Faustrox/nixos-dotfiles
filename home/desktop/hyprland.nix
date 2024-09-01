@@ -141,7 +141,7 @@
 
         opengl = {
 
-          nvidia_anti_flicker = false;
+          nvidia_anti_flicker = true;
 
         };
 
@@ -154,7 +154,7 @@
 
         debug = {
 
-          damage_tracking = 1;
+          damage_tracking = 0;
 
         };
       };
