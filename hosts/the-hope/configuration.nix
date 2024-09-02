@@ -43,15 +43,8 @@
     allowedTCPPorts = [ 51413 ];
   };
 
-  # Kernel Version
-  boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
-
-  # Chaotic Settings
-
-  chaotic.scx = {
-    enable = true;
-    scheduler = "scx_bpfland";
-  };
+  # Kernel Version and Nix package
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
 
   # Services
   services = {

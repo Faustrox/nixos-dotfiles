@@ -84,6 +84,7 @@
 
     # Browsers
     google-chrome
+    firefox
 
     # Developer
     nodejs_20

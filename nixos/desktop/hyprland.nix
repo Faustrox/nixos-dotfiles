@@ -19,6 +19,8 @@
       package = inputs.hyprland.packages.x86_64-linux.hyprland;
     };
 
+    overlays.hyprland-portal.fix = true;
+
     services = {
       displayManager = { 
         sddm = {

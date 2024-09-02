@@ -31,6 +31,7 @@
       prismlauncher
       heroic
       arma3-unix-launcher
+      umu.umu
 
       # Wine
       wineWowPackages.waylandFull

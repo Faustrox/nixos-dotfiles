@@ -51,6 +51,7 @@
 
     # NixOS configuration for Star Citizen
     boot.kernel.sysctl = {
+      "kernel.split_lock_mitigate" = 0;
       # 20-shed.conf
       "kernel.sched_cfs_bandwidth_slice_us" = 3000;
       # 20-net-timeout.conf
