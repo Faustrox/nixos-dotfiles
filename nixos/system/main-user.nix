@@ -41,6 +41,8 @@
       proton-pass
     ];
 
+    nix.settings.trusted-users = [ config.main-user.userName ];
+
     overlays.proton-pass.update = true;
 
   };

@@ -10,9 +10,13 @@
   config = lib.mkIf config.zsh.setup {
 
     programs = {
-      bat.enable = true;
       fastfetch.enable = true;
       fd.enable = true;
+
+      bat = {
+        enable = true;
+        catppuccin.enable = true;
+      };
 
       zsh = {
         enable = true;
@@ -83,7 +87,7 @@
           nixos-boot = "nh os boot";
           nixos-switch-update = "nh os switch --update";
           nixos-boot-update = "nh os boot --update";
-          nixos-clean = "nh clean all";
+          nixos-clean = "nh clean all --keep 2";
         };
       };
 

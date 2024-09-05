@@ -17,13 +17,12 @@
 
   zramSwap.enable = true;
 
-  boot.kernel.sysctl = { 
-    "vm.vfs_cache_pressure" = 50;
+  boot.kernel.sysctl = {
     "vm.swappiness" = 180;
     "vm.watermark_boost_factor" = 0;
     "vm.watermark_scale_factor" = 125;
-    "vm.dirty_background_ratio" = 5;
-    "vm.dirty_ratio" = 10;
+    "vm.dirty_background_ratio" = 10;
+    "vm.dirty_ratio" = 20;
     "vm.page-cluster" = 0;
   };
 

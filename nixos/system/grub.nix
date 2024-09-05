@@ -27,8 +27,6 @@
         "rd.udev.log_level=3"
         "udev.log_priority=3"
         "bgrt_disable" # Disable OEM Logo on system startup loading screen
-        "retbleed=off"
-        "mitigations=off"
       ];
       initrd.verbose = false;
 
