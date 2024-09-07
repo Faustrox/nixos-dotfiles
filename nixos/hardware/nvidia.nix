@@ -78,8 +78,7 @@
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
       __GL_SYNC_DISPLAY_DEVICE = "DP-1";
       __GL_GSYNC_ALLOWED = 1;
-      __GL_MaxFramesAllowed = 0;
-      __GL_SYNC_TO_VBLANK = 0;
+      __GL_MaxFramesAllowed = 1;
     };
   
   };

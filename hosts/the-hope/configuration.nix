@@ -110,8 +110,8 @@
     gtop
     p7zip
     mesa-demos
-    vulkan-tools
-    vulkan-headers
+    vulkanPackages_latest.vulkan-tools
+    vulkanPackages_latest.vulkan-headers
 
     # Terminal
     kitty

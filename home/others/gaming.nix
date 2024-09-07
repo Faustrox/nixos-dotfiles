@@ -72,6 +72,8 @@
           DXVK_HUD = "compiler";
           DXVK_ASYNC = 1;
           MANGOHUD = 1;
+          WINEESYNC = 1;
+          WINEFSYNC = 1;
           WEBKIT_DISABLE_COMPOSITING_MODE = 1; # Fixes problems for logins in Lutris and other apps
       };
     };

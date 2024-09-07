@@ -134,7 +134,7 @@
         render = {
 
             explicit_sync = 1;
-            explicit_sync_kms = 1;
+            explicit_sync_kms = 0;
             direct_scanout = true;
         
         };
@@ -146,11 +146,6 @@
 
         };
 
-        debug = {
-
-          damage_tracking = 0;
-
-        };
       };
     };
 

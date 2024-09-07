@@ -16,8 +16,6 @@
       accent = "dark";
     };
 
-    overlays.catppuccin-cursors = true;
-
     # GTK Theming
 
     dconf = {
