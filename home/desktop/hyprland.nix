@@ -142,7 +142,13 @@
         opengl = {
 
           nvidia_anti_flicker = true;
-          force_introspection = 1;
+
+        };
+
+        xwayland = {
+          
+          use_nearest_neighbor = false;
+          force_zero_scaling = false;
 
         };
 

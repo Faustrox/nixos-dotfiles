@@ -12,12 +12,13 @@ in {
   config = lib.mkIf config.hardware.sound.setup {
 
     environment.systemPackages = with pkgs; [
-      easyeffects
       pavucontrol
       pulseaudio
       headsetcontrol
       helvum
     ];
+
+    programs.noisetorch.enable = true;
 
     services.udev.packages = with pkgs; [ headsetcontrol ];
 

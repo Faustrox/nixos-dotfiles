@@ -46,6 +46,11 @@
   # Kernel Version and Nix package
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
 
+  chaotic.scx = {
+    enable = true;
+    scheduler = "scx_bpfland";
+  };
+
   # Services
   services = {
     # Handle process when out of memory

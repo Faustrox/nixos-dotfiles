@@ -29,7 +29,7 @@
       # Launchers
       lutris
       prismlauncher
-      heroic
+      heroic-unwrapped
       arma3-unix-launcher
       umu.umu
 
@@ -74,6 +74,7 @@
           MANGOHUD = 1;
           WINEESYNC = 1;
           WINEFSYNC = 1;
+          PROTON_ENABLE_NVAPI = 1;
           WEBKIT_DISABLE_COMPOSITING_MODE = 1; # Fixes problems for logins in Lutris and other apps
       };
     };

@@ -5,26 +5,34 @@
 
 {
   imports = [ 
-      (modulesPath + "/installer/scan/not-detected.nix")
-      inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
-      inputs.nixos-hardware.nixosModules.common-cpu-amd-zenpower
-      inputs.nixos-hardware.nixosModules.common-pc-ssd
-    ];
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
-  boot.supportedFilesystems = [ "ntfs" ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot = {
+
+    supportedFilesystems = [ "ntfs" ];
+    
+    initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
+    kernelModules = [ "kvm-amd" "zenpower" ];
+    extraModulePackages = [ config.boot.kernelPackages.zenpower ];
+    blacklistedKernelModules = [ "k10temp" ];
+
+    kernelParams = [ "amd_pstate=active" ];
+
+    kernel.sysctl = {
+      "vm.swappiness" = 180;
+      "vm.watermark_boost_factor" = 0;
+      "vm.watermark_scale_factor" = 125;
+      "vm.dirty_background_ratio" = 10;
+      "vm.dirty_ratio" = 20;
+      "vm.page-cluster" = 0;
+    };
+
+  };
+
+  services.fstrim.enable = lib.mkDefault true;
 
   zramSwap.enable = true;
-
-  boot.kernel.sysctl = {
-    "vm.swappiness" = 180;
-    "vm.watermark_boost_factor" = 0;
-    "vm.watermark_scale_factor" = 125;
-    "vm.dirty_background_ratio" = 10;
-    "vm.dirty_ratio" = 20;
-    "vm.page-cluster" = 0;
-  };
 
   powerManagement.cpuFreqGovernor = "performance";
 
