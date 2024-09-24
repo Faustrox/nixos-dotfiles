@@ -34,7 +34,7 @@
 
   zramSwap.enable = true;
 
-  powerManagement.cpuFreqGovernor = "performance";
+  powerManagement.cpuFreqGovernor = "ondemand";
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/9a45c8d8-622c-4eef-9376-680b0b690f8a";

@@ -32,13 +32,15 @@
       heroic-unwrapped
       arma3-unix-launcher
       umu.umu
+      cartridges
 
       # Wine
-      wineWowPackages.waylandFull
+      wineWowPackages.full
       winetricks
+      mono
 
       # Utils
-      mangohud_git
+      mangohud
       goverlay
       protonup-qt
       protonup-ng

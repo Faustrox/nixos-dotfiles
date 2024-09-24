@@ -42,7 +42,6 @@
 
   programs = {
     vscode.enable = true;
-    obs-studio.enable = true;
 
     btop = {
       enable = true;
@@ -52,10 +51,18 @@
       enable = true;
       catppuccin.enable = true;
     };
+    firefox = {
+      enable = true;
+      nativeMessagingHosts = with pkgs; [ uget-integrator ];
+    };
     kitty = {
       enable = true;
       shellIntegration.enableZshIntegration = true;
       catppuccin.enable = true;
+    };
+    obs-studio = {
+      enable = true;
+      plugins = with pkgs.obs-studio-plugins; [ droidcam-obs ]; 
     };
     rofi = {
       enable = true;
@@ -69,7 +76,7 @@
     zsh-powerlevel10k
 
     # Social media
-    telegram-desktop_git
+    telegram-desktop
 
     # Multimedia
     stremio
@@ -84,7 +91,6 @@
 
     # Browsers
     google-chrome
-    firefox
 
     # Developer
     nodejs_20

@@ -10,10 +10,13 @@
   config = lib.mkIf config.gaming.setup {
 
     # Xbox controllers dongle
+    overlays.xone.fixes = true;
     hardware.xone.enable = true;
 
     # Setup Steam, Gamescope, gamemode 
     programs = {
+
+      gamescope.enable = true;
 
       gamemode = {
         enable = true;
@@ -42,11 +45,6 @@
         openFirewall = true;
       };
       
-      gamescope = {
-        enable = true;
-        package = pkgs.gamescope_git;
-      };
-
     };
 
     boot = {
@@ -56,6 +54,7 @@
         "tsc=reliable"
         "clocksource=tsc"
         "clearcpuid=514"
+        "preempt=full"
       ];
       kernel.sysctl = {
         "kernel.split_lock_mitigate" = 0;

@@ -134,21 +134,14 @@
         render = {
 
             explicit_sync = 1;
-            explicit_sync_kms = 0;
+            explicit_sync_kms = 1;
             direct_scanout = true;
         
         };
 
         opengl = {
 
-          nvidia_anti_flicker = true;
-
-        };
-
-        xwayland = {
-          
-          use_nearest_neighbor = false;
-          force_zero_scaling = false;
+          nvidia_anti_flicker = false;
 
         };
 

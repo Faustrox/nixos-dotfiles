@@ -28,7 +28,7 @@
     };
 
     suyu = {
-      url = "git+https://git.suyu.dev/suyu/nix-flake";
+      url = "git+https://github.com/Noodlez1232/suyu-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

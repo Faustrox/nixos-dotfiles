@@ -13,9 +13,7 @@ in {
 
     environment.systemPackages = with pkgs; [
       pavucontrol
-      pulseaudio
       headsetcontrol
-      helvum
     ];
 
     programs.noisetorch.enable = true;

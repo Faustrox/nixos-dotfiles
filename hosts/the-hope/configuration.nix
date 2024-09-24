@@ -44,7 +44,7 @@
   };
 
   # Kernel Version and Nix package
-  boot.kernelPackages = pkgs.linuxPackages_cachyos;
+  boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
 
   chaotic.scx = {
     enable = true;
