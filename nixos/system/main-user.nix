@@ -21,7 +21,7 @@
     users.users.${config.main-user.userName} = {
       isNormalUser = true;
       description = config.main-user.userName;
-      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" "kvm" "adbusers" "gamemode" ];
+      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" "kvm" "adbusers" "gamemode" "firejail" ];
       shell = pkgs.zsh;
     };
 
@@ -42,8 +42,6 @@
     ];
 
     nix.settings.trusted-users = [ config.main-user.userName ];
-
-    overlays.proton-pass.update = true;
 
   };
 

@@ -39,13 +39,28 @@
 
   };
 
-  outputs = { self, nixpkgs, home-manager, lix-module, chaotic, catppuccin, spicetify-nix, hyprland, ... }@inputs:
-    let
-      lib = nixpkgs.lib;
-      system = "x86_64-linux";
-    in {
+  outputs = inputs: let
+    system = "x86_64-linux";
+
+    originPkgs = inputs.nixpkgs.legacyPackages.${system};
+    pkgsPatches = [
+      
+      { meta.description = "gpu-screen-recorder{-,gtk} 4.2.1 -> 4.2.3";
+        url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/349665.diff";
+        sha256 = "BWmU1qzU1EtbT4i5Eqj3UmB9L/pF98rz/RyQIRiykHA=";
+      }
+
+    ];
+    patchedNixpkgs = originPkgs.applyPatches {
+      name = "nixpkgs-patched";
+      src = inputs.nixpkgs;
+      patches = map originPkgs.fetchpatch pkgsPatches;
+    };
+
+    nixosSystem = import (patchedNixpkgs + "/nixos/lib/eval-config.nix");
+  in {
     nixosConfigurations = {
-      the-hope = lib.nixosSystem {
+      the-hope = nixosSystem {
         inherit system;
 
         specialArgs = { inherit inputs; };
@@ -53,10 +68,10 @@
         modules = [
           ./hosts/the-hope/configuration.nix
           ./nixos
-          home-manager.nixosModules.home-manager
-          lix-module.nixosModules.default
-          chaotic.nixosModules.default
-          catppuccin.nixosModules.catppuccin
+          inputs.home-manager.nixosModules.home-manager
+          inputs.lix-module.nixosModules.default
+          inputs.chaotic.nixosModules.default
+          inputs.catppuccin.nixosModules.catppuccin
           {
             home-manager = {
 
@@ -69,10 +84,10 @@
                   imports = [
                     ./hosts/the-hope/home.nix
                     ./home
-                    hyprland.homeManagerModules.default
-                    chaotic.homeManagerModules.default
-                    catppuccin.homeManagerModules.catppuccin
-                    spicetify-nix.homeManagerModules.default
+                    inputs.hyprland.homeManagerModules.default
+                    inputs.chaotic.homeManagerModules.default
+                    inputs.catppuccin.homeManagerModules.catppuccin
+                    inputs.spicetify-nix.homeManagerModules.default
                   ];
                 };
               };

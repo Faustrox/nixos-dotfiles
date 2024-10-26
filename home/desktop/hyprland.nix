@@ -26,7 +26,6 @@
           "DP-1,2560x1440@165, 1920x0, 1"
           "DP-2,1920x1080@144, 0x360, 1"
         ];
-        exec-once = "xrandr --output DP-1 --primary";
 
         #####################
         ### LOOK AND FEEL ###
@@ -119,6 +118,12 @@
         
         };
 
+        cursor = {
+
+          no_hardware_cursors = true;
+
+        };
+
         ##############
         ### OTHERS ###
         ##############
@@ -134,27 +139,21 @@
         render = {
 
             explicit_sync = 1;
-            explicit_sync_kms = 1;
+            explicit_sync_kms = 0;
             direct_scanout = true;
         
         };
 
-        opengl = {
-
-          nvidia_anti_flicker = false;
-
+        xwayland = {
+          force_zero_scaling = true;
         };
 
       };
     };
 
-    home = {
+    overlays.cliphist.fix = true;
 
-      sessionVariables = {
-        XDG_CURRENT_DESKTOP = "Hyprland";
-        XDG_SESSION_DESKTOP = "Hyprland";
-        QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
-      };
+    home = {
 
       packages = with pkgs; [
 

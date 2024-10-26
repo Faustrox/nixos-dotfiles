@@ -17,10 +17,6 @@
       lib.mkOption {
         description = "Extra locale";
       };
-    x11.keymap = 
-      lib.mkOption {
-        description = "Keymap";
-      };
   };
 
   config = lib.mkIf config.time.enable {
@@ -34,9 +30,6 @@
     i18n.defaultLocale = config.time.defaultLocale;
 
     i18n.extraLocaleSettings = config.time.extraLocale;
-
-    # Configure keymap in X11
-    services.xserver = config.x11.keymap;
   };
 
 }

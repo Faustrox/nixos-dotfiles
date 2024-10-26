@@ -13,10 +13,15 @@
     overlays.xone.fixes = true;
     hardware.xone.enable = true;
 
-    # Setup Steam, Gamescope, gamemode 
+    # Setup Steam, Gamescope, gamemode
     programs = {
 
-      gamescope.enable = true;
+      gpu-screen-recorder.enable = true;
+
+      gamescope = {
+        enable = true;
+        capSysNice = true;
+      };
 
       gamemode = {
         enable = true;

@@ -1,5 +1,7 @@
-{ config, pkgs, lib, inputs, ... }: 
-
+{ config, pkgs, lib, inputs, ... }:
+let
+  hyprland.packages = inputs.hyprland.packages.x86_64-linux;
+in
 {
 
   options = {
@@ -16,11 +18,13 @@
 
     programs.hyprland = {
       enable = true;
-      package = inputs.hyprland.packages.x86_64-linux.hyprland;
+      package = hyprland.packages.hyprland;
     };
 
     services = {
-      displayManager = { 
+      gvfs.enable = true;
+
+      displayManager = {
         sddm = {
           enable = true;
           package = pkgs.kdePackages.sddm;
@@ -28,8 +32,13 @@
           catppuccin.enable = true;
         };
       };
-      gvfs.enable = true;
+
+      # Sets primary display on xwayland
+      xserver.displayManager.setupCommands = ''
+        ${pkgs.xorg.xrandr}/bin/xrandr --output DP-1 --primary
+      '';  
     };
+
     
     systemd = {
       user.services.polkit-gnome-authentication-agent-1 = {
@@ -57,6 +66,32 @@
       };
     };
 
+    # Xwayland VRAM usage fix on Nvidia GPU
+    environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-hyprland.txt".text = ''
+      {
+        "rules": [
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "Hyprland"
+            },
+            "profile": "Limit Free Buffer Pool On Hyprland"
+          }
+        ],
+        "profiles": [
+          {
+            "name": "Limit Free Buffer Pool On Hyprland",
+            "settings": [
+              {
+                  "key": "GLVidHeapReuseRatio",
+                  "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    '';
+
     environment.systemPackages = with pkgs; [
       
       wlr-randr
@@ -75,11 +110,15 @@
 
       GDK_BACKEND = "wayland,x11,*";
       QT_QPA_PLATFORM = "wayland;xcb";
-      SDL_VIDEODRIVER = "wayland,x11";
+      SDL_VIDEODRIVER = "wayland";
       CLUTTER_BACKEND = "wayland";
+      XDG_CURRENT_DESKTOP = "Hyprland";
       XDG_SESSION_TYPE = "wayland";
+      XDG_SESSION_DESKTOP = "Hyprland";
+      QT_AUTO_SCREEN_SCALE_FACTOR = 1;
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
     };
-
+    
   };
 
 }

@@ -109,8 +109,12 @@
     qalculate-gtk
     dconf
     jq
-    gimp
     usbimager
+    gpu-screen-recorder-gtk
+
+    # Design
+    gimp
+    inkscape
 
     # Others
     fragments

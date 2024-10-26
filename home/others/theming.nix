@@ -1,5 +1,14 @@
 { lib, config, pkgs, ... }:
+let
 
+  qtTheme = pkgs.catppuccin-kvantum.override {
+    variant = "mocha";
+    accent = "sapphire";
+  };
+
+  qtThemeName = "catppuccin-mocha-sapphire";
+
+in
 {
   options = {
     theming.setup = 
@@ -48,29 +57,34 @@
     # QT Theming
 
     home.packages = with pkgs; [
-      # The following is a Qt theme engine, which can be configured with kvantummanager
+      qt5.qttools
+      qt6Packages.qtstyleplugin-kvantum
       libsForQt5.qtstyleplugin-kvantum
-      kdePackages.qtstyleplugin-kvantum
-    ];
 
-    xdg.configFile."kdeglobals".source = "${(pkgs.catppuccin-kde.override {
-      flavour = [ "mocha" ];
-      accents = [ "sapphire" ];
-      winDecStyles = [ "modern" ];
-    })}/share/color-schemes/CatppuccinMochaSapphire.colors";
+      qtTheme
+
+    ];
 
     qt = {
       enable = true;
       platformTheme.name = "kvantum";
-      style = {
-        name = "kvantum";
-        catppuccin.enable = true;
-      };
+      style.name = "kvantum";
     };
 
-    home.sessionVariables = {
-      QT_AUTO_SCREEN_SCALE_FACTOR = 1;
+    xdg.configFile = {
+
+      "Kvantum/catppuccin/catppuccin.kvconfig".source = "${qtTheme}/share/Kvantum/${qtThemeName}/${qtThemeName}.kvconfig";
+      "Kvantum/catppuccin/catppuccin.svg".source = "${qtTheme}/share/Kvantum/${qtThemeName}/${qtThemeName}.svg";
+      "Kvantum/kvantum.kvconfig".text = "theme=catppuccin";
+
+      "kdeglobals".source = "${(pkgs.catppuccin-kde.override {
+        flavour = ["mocha"];
+        accents = ["sapphire"];
+        winDecStyles = ["modern"];
+      })}/share/color-schemes/CatppuccinMochaSapphire.colors";
+
     };
+
 
   };
 

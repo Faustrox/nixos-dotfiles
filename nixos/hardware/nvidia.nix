@@ -36,17 +36,24 @@
       powerManagement.finegrained = false;
 
       # Enable the Nvidia settings menu,
-      nvidiaSettings = false;
+      nvidiaSettings = true;
 
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-          version = "560.35.03";
-          sha256_64bit = "sha256-8pMskvrdQ8WyNBvkU/xPc/CtcYXCa7ekP73oGuKfH+M=";
-          openSha256 = "sha256-/32Zf0dKrofTmPZ3Ratw4vDM7B+OgpC4p7s+RHUjCrg=";
-          settingsSha256 = "";
-          persistencedSha256 = "";
-        };
+        version = "565.57.01";
+        sha256_64bit = "sha256-buvpTlheOF6IBPWnQVLfQUiHv4GcwhvZW3Ks0PsYLHo=";
+        sha256_aarch64 = "";
+        openSha256 = "sha256-/tM3n9huz1MTE6KKtTCBglBMBGGL/GOHi5ZSUag4zXA=";
+        settingsSha256 = "sha256-H7uEe34LdmUFcMcS6bz7sbpYhg9zPCb/5AmZZFTx1QA=";
+        persistencedSha256 = lib.fakeSha256;
+      };
     };
+
+    hardware.enableRedistributableFirmware = true;
+
+    boot.kernelParams = [
+      "nvidia-drm.fbdev=1"
+    ];
 
     boot.extraModprobeConfig =
     "options nvidia "
@@ -65,20 +72,26 @@
       # Disable GSP Firmware.
       # Nvidia 555 beta enables it by default
       # This can't be change in open nvidia drivers
-      # "NVreg_EnableGpuFirmware=0"
+      "NVreg_EnableGpuFirmware=0"
+      "NVreg_EnableResizableBar=1"
+      "NVreg_InitializeSystemMemoryAllocations=0"
     ];
 
     nixpkgs.config.nvidia.acceptLicense = true;
 
+    environment.systemPackages = with pkgs; [
+      egl-wayland
+      nvidia-vaapi-driver
+      vulkanPackages_latest.vulkan-tools
+      vulkanPackages_latest.vulkan-headers
+      vulkanPackages_latest.vulkan-loader
+    ];
+
     environment.variables = {
       GBM_BACKEND = "nvidia-drm";
-      NVD_BACKEND = "direct";
-      
       LIBVA_DRIVER_NAME = "nvidia";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-      __GL_SYNC_DISPLAY_DEVICE = "DP-1";
-      __GL_GSYNC_ALLOWED = 1;
-      __GL_MaxFramesAllowed = 1;
+      NVD_BACKEND = "direct";
     };
   
   };

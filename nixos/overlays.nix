@@ -4,8 +4,7 @@
 
   options = {
     overlays = {
-      gnome.setup = lib.mkEnableOption "Configure some patches overlays for Gnome";
-      proton-pass.update = lib.mkEnableOption "update proton-pass to 1.22.2";
+      gnome.setup = lib.mkEnableOption "Configure some patches for Gnome";
       xone.fixes = lib.mkEnableOption "Fix xone for linux 6.11";
     };
   };
@@ -28,25 +27,6 @@
                 })
               ];
             });
-          });
-        })
-      ];
-    })
-
-    (lib.mkIf config.overlays.proton-pass.update {
-      nixpkgs.overlays = [
-        (self: super: {
-          proton-pass = let
-            
-            version = "1.22.2";
-
-          in super.proton-pass.overrideAttrs ( old: {
-            inherit version;
-
-            src = super.fetchurl {
-              url = "https://proton.me/download/PassDesktop/linux/x64/ProtonPass_${version}.deb";
-              hash = "sha256-aiotNWub/82YEyrveoTiRacaSoUT9Srw0s98XtXVN7g=";
-            };
           });
         })
       ];

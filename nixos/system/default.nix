@@ -29,8 +29,8 @@
 
   x11.enable = lib.mkDefault true;
   x11.keymap = lib.mkDefault {
-    xkb.layout = "us";
-    xkb.variant = "alt-intl";
+    layout = "us";
+    variant = "alt-intl";
   };
   
 }

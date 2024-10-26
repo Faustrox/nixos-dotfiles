@@ -46,9 +46,17 @@
   # Kernel Version and Nix package
   boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
 
-  chaotic.scx = {
-    enable = true;
-    scheduler = "scx_bpfland";
+  systemd.services.scx = {
+    wantedBy = [ "multi-user.target" ];
+    description = "scheduler daemon";
+    serviceConfig = {
+      Type = "simple";
+      User = "root";
+      ExecStart = "${pkgs.scx}/bin/scx_lavd --performance --no-core-compaction"; # scx_bpfland -c 0 -k -L -m performance
+      Restart = "on-failure";
+      StandardError = "null";
+      StandardOutput = "null";
+    };
   };
 
   # Services
@@ -105,7 +113,6 @@
     gnumake
     cmake
     ninja
-    appimage-run
     glxinfo
     zenmonitor
     lm_sensors
@@ -115,11 +122,14 @@
     gtop
     p7zip
     mesa-demos
-    vulkanPackages_latest.vulkan-tools
-    vulkanPackages_latest.vulkan-headers
 
     # Terminal
     kitty
+
+    # Other
+    scx
+    gnome.zenity
+    sway
 
   ];
 
@@ -136,6 +146,11 @@
   programs = {
     adb.enable = true;
     firejail.enable = true;
+
+    appimage = {
+      enable = true;
+      binfmt = true;
+    };
     
     nh = {
       enable = true;

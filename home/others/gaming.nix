@@ -27,25 +27,32 @@
       suyu.suyu
 
       # Launchers
-      lutris
+      (lutris.override {
+        extraPkgs = pkgs: [
+          wineWowPackages.stable
+          winetricks
+        ];
+      })
       prismlauncher
       heroic-unwrapped
       arma3-unix-launcher
       umu.umu
       cartridges
+      rpcs3
 
       # Wine
-      wineWowPackages.full
+      wineWowPackages.stable
       winetricks
       mono
 
       # Utils
+      glfw-wayland-minecraft
       mangohud
       goverlay
       protonup-qt
       protonup-ng
       vkbasalt
-      steamPackages.steamcmd
+      steamcmd
 
     ];
 
@@ -64,7 +71,6 @@
 
     home = {
       file.".config/vkBasalt/vkBasalt.conf".source = ../config/vkBasalt/vkBasalt.conf;
-
       sessionVariables = {
           STEAM_ROOT = config.gaming.steamRoot;
           __GL_SHADER_DISK_CACHE = 1;
@@ -76,7 +82,9 @@
           MANGOHUD = 1;
           WINEESYNC = 1;
           WINEFSYNC = 1;
+          VKD3D_CONFIG = "dxr,force_host_cached";
           PROTON_ENABLE_NVAPI = 1;
+          PROTON_FORCE_LARGE_ADDRESS_AWARE = 1;
           WEBKIT_DISABLE_COMPOSITING_MODE = 1; # Fixes problems for logins in Lutris and other apps
       };
     };
