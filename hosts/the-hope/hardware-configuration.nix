@@ -6,6 +6,7 @@
 {
   imports = [ 
     (modulesPath + "/installer/scan/not-detected.nix")
+    ./disko-config.nix
   ];
 
   boot = {
@@ -15,54 +16,33 @@
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
     kernelModules = [ "kvm-amd" "zenpower" ];
     extraModulePackages = [ config.boot.kernelPackages.zenpower ];
-    blacklistedKernelModules = [ "k10temp" ];
+    blacklistedKernelModules = [ "k10temp" "ath3k" ];
 
     kernelParams = [ "amd_pstate=active" ];
 
     kernel.sysctl = {
-      "vm.swappiness" = 180;
+      "vm.swappiness" = 10;
       "vm.watermark_boost_factor" = 0;
       "vm.watermark_scale_factor" = 125;
-      "vm.dirty_background_ratio" = 10;
-      "vm.dirty_ratio" = 20;
+      "vm.dirty_background_ratio" = 1;
+      "vm.dirty_ratio" = 50;
       "vm.page-cluster" = 0;
-    };
+      "vm.vfs_cache_pressure" = 500;
 
+      "kernel.nmi_watchdog" = 0;
+    };
   };
 
   services.fstrim.enable = lib.mkDefault true;
+  services.system76-scheduler.enable = true;
 
   zramSwap.enable = true;
-
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/9a45c8d8-622c-4eef-9376-680b0b690f8a";
-      fsType = "ext4";
-    };
-  
-  fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/095c5d64-e5ff-4276-803d-115bb2d13381";
-      fsType = "ext4";
-    };
-
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/58ce64d5-a531-4e8e-b12c-92bcbf15720a";
-      fsType = "ext4";
-    };
-
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/88AB-43B4";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
 
   fileSystems."/mnt/games" =
     { device = "/dev/disk/by-uuid/df022cf4-ed2f-4883-8da1-b5161367a8ea";
       fsType = "btrfs";
+      options = [ "compress=zstd" "noatime" "discard=async" ];
     };
-
-  swapDevices = [
-    { device = "/dev/disk/by-uuid/694a1090-6d7f-4e91-be56-23deaec0bf28"; }
-  ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -73,4 +53,5 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.enableRedistributableFirmware = lib.mkDefault true;
 }

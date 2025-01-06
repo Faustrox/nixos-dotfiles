@@ -12,8 +12,8 @@
     programs.neovim = {
       enable = true;
       vimAlias = true;
-      catppuccin.enable = true;
     };
+    catppuccin.nvim.enable = true;
 
     home.sessionVariables = {
       EDITOR = "nvim";

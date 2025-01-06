@@ -12,11 +12,7 @@
     programs = {
       fastfetch.enable = true;
       fd.enable = true;
-
-      bat = {
-        enable = true;
-        catppuccin.enable = true;
-      };
+      bat.enable = true;
 
       zsh = {
         enable = true;
@@ -82,12 +78,13 @@
 
         shellAliases = {
           ls = "eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions";
+          lsp = "eza --color=always --long --git --no-filesize --icons=always --no-time";
           cd = "z";
           nixos-switch = "nh os switch";
           nixos-boot = "nh os boot";
           nixos-switch-update = "nh os switch --update";
           nixos-boot-update = "nh os boot --update";
-          nixos-clean = "nh clean all --keep 2";
+          nixos-clean = "nh clean all --keep 5";
         };
       };
 
@@ -102,7 +99,7 @@
         enable = true;
         enableZshIntegration = true;
         git = true;
-        icons = true;
+        # icons = true;
       };
 
       fzf = {
@@ -116,6 +113,8 @@
         enableZshIntegration = true;
       };
     };
+
+    catppuccin.bat.enable = true;
 
 
     home.packages = with pkgs; [

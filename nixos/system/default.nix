@@ -2,11 +2,11 @@
 
 {
   imports = [
-    ./grub.nix
+    ./bootloader.nix
     ./main-user.nix
     ./network.nix
     ./time.nix
-    ./x11.nix
+    ./xserver.nix
   ];
 
   grub.enable = lib.mkDefault true;
@@ -24,11 +24,11 @@
     LC_NUMERIC = "es_DO.UTF-8";
     LC_PAPER = "es_DO.UTF-8";
     LC_TELEPHONE = "es_DO.UTF-8";
-    LC_TIME = "es_DO.UTF-8";
+    LC_TIME = "en_US.UTF-8";
   };
 
-  x11.enable = lib.mkDefault true;
-  x11.keymap = lib.mkDefault {
+  xserver.enable = lib.mkDefault true;
+  xserver.keymap = lib.mkDefault {
     layout = "us";
     variant = "alt-intl";
   };

@@ -34,12 +34,12 @@ in {
             {
               matches = [
                 {
-                  "device.name" = "alsa_output.usb-SteelSeries_Arctis_Nova_7-00";
+                  "device.name" = "alsa_card.usb-SteelSeries_Arctis_Nova_7-00";
                 }
               ];
               actions = {
                 "update-props" = {
-                  "device.profile" = "pro-audio";
+                  # "device.profile" = "pro-audio";
                   "api.alsa.period-size" = 64;
                   "api.alsa.period-num" = 3;
                   "audio.rate" = 48000;

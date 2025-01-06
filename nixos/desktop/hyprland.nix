@@ -1,6 +1,6 @@
 { config, pkgs, lib, inputs, ... }:
 let
-  hyprland.packages = inputs.hyprland.packages.x86_64-linux;
+  hyprPackages = inputs.hyprland.packages.${pkgs.system};
 in
 {
 
@@ -16,55 +16,18 @@ in
       trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
     };
 
-    programs.hyprland = {
-      enable = true;
-      package = hyprland.packages.hyprland;
-    };
-
-    services = {
-      gvfs.enable = true;
-
-      displayManager = {
-        sddm = {
-          enable = true;
-          package = pkgs.kdePackages.sddm;
-          wayland.enable = true;
-          catppuccin.enable = true;
-        };
-      };
-
-      # Sets primary display on xwayland
-      xserver.displayManager.setupCommands = ''
-        ${pkgs.xorg.xrandr}/bin/xrandr --output DP-1 --primary
-      '';  
-    };
-
-    
-    systemd = {
-      user.services.polkit-gnome-authentication-agent-1 = {
-        description = "polkit-gnome-authentication-agent-1";
-        wantedBy = [ "graphical-session.target" ];
-        wants = [ "graphical-session.target" ];
-        after = [ "graphical-session.target" ];
-        serviceConfig = {
-            Type = "simple";
-            ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-            Restart = "on-failure";
-            RestartSec = 1;
-            TimeoutStopSec = 10;
-          };
+    programs = {
+      uwsm.enable = true;
+      hyprland = {
+        enable = true;
+        withUWSM  = true;
+        xwayland.enable = true;
+        portalPackage = hyprPackages.xdg-desktop-portal-hyprland;
+        package = hyprPackages.hyprland;
       };
     };
 
-    xdg.mime = {
-      enable = true;
-      defaultApplications = {
-        "inode/directory" = [ "org.gnome.Nautilus.desktop" ];
-      };
-      removedAssociations = {
-        "inode/directory" = "code.desktop";
-      };
-    };
+    services.gvfs.enable = true;
 
     # Xwayland VRAM usage fix on Nvidia GPU
     environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-hyprland.txt".text = ''
@@ -92,21 +55,11 @@ in
       }
     '';
 
-    environment.systemPackages = with pkgs; [
-      
-      wlr-randr
-      wl-clipboard
-      wl-clip-persist
-      networkmanagerapplet
-      polkit_gnome
-      zenity
-      
-    ];
-
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1";
       ELECTRON_OZONE_PLATFORM_HINT = "auto";
       MOZ_ENABLE_WAYLAND = "1";
+      MOZ_DBUS_REMOTE = "1";
 
       GDK_BACKEND = "wayland,x11,*";
       QT_QPA_PLATFORM = "wayland;xcb";

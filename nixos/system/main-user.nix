@@ -5,7 +5,7 @@
   options = {
     main-user.enable =
       lib.mkEnableOption "Enables main user";
-    main-user.userName = lib.mkOption {
+    main-user.username = lib.mkOption {
       default = "faustrox";
       description = ''
         username
@@ -17,19 +17,27 @@
 
     hardware.i2c.enable = true;
 
+    security.sudo.extraRules = [
+      { 
+        users = [ config.main-user.username ];
+        commands = [
+          {
+            command = "/root/scripts/*";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+      }
+    ];
+
     # Set up user
-    users.users.${config.main-user.userName} = {
+    users.users.${config.main-user.username} = {
       isNormalUser = true;
-      description = config.main-user.userName;
-      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" "kvm" "adbusers" "gamemode" "firejail" ];
+      description = config.main-user.username;
+      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" "kvm" "adbusers" "firejail" ];
       shell = pkgs.zsh;
     };
 
-    # Enable automatic login for the user.
-    services.displayManager.autoLogin = {
-      enable = true;
-      user = config.main-user.userName;
-    };
+    services.getty.autologinUser = config.main-user.username;
 
     programs.zsh = {
       enable = true;
@@ -37,11 +45,13 @@
       autosuggestions.enable = true;
     };
 
-    environment.systemPackages = with pkgs; [
-      proton-pass
-    ];
+    console.earlySetup = true;
+    catppuccin.tty = {
+      enable = true;
+      flavor = "mocha";
+    };
 
-    nix.settings.trusted-users = [ config.main-user.userName ];
+    nix.settings.trusted-users = [ config.main-user.username ];
 
   };
 

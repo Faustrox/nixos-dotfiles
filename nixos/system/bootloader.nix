@@ -13,7 +13,6 @@
 
       plymouth = {
         enable = true;
-        catppuccin.enable = true;
       };
 
       # Silent boot
@@ -32,18 +31,22 @@
 
       # Bootloader config
       loader = {
-        efi.canTouchEfiVariables = true;
         timeout = 3;
         grub = {
           enable = true;
+          configurationLimit = 5;
           gfxmodeEfi = "1920x1080";
-          devices = [ "nodev" ];
           efiSupport = true;
+          efiInstallAsRemovable = true;
           useOSProber = false;
           default = 0;
-          catppuccin.enable = true;
         };
       };
+    };
+
+    catppuccin = {
+      plymouth.enable = true;
+      grub.enable = true;
     };
 
   };

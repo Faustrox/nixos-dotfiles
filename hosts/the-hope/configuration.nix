@@ -12,14 +12,22 @@
   
   catppuccin.flavor = "mocha";
 
-  # --- System Settings ---
-
-  # Enable Flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # --- Nix Settings ---
 
   # Optimize store
   nix.optimise.automatic = true;
   nix.settings.auto-optimise-store = true;
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+  system.tools.nixos-option.enable = false;
+
+  # --- System Settings ---
+
+  virt-machine.enable = false;
+
+  # Enable Flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Network Settings
   network.host = "the-hope";
@@ -33,43 +41,38 @@
   # Set up docker for nixos
   docker.enable = true;
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # Fragments allow ports
-  networking.firewall = {
-    enable = true;
-    allowedUDPPorts = [ 51413 ];
-    allowedTCPPorts = [ 51413 ];
-  };
-
-  # Kernel Version and Nix package
-  boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
-
-  systemd.services.scx = {
-    wantedBy = [ "multi-user.target" ];
-    description = "scheduler daemon";
-    serviceConfig = {
-      Type = "simple";
-      User = "root";
-      ExecStart = "${pkgs.scx}/bin/scx_lavd --performance --no-core-compaction"; # scx_bpfland -c 0 -k -L -m performance
-      Restart = "on-failure";
-      StandardError = "null";
-      StandardOutput = "null";
-    };
-  };
-
   # Services
   services = {
     # Handle process when out of memory
     earlyoom.enable = true;
 
+    # help balance the cpu load generated
+    irqbalance.enable = true;
+
     ollama = {
-        enable = true;
-        acceleration = "cuda";
+      enable = false;
+      acceleration = "cuda";
     };
+    # open-webui = {
+    #   enable = true;
+    #   openFirewall = true;
+    #   environment = {
+    #     OLLAMA_API_BASE_URL = "http://127.0.0.1:11434";
+    #     ANONYMIZED_TELEMETRY = "False";
+    #     DO_NOT_TRACK = "True";
+    #     SCARF_NO_ANALYTICS = "True";
+    #   };
+    # };
+
     # Import udev rules
     udev.extraRules = builtins.readFile ./rules-file;
+    
+    # Handle Renice
+    ananicy = {
+      enable = true;
+      package = pkgs.ananicy-cpp;
+      rulesProvider = pkgs.ananicy-rules-cachyos;
+    };
   };
 
   # This value determines the NixOS release from which the default
@@ -78,11 +81,11 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05";
+  system.stateVersion = "25.05";
 
   # --- Hardware Settings ---
 
-  bluetooth.enable = true;
+  bluetooth.enable = false;
   hardware.sound.setup = true;
 
   nvidia.enable = true;
@@ -99,12 +102,13 @@
   environment.systemPackages = with pkgs; [
 
     # Utils
+    hwloc
     rivalcfg
     rar
     zip
     unrar
     unzip
-    toybox
+    pciutils
     git
     wget
     curl
@@ -116,9 +120,11 @@
     glxinfo
     zenmonitor
     lm_sensors
+    killall
 
     # Dependencies
     gcc
+    libgcc
     gtop
     p7zip
     mesa-demos
@@ -127,20 +133,16 @@
     kitty
 
     # Other
-    scx
-    gnome.zenity
+    zenity
     sway
+
+    cpuset
 
   ];
 
-  security.wrappers = {
-    firejail = {
-      source = "${pkgs.firejail.out}/bin/firejail";
-    };
-  };
-
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
+    nerd-fonts.fira-code
+    nerd-fonts.hack
   ];
 
   programs = {
@@ -154,8 +156,12 @@
     
     nh = {
       enable = true;
-      clean.enable = true;
-      flake = "/home/faustrox/.dotfiles";
+      flake = "/home/${config.main-user.username}/.dotfiles";
+      clean = {
+        enable = true;
+        dates = "daily";
+        extraArgs = "--keep 5";
+      };
     };
   };
 

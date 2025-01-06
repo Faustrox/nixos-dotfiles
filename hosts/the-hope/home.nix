@@ -5,28 +5,24 @@
   catppuccin = {
     flavor = "mocha";
     accent = "sapphire";
+    btop.enable = true;
+    kitty.enable = true;
+    rofi.enable = true;
   };
 
   # --- Home Manager Settings ---
 
   home.username = "faustrox";
-  home.homeDirectory = "/home/faustrox";
+  home.homeDirectory = "/home/${config.home.username}";
 
   # This value determines the home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new home Manager release introduces backwards
   # incompatible changes.
-  home.stateVersion = "24.05";
+  home.stateVersion = "25.05";
   
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-      allowUnfreePredicate = (_: true);
-    };
-  };
 
   # --- Desktop Settings ---
 
@@ -45,28 +41,25 @@
 
     btop = {
       enable = true;
-      catppuccin.enable = true;
+      package = pkgs.btop.override { cudaSupport = true; };
     };
-    cava = {
-      enable = true;
-      catppuccin.enable = true;
-    };
+    # cava = { # Build errors on nixos-unstable
+    #   enable = true;
+    # };
     firefox = {
       enable = true;
-      nativeMessagingHosts = with pkgs; [ uget-integrator ];
+      nativeMessagingHosts = with pkgs; [ uget-integrator firefoxpwa ];
     };
     kitty = {
       enable = true;
       shellIntegration.enableZshIntegration = true;
-      catppuccin.enable = true;
     };
     obs-studio = {
-      enable = true;
+      enable = false;
       plugins = with pkgs.obs-studio-plugins; [ droidcam-obs ]; 
     };
     rofi = {
       enable = true;
-      catppuccin.enable = true;
     };
   };
   
@@ -84,12 +77,14 @@
     mpv
     celluloid
     ffmpeg-full
+    gifsicle
 
     # Themes, cursors and icons
     adw-gtk3
     adwsteamgtk
 
     # Browsers
+    firefoxpwa
     google-chrome
 
     # Developer
@@ -100,16 +95,17 @@
     # Dependencies
     spirv-headers
     glslang
-    libgcc
     pinentry-gnome3
 
     # Utils
+    transmission_4-gtk
     httpie
     vrrtest
     qalculate-gtk
     dconf
     jq
     usbimager
+    gpu-screen-recorder
     gpu-screen-recorder-gtk
 
     # Design
@@ -117,30 +113,41 @@
     inkscape
 
     # Others
-    fragments
     uget
     
   ];
 
   xdg = {
     enable = true;
-    desktopEntries = {
-      code = {
-        name = "Visual Studio Code";
-        exec = "code --disable-gpu-compositing %F";
-        terminal = false;
-        genericName = "Text Editor";
-        type = "Application";
-        icon = "vscode";
-        categories = [
-          "Utility"
-          "TextEditor"
-          "Development"
-          "IDE"
-        ];
-        mimeType = [
-          "text/plain"
-        ];
+    userDirs.enable = true;
+    userDirs.createDirectories = true;
+    # desktopEntries = {
+    #   code = {
+    #     name = "Visual Studio Code";
+    #     exec = "code --disable-gpu-compositing %F";
+    #     terminal = false;
+    #     genericName = "Text Editor";
+    #     type = "Application";
+    #     icon = "vscode";
+    #     categories = [
+    #       "Utility"
+    #       "TextEditor"
+    #       "Development"
+    #       "IDE"
+    #     ];
+    #     mimeType = [
+    #       "text/plain"
+    #     ];
+    #   };
+    # };
+    mimeApps = {
+      defaultApplications = {
+        "default-web-browser" = [ "firefox.desktop" ];
+        "text/html" = [ "firefox.desktop" ];
+        "x-scheme-handler/http" = [ "firefox.desktop" ];
+        "x-scheme-handler/https" = [ "firefox.desktop" ];
+        "x-scheme-handler/about" = [ "firefox.desktop" ];
+        "x-scheme-handler/unknown" = [ "firefox.desktop" ];
       };
     };
   };

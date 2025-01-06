@@ -17,12 +17,17 @@ in
 
   config = lib.mkIf config.theming.setup {
 
-    home.pointerCursor.size = 24;
+    home.pointerCursor = {
+      name = "catppuccin-mocha-dark-cursors";
+      package = pkgs.catppuccin-cursors.mochaDark;
+      size = 24;
+      x11.enable = true;
+      gtk.enable = true;
+    };
 
-    catppuccin.pointerCursor = {
-      enable = true;
-      flavor = "mocha";
-      accent = "dark";
+    home.sessionVariables = {
+      HYPRCURSOR_THEME = "catppuccin-mocha-dark-cursors";
+      HYPRCURSOR_SIZE = 24;
     };
 
     # GTK Theming
@@ -34,23 +39,32 @@ in
     
     gtk = {
       enable = true;
-      catppuccin = {
-        enable = true;
-        flavor = "mocha";
-        accent = "sapphire";
-        size = "standard";
-        tweaks = [ "rimless" ];
-      };
+      theme =
+        let
+          cfg = {
+            flavor = "mocha";
+            accent = "sapphire";
+            size = "standard";
+            tweaks = [ "rimless" ];
+          };
+          gtkTweaks = "+" + lib.concatStringsSep "," cfg.tweaks;
+        in
+        {
+          name =
+            "catppuccin-${cfg.flavor}-${cfg.accent}-${cfg.size}"
+            + gtkTweaks;
+          package = pkgs.catppuccin-gtk.override {
+            inherit (cfg) size tweaks;
+            accents = [ cfg.accent ];
+            variant = cfg.flavor;
+          };
+        };
       iconTheme = {
         name = "Papirus-Dark";
         package = pkgs.catppuccin-papirus-folders.override {
           flavor = "mocha";
           accent = "sapphire";
         };
-      };
-      cursorTheme = {
-        name = "catppuccin-mocha-dark-cursors";
-        package = pkgs.catppuccin-cursors;
       };
     };
 
@@ -71,20 +85,28 @@ in
       style.name = "kvantum";
     };
 
-    xdg.configFile = {
+    xdg.configFile = 
+    let
+      gtk4Dir = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0";
+      qtDir = "${qtTheme}/share/Kvantum/${qtThemeName}";
+    in
+    {
 
-      "Kvantum/catppuccin/catppuccin.kvconfig".source = "${qtTheme}/share/Kvantum/${qtThemeName}/${qtThemeName}.kvconfig";
-      "Kvantum/catppuccin/catppuccin.svg".source = "${qtTheme}/share/Kvantum/${qtThemeName}/${qtThemeName}.svg";
+      "gtk-4.0/assets".source = "${gtk4Dir}/assets";
+      "gtk-4.0/gtk.css".source = "${gtk4Dir}/gtk.css";
+      "gtk-4.0/gtk-dark.css".source = "${gtk4Dir}/gtk-dark.css";
+
+      "Kvantum/catppuccin/catppuccin.kvconfig".source = "${qtDir}/${qtThemeName}.kvconfig";
+      "Kvantum/catppuccin/catppuccin.svg".source = "${qtDir}/${qtThemeName}.svg";
       "Kvantum/kvantum.kvconfig".text = "theme=catppuccin";
 
       "kdeglobals".source = "${(pkgs.catppuccin-kde.override {
         flavour = ["mocha"];
         accents = ["sapphire"];
         winDecStyles = ["modern"];
-      })}/share/color-schemes/CatppuccinMochaSapphire.colors";
+      })}/share/color-schemes/catppuccinmochasapphire.colors";
 
     };
-
 
   };
 

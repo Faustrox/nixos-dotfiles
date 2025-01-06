@@ -6,8 +6,6 @@
     ./desktop
     ./others
     ./programs
-
-    ./overlays.nix
   ];
 
 }

@@ -37,11 +37,11 @@
 
         # Wallpaper
         "org/gnome/desktop/screensaver" = {
-          picture-uri = "file:///home/faustrox/.dotfiles/assets/wallpapers/nix-black-4k.png";
+          picture-uri = "file:///home/${config.home.username}/.dotfiles/assets/wallpapers/nix-black-4k.png";
         };
         "org/gnome/desktop/background" = {
-          picture-uri = "file:///home/faustrox/.dotfiles/assets/wallpapers/nix-black-4k.png";
-          picture-uri-dark = "file:///home/faustrox/.dotfiles/assets/wallpapers/nix-black-4k.png";
+          picture-uri = "file:///home/${config.home.username}/.dotfiles/assets/wallpapers/nix-black-4k.png";
+          picture-uri-dark = "file:///home/${config.home.username}/.dotfiles/assets/wallpapers/nix-black-4k.png";
         };
 
         # Mutter, extensions and apps on dock
@@ -84,7 +84,7 @@
           name = "Catppuccin-Mocha-Standard-Sapphire-Dark";
         };
         "org/gnome/shell/extensions/burn-my-windows" = {
-          active-profile = "/home/faustrox/.dotfiles/home/config/gnome/burn-my-windows.conf";
+          active-profile = "/home/${config.home.username}/.dotfiles/home/config/gnome/burn-my-windows.conf";
         };
         "org/gnome/shell/extensions/com/github/hermes83/compiz-windows-effect" = {
           resize-effect = true;
