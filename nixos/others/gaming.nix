@@ -11,27 +11,22 @@
 
     users.users.${config.main-user.username}.extraGroups = [ "gamemode" ];
 
-    # Xbox controllers dongle
-    hardware.xone.enable = true;
-
-    # New games for ananicy rules
-    services.ananicy.extraRules = let
-      defaultType = "Game";
-      gamesToImport = [ "isaac-ng.exe" "bms.exe" "project8.exe" "valheim.exe" "Marvel.exe" "TheGreatCircle.exe" "dontstarve_steam_x64.exe" ];
-    in map (gameName: {
-      type = defaultType;
-      name = gameName;
-    }) gamesToImport;
+    # Kernel zen version
+    boot.kernelPackages = pkgs.linuxPackages_cachyos;
 
     # SCX Scheduler
     services.scx = {
       enable = true;
+      package = pkgs.scx_git.full;
       scheduler = "scx_lavd";
       extraArgs = [
         "--performance"
         "--no-core-compaction"
       ];
     };
+    
+    # Xbox controllers dongle
+    hardware.xone.enable = true;
 
     # Setup Steam, Gamescope, gamemode
     programs = {
@@ -93,8 +88,21 @@
       kernel.sysctl = {
         "kernel.split_lock_mitigate" = 0;
 
-        "vm.max_map_count" = 2147483642;
+        "kernel.sched_cfs_bandwidth_slice_us" = 3000;
+        # Internet
+        "net.ipv4.tcp_fastopen" = 3;
+        "net.ipv4.tcp_low_latency" = 1;
+        "net.ipv4.tcp_ecn" = 1;
+        "net.ipv4.tcp_congestion_control" = "bbr";
+        "net.ipv4.tcp_fin_timeout" = 5;
 
+        # Kernel delay task accounting
+        "kernel.task_delayacct" = 1;
+
+        # Increase the compaction activity slightly
+        "vm.compaction_proactiveness" = 0;
+
+        "vm.max_map_count" = 2147483642;
         "fs.file-max" = 524288;
       };
     };

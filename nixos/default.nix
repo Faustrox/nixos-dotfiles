@@ -8,8 +8,6 @@
     ./others
     ./programs
     ./system
-
-    ./overlays.nix
   ];
 
 }

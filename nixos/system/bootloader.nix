@@ -49,6 +49,11 @@
       grub.enable = true;
     };
 
+    stylix.targets = {
+      grub.enable = false;
+      plymouth.enable = false;
+    };
+
   };
   
 }

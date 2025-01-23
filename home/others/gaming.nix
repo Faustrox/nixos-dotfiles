@@ -1,6 +1,11 @@
-{ lib, config, pkgs, inputs, ... }:
-
-{
+{ lib, config, pkgs, inputs, ... }: let
+  inherit (pkgs.stdenv.hostPlatform) system;
+  umu = inputs.umu.packages.${system}.umu.override {
+    version = inputs.umu.shortRev;
+    truststore = true;
+    cbor2 = true;
+  };
+in {
 
   options = {
     gaming.setup = 
@@ -17,7 +22,8 @@
     home.packages = with pkgs; [
 
       # Social
-      discord
+      # discord
+      vesktop
 
       # Emulators
       suyu
@@ -32,7 +38,7 @@
       prismlauncher
       heroic-unwrapped
       # arma3-unix-launcher
-      umu-launcher
+      umu
       cartridges
       rpcs3
 
@@ -42,7 +48,7 @@
       mono
 
       # Utils
-      glfw-wayland-minecraft
+      glfw-wayland
       mangohud
       goverlay
       protonup-qt
@@ -59,29 +65,26 @@
       };
 
       zsh.shellAliases = {
-        umu-launcher = "LD_BIND_NOW=1 STAGING_WRITECOPY=1 STAGING_SHARED_MEMORY=1 WINEDEBUG=-all ENABLE_VKBASALT=1 gamemoderun mangohud umu-run";
+        # umu-launcher = "LD_BIND_NOW=1 STAGING_WRITECOPY=1 STAGING_SHARED_MEMORY=1 WINEDEBUG=-all ENABLE_VKBASALT=1 gamemoderun mangohud umu-run";
         dayz-launch = "$HOME/.dotfiles/home/others/scripts/dayz-launcher.sh";
-        bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
+        # bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
       };
     };
 
     home = {
       file.".config/vkBasalt".source = ../config/vkBasalt;
       sessionVariables = {
-          STEAM_ROOT = config.gaming.steamRoot;
-          __GL_SHADER_DISK_CACHE = 1;
-          __GL_SHADER_DISK_CACHE_PATH = "$HOME/.shaders";
-          __GL_SHADER_DISK_CACHE_SIZE = "100000000000";
-          __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = 1;
-          PROTON_HIDE_NVIDIA_GPU = 0;
-          DXVK_HUD = "compiler";
-          DXVK_ASYNC = 1;
-          MANGOHUD = 1;
-          WINEESYNC = 1;
-          WINEFSYNC = 1;
-          VKD3D_CONFIG = "dxr";
-          PROTON_ENABLE_NVAPI = 1;
-          WEBKIT_DISABLE_COMPOSITING_MODE = 1; # Fixes problems for logins in Lutris and other apps
+        STEAM_ROOT = config.gaming.steamRoot;
+        DXVK_STATE_CACHE_PATH = "/home/${config.home.username}/.cache/dxvk";
+        PROTON_HIDE_NVIDIA_GPU = 0;
+        DXVK_HUD = "compiler";
+        DXVK_ASYNC = 1;
+        MANGOHUD = 1;
+        WINEESYNC = 1;
+        WINEFSYNC = 1;
+        VKD3D_CONFIG = "dxr11,dxr";
+        PROTON_ENABLE_NVAPI = 1;
+        WEBKIT_DISABLE_COMPOSITING_MODE = 1; # Fixes problems for logins in Lutris and other apps
       };
     };
   };

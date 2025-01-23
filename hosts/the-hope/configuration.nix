@@ -39,7 +39,7 @@
   main-user.enable = true;
 
   # Set up docker for nixos
-  docker.enable = true;
+  docker.enable = false;
 
   # Services
   services = {
@@ -63,16 +63,6 @@
     #     SCARF_NO_ANALYTICS = "True";
     #   };
     # };
-
-    # Import udev rules
-    udev.extraRules = builtins.readFile ./rules-file;
-    
-    # Handle Renice
-    ananicy = {
-      enable = true;
-      package = pkgs.ananicy-cpp;
-      rulesProvider = pkgs.ananicy-rules-cachyos;
-    };
   };
 
   # This value determines the NixOS release from which the default
@@ -147,6 +137,7 @@
 
   programs = {
     adb.enable = true;
+    dconf.enable = true;
     firejail.enable = true;
 
     appimage = {
@@ -161,6 +152,32 @@
         enable = true;
         dates = "daily";
         extraArgs = "--keep 5";
+      };
+    };
+  };
+
+  stylix = {
+    enable = true;
+    image = ../../assets/wallpapers/nix-black-4k.png;
+    polarity = "dark";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+    
+
+    cursor = {
+      name = "catppuccin-mocha-dark-cursors";
+      package = pkgs.catppuccin-cursors.mochaDark;
+      size = 32;
+    };
+
+    fonts = {
+      sizes.popups = 14;
+      monospace = {
+        package = pkgs.nerd-fonts.ubuntu-sans;
+        name = "UbuntuSans Nerd Font";
+      };
+      sansSerif = {
+        package = pkgs.nerd-fonts.ubuntu-sans;
+        name = "UbuntuSans Nerd Font";
       };
     };
   };

@@ -11,7 +11,7 @@
 
     services.dunst = {
       enable = true;
-      catppuccin.enable = true;
+      catppuccin.enable = false;
     };
 
   };

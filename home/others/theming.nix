@@ -17,60 +17,25 @@ in
 
   config = lib.mkIf config.theming.setup {
 
-    home.pointerCursor = {
-      name = "catppuccin-mocha-dark-cursors";
-      package = pkgs.catppuccin-cursors.mochaDark;
-      size = 24;
-      x11.enable = true;
-      gtk.enable = true;
-    };
-
-    home.sessionVariables = {
-      HYPRCURSOR_THEME = "catppuccin-mocha-dark-cursors";
-      HYPRCURSOR_SIZE = 24;
-    };
-
-    # GTK Theming
-
-    dconf = {
+    stylix.iconTheme = {
       enable = true;
-      settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
-    };
-    
-    gtk = {
-      enable = true;
-      theme =
-        let
-          cfg = {
-            flavor = "mocha";
-            accent = "sapphire";
-            size = "standard";
-            tweaks = [ "rimless" ];
-          };
-          gtkTweaks = "+" + lib.concatStringsSep "," cfg.tweaks;
-        in
-        {
-          name =
-            "catppuccin-${cfg.flavor}-${cfg.accent}-${cfg.size}"
-            + gtkTweaks;
-          package = pkgs.catppuccin-gtk.override {
-            inherit (cfg) size tweaks;
-            accents = [ cfg.accent ];
-            variant = cfg.flavor;
-          };
-        };
-      iconTheme = {
-        name = "Papirus-Dark";
-        package = pkgs.catppuccin-papirus-folders.override {
-          flavor = "mocha";
-          accent = "sapphire";
-        };
+      dark = "Papirus-Dark";
+      package = pkgs.catppuccin-papirus-folders.override {
+        flavor = "mocha";
+        accent = "sapphire";
       };
     };
 
-    # QT Theming
+    # Fix Catppuccin-cursor inconsistant size Hyprcursor (32) and XCursor (24)
+    gtk.cursorTheme = {
+      name = "catppuccin-mocha-dark-cursors";
+      size = lib.mkForce 24;
+    };
+
+    # # QT Theming
 
     home.packages = with pkgs; [
+      
       qt5.qttools
       qt6Packages.qtstyleplugin-kvantum
       libsForQt5.qtstyleplugin-kvantum
@@ -87,14 +52,9 @@ in
 
     xdg.configFile = 
     let
-      gtk4Dir = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0";
       qtDir = "${qtTheme}/share/Kvantum/${qtThemeName}";
     in
     {
-
-      "gtk-4.0/assets".source = "${gtk4Dir}/assets";
-      "gtk-4.0/gtk.css".source = "${gtk4Dir}/gtk.css";
-      "gtk-4.0/gtk-dark.css".source = "${gtk4Dir}/gtk-dark.css";
 
       "Kvantum/catppuccin/catppuccin.kvconfig".source = "${qtDir}/${qtThemeName}.kvconfig";
       "Kvantum/catppuccin/catppuccin.svg".source = "${qtDir}/${qtThemeName}.svg";

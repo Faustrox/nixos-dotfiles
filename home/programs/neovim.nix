@@ -13,7 +13,7 @@
       enable = true;
       vimAlias = true;
     };
-    catppuccin.nvim.enable = true;
+    catppuccin.nvim.enable = false;
 
     home.sessionVariables = {
       EDITOR = "nvim";

@@ -1,0 +1,223 @@
+// https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gtk/theme/Adwaita/_colors-public.scss
+@use 'colors';
+@use "sass:color";
+
+window {
+	background-color: transparent;
+}
+
+window.Bar {
+	color: colors.$text;
+	font-weight: bold;
+
+	>centerbox {
+		background: colors.$background;
+		padding: 0.4rem 1rem;
+	}
+}
+
+.Clock {
+	background-color: colors.$background;
+	color: colors.$text;
+	border-radius: 1rem;
+	padding: 0 0.9rem;
+	margin: 0.5rem 0.25rem;
+	transition: background-color 0.3s;  // Specify which property should transition
+	font-size: 1.5rem;
+
+	&:hover {
+		// Nesting hover inside .clock for better specificity
+		background-color: color.mix(colors.$surface-variant, colors.$on-surface-variant, 70%);
+	}
+}
+
+.Avatar {
+	margin: 0.4rem 1rem;
+	font-size: 2.2rem;
+	font-weight: bolder;
+	color: colors.$surface;
+	border-radius: 100%;
+	padding: 0;
+	transition: 0.3s;
+	
+	>box {
+		background-image: url("/home/faustrox/Pictures/Faustrox.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    min-height: 3rem;
+    min-width: 3.2rem;
+    border-radius: 100%;
+	}
+}
+
+.Workspaces {
+	border-radius: 1rem;
+	padding: 1.3rem 0.8rem;
+	// margin: 0 1rem;
+	background-color: colors.$background;
+}
+
+.workspace {
+	border-radius: 1rem;
+	background-color: colors.$surface-variant;
+	min-height: 1.1rem;
+	margin: 0 0.25rem;
+	padding: 0 0.3rem;
+	transition: 0.3s;
+
+	&.current {
+		background-color:  colors.$primary;
+		padding: 0 1.8rem;
+	}
+
+	&:hover {
+		background-color: color.mix(colors.$on-primary, colors.$on-surface, 70%);
+    &.current {
+        background-color: color.mix(colors.$primary, colors.$on-surface, 70%);
+    }
+	}
+}
+
+.Edge {
+	background-color: colors.$background;
+  border-radius: 0%;
+  box-shadow: 2px 0px 1px 0px colors.$light-surface-container-highest;
+
+	&.topside {
+		padding-top: 0.4rem;
+		padding-bottom: 0.4rem;
+	}
+
+	&.leftside {
+		padding-left: 0.4rem;
+		padding-right: 0.4rem;
+	}
+
+	&.rightside {
+		padding-left: 0.4rem;
+		padding-right: 0.4rem;
+	}
+}
+
+.Corner {
+	background-color: transparent;
+
+	>box {
+		background-color: transparent;
+		padding: 30px;
+		border-radius: 100%;
+
+		&.bottom-left {
+			// margin-bottom: 650px;
+			box-shadow: -25px 30px 0px 0px colors.$background;
+		}
+		&.bottom-right {
+			box-shadow: 25px 30px 0px 0px colors.$background;
+		}
+
+		&.top-left {
+      box-shadow: -29px -25px 0px 0px colors.$background;
+
+    }
+    &.top-right {
+      box-shadow: 29px -25px 0px 0px colors.$background;
+    }
+	}
+}
+
+.Indicator {
+	background-color: colors.$background;
+	border-radius: 1rem;
+	padding: 0rem 32px;  // Corrected padding syntax
+	margin: 0 0.5rem;
+	margin-right: 0rem;
+	transition: 0.3s;
+
+	>label {
+		margin: 0 0.6rem;
+		font-size: 1.5rem;
+	}
+
+	&:hover {
+		background-color: color.mix(colors.$surface-variant, colors.$on-surface-variant, 70%);
+	}
+}
+
+.indicator:hover {
+	background-color: color.mix(colors.$surface-variant, colors.$on-surface-variant, 70%);
+}
+
+.Power {
+	font-size: 2rem;
+	font-weight: bolder;
+	background-color: colors.$primary;
+	color: colors.$text;
+	border-radius: 2rem;
+	padding: 0 0.6rem;
+	margin: 0.2rem 1rem;
+	transition: 0.3s;
+
+	&:hover {
+		background-color: color.mix(colors.$primary, colors.$on-surface, 70%);
+	}
+}
+
+.Powermenu {
+
+	background-color: colors.$background;
+	box-shadow: 0 0 0 0px;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+	padding-top: 1.5rem;
+	padding-bottom: 1.5rem;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-bottom-left-radius: 3rem;
+	border-bottom-right-radius: 3rem;
+
+	&.container {
+		min-height: 4rem;
+	}
+
+}
+
+.Powermenu-entry {
+	margin: 0 0.5rem;
+
+	>button {
+		background-color: colors.$background;
+		transition: 0.3s;
+		padding: 1.2rem 1.9rem;
+		color: colors.$primary;
+		border-radius: 10rem;
+		
+		&:hover {
+			background-color: colors.$primary;
+			color: colors.$background;
+		}
+
+		>label {
+			font-size: 5rem;
+			// margin-right: 0.5rem;
+		}
+	}
+
+}
+
+.Powercorner {
+	background-color: transparent;
+	padding: 35px;
+	border-radius: 100%;
+
+	&.left {
+		margin-right: 0;
+		box-shadow: 30px -30px 0px 0px colors.$background;
+		
+	}
+	
+	&.right {
+		margin-left: 0;
+		box-shadow: -30px -30px 0px 0px colors.$background;
+	}
+}

@@ -47,7 +47,7 @@
 
     console.earlySetup = true;
     catppuccin.tty = {
-      enable = true;
+      enable = false;
       flavor = "mocha";
     };
 

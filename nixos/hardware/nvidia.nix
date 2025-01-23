@@ -15,9 +15,6 @@
       enable32Bit = true;
     };
 
-    # Kernel zen version
-    boot.kernelPackages = pkgs.linuxPackages_zen;
-
     # Load nvidia driver for Xorg and Wayland
     services.xserver.videoDrivers = [ "nvidia" ];
     boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
@@ -91,6 +88,14 @@
       LIBVA_DRIVER_NAME = "nvidia";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
       NVD_BACKEND = "direct";
+
+      __GL_SHADER_DISK_CACHE = 1;
+      __GL_SHADER_DISK_CACHE_PATH = "/home/${config.main-user.username}/.cache/nvidia";
+      __GL_SHADER_DISK_CACHE_SIZE = "100000000000";
+      __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = 1;
+      __GL_THREADED_OPTIMIZATION = 1;
+      __GL_SYNC_TO_VBLANK = 0;
+      __GL_GSYNC_ALLOWED = 1;
     };
   
   };

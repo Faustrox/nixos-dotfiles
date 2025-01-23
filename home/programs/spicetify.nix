@@ -17,4 +17,6 @@
       theme = spicetifyPkgs.themes.catppuccin;
       colorScheme = "mocha";
     };
+  
+  stylix.targets.spicetify.enable = false;
 }

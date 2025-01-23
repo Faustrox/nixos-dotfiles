@@ -9,6 +9,25 @@
     ./disko-config.nix
   ];
 
+  services.udev.extraRules = ''
+    # SteelSeries Aerox 3 Wireless (wired mode)
+    SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="183a", MODE="0666"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="183a", MODE="0666"
+
+    # SteelSeries Aerox 3 Wireless (2.4 GHz wireless mode)
+    SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="1838", MODE="0666"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="1838", MODE="0666"
+
+    # HDD
+    ACTION=="add|change", KERNEL=="sd[a-z]*", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+
+    # SSD
+    ACTION=="add|change", KERNEL=="sd[a-z]*|mmcblk[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
+
+    # NVMe SSD
+    ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
+  '';
+
   boot = {
 
     supportedFilesystems = [ "ntfs" ];
@@ -21,13 +40,29 @@
     kernelParams = [ "amd_pstate=active" ];
 
     kernel.sysctl = {
-      "vm.swappiness" = 10;
-      "vm.watermark_boost_factor" = 0;
-      "vm.watermark_scale_factor" = 125;
+
+      # Memory
+			# Disable swap read ahead, increases latency when dealing with swap and it's rather meaningless when using zram+zstd anyway
+			"vm.page-cluster" = 0;
+			# Hugepages configuration, mostly for xmrig
+			# Not needed anymore
+			"vm.nr_hugepages" = 25;
+			"vm.nr_overcommit_hugepages" = 150;
+			# Prefer to keep filesystem cache memory over application memory
+			"vm.vfs_cache_pressure" = 75;
+			# Proper swappiness
+			"vm.swappiness" = 200;
+			# Best value, according to phoronix
+			"vm.page_lock_unfairness" = 3;
+			# Disable watermark boosting
+			"vm.watermark_boost_factor" = 0; # Needed when not using the zen-kernel
+			# Increase kswapd activity
+			# When free memory is less than 1.5%, make kswapd kick in.
+			# https://unix.stackexchange.com/a/679203
+			"vm.watermark_scale_factor" = 75;
+
       "vm.dirty_background_ratio" = 1;
       "vm.dirty_ratio" = 50;
-      "vm.page-cluster" = 0;
-      "vm.vfs_cache_pressure" = 500;
 
       "kernel.nmi_watchdog" = 0;
     };

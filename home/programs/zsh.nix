@@ -114,7 +114,7 @@
       };
     };
 
-    catppuccin.bat.enable = true;
+    catppuccin.bat.enable = false;
 
 
     home.packages = with pkgs; [

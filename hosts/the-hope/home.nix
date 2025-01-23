@@ -1,13 +1,13 @@
-{ config, pkgs, inputs, ... }:
+{ lib, config, pkgs, ... }:
 
 {
 
   catppuccin = {
     flavor = "mocha";
     accent = "sapphire";
-    btop.enable = true;
-    kitty.enable = true;
-    rofi.enable = true;
+    btop.enable = false;
+    kitty.enable = false;
+    # rofi.enable = true;
   };
 
   # --- Home Manager Settings ---
@@ -36,9 +36,9 @@
   wlogout.setup = true;
   zsh.setup = true;
 
-  programs = {
-    vscode.enable = true;
+  stylix.targets.vscode.enable = false;
 
+  programs = {
     btop = {
       enable = true;
       package = pkgs.btop.override { cudaSupport = true; };
@@ -52,6 +52,10 @@
     };
     kitty = {
       enable = true;
+      font = {
+        name = lib.mkForce "Hack Nerd Font";
+        package = lib.mkForce pkgs.nerd-fonts.hack;
+      };
       shellIntegration.enableZshIntegration = true;
     };
     obs-studio = {
@@ -59,7 +63,7 @@
       plugins = with pkgs.obs-studio-plugins; [ droidcam-obs ]; 
     };
     rofi = {
-      enable = true;
+      enable = false;
     };
   };
   
@@ -88,6 +92,7 @@
     google-chrome
 
     # Developer
+    vscode-fhs
     nodejs_20
     yarn
     python3
@@ -102,11 +107,11 @@
     httpie
     vrrtest
     qalculate-gtk
-    dconf
     jq
     usbimager
     gpu-screen-recorder
     gpu-screen-recorder-gtk
+    kdePackages.kruler
 
     # Design
     gimp
@@ -114,6 +119,7 @@
 
     # Others
     uget
+    libnotify
     
   ];
 

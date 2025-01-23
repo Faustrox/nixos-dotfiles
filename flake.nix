@@ -3,8 +3,12 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     catppuccin.url = "github:catppuccin/nix";
+    stylix.url = "github:danth/stylix";
+    ags.url = "github:Aylur/ags";
     hyprpanel.url = "github:Jas-SinghFSU/HyprPanel";
+    umu.url = "github:Open-Wine-Components/umu-launcher?dir=packaging/nix";
 
     disko = {
       url = "github:nix-community/disko";
@@ -43,18 +47,13 @@
 
     originPkgs = inputs.nixpkgs.legacyPackages.${system};
     pkgsPatches = [
-      
       # {
-      #   url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/355948.diff";
-      #   sha256 = "lUYQTydR/jCyspOfoGrVpKSYujJSPZh9e6lmaOc0PQQ=";  
+      #   url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/368117.diff"; # suyu
+      #   sha256 = "Pjt8lgBZnxkaduoaFJ54lGROvz1SRn6H+v6znmy1p3Q=";  
       # }
       {
-        url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/369259.diff"; # umu-launcher
-        sha256 = "Wigt5CMRrPVGR5foeYPFW+qi3xzdNeqnEhR1/zzaQOI=";  
-      }
-      {
-        url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/368117.diff"; # suyu
-        sha256 = "uCKO6nbEK+pJtTsy+vLoEUXE8vKf8mDpS+JyMTLYP44=";  
+        url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/371640.diff"; # suitesparse fix
+        sha256 = "S4zTab4Mpsr3if4CANbeEUaEWcVTxTONbHKojIK7XZ4=";  
       }
     ];
     patchedNixpkgs = originPkgs.applyPatches {
@@ -76,11 +75,14 @@
         modules = [
           ./hosts/the-hope/configuration.nix
           ./nixos
+          ./overlays.nix
           inputs.home-manager.nixosModules.home-manager
+          inputs.chaotic.nixosModules.default
           # inputs.lix-module.nixosModules.default
           inputs.catppuccin.nixosModules.catppuccin
           inputs.spicetify-nix.nixosModules.default
           inputs.disko.nixosModules.disko
+          inputs.stylix.nixosModules.stylix
           {
             home-manager = {
 
@@ -94,9 +96,12 @@
                   imports = [
                     ./hosts/the-hope/home.nix
                     ./home
+                    inputs.chaotic.homeManagerModules.default
                     inputs.hyprland.homeManagerModules.default
                     inputs.catppuccin.homeManagerModules.catppuccin
                     inputs.spicetify-nix.homeManagerModules.default
+                    inputs.ags.homeManagerModules.default
+                    # inputs.hyprpanel.homeManagerModules.hyprpanel
                   ];
                 };
               };
