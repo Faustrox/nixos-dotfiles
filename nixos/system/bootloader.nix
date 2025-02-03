@@ -35,7 +35,7 @@
         grub = {
           enable = true;
           configurationLimit = 5;
-          gfxmodeEfi = "1920x1080";
+          gfxmodeEfi = "2560x1440";
           efiSupport = true;
           efiInstallAsRemovable = true;
           useOSProber = false;

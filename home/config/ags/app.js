@@ -7,6 +7,6 @@ App.start({
     css: style,
     main() {
         App.get_monitors().map(Bar)
-        App.get_monitors().map(PowerMenu)
+        PowerMenu(1)
     },
 })

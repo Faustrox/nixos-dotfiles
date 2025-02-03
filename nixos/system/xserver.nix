@@ -19,6 +19,7 @@
     services.xserver = {
       # Enable the X11 windowing system.
       enable = config.xserver.enable;
+      exportConfiguration = true;
       # Configure keymap in X11
       xkb.layout = config.xserver.keymap.layout;
       xkb.variant =  config.xserver.keymap.variant;
@@ -27,7 +28,7 @@
       # Remove Xterm
       excludePackages = [ pkgs.xterm ];
       desktopManager.xterm.enable = false;
-      displayManager.lightdm.enable = false;
+      displayManager.lightdm.enable = lib.mkForce false;
     };
 
 

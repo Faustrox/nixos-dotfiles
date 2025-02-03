@@ -18,6 +18,7 @@ in
 
     programs = {
       uwsm.enable = true;
+      ssh.startAgent = true;
       hyprland = {
         enable = true;
         withUWSM  = true;
@@ -27,7 +28,11 @@ in
       };
     };
 
-    services.gvfs.enable = true;
+    services = {
+      gnome.gnome-keyring.enable = true;
+      gvfs.enable = true;
+    };
+    security.pam.services.gdm.enableGnomeKeyring = true;
 
     # Xwayland VRAM usage fix on Nvidia GPU
     environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-hyprland.txt".text = ''
@@ -56,20 +61,22 @@ in
     '';
 
     environment.sessionVariables = {
-      NIXOS_OZONE_WL = "1";
+      NIXOS_OZONE_WL = 1;
       ELECTRON_OZONE_PLATFORM_HINT = "auto";
-      MOZ_ENABLE_WAYLAND = "1";
-      MOZ_DBUS_REMOTE = "1";
+      MOZ_ENABLE_WAYLAND = 1;
+      MOZ_DBUS_REMOTE = 1;
 
-      GDK_BACKEND = "wayland,x11,*";
-      QT_QPA_PLATFORM = "wayland;xcb";
+      GDK_BACKEND = "wayland";
+      QT_QPA_PLATFORM = "wayland";
       SDL_VIDEODRIVER = "wayland";
       CLUTTER_BACKEND = "wayland";
+      
+      QT_AUTO_SCREEN_SCALE_FACTOR = 1;
+      QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
+
       XDG_CURRENT_DESKTOP = "Hyprland";
       XDG_SESSION_TYPE = "wayland";
       XDG_SESSION_DESKTOP = "Hyprland";
-      QT_AUTO_SCREEN_SCALE_FACTOR = 1;
-      QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
     };
     
   };

@@ -37,6 +37,7 @@ in {
           webkitgtk
           accountsservice
           inputs.ags.packages.${pkgs.system}.hyprland
+          inputs.ags.packages.${pkgs.system}.notifd
         ];
       };
       wofi.enable = false;
@@ -45,7 +46,7 @@ in {
         configDir = ../config/eww;
       };
       zsh.shellAliases = {
-        eww-start = "$HOME/.dotfiles/home/others/scripts/eww-start.sh";
+        # eww-start = "$HOME/.dotfiles/home/others/scripts/eww-start.sh";
         ags-start = "$HOME/.scripts/start.sh";
       };
     };

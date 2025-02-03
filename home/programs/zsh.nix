@@ -84,7 +84,7 @@
           nixos-boot = "nh os boot";
           nixos-switch-update = "nh os switch --update";
           nixos-boot-update = "nh os boot --update";
-          nixos-clean = "nh clean all --keep 5";
+          nixos-clean = "nh clean all --keep 3";
         };
       };
 

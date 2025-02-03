@@ -26,6 +26,27 @@
 
     # NVMe SSD
     ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
+
+    TEST!="/dev/zram0", GOTO="zram_end"
+
+    # When used with ZRAM, it is better to prefer page out only anonymous pages,
+    # because it ensures that they do not go out of memory, but will be just
+    # compressed. If we do frequent flushing of file pages, that increases the
+    # percentage of page cache misses, which in the long term gives additional
+    # cycles to re-read the same data from disk that was previously in page cache.
+    # This is the reason why it is recommended to use high values from 100 to keep
+    # the page cache as hermetic as possible, because otherwise it is "expensive"
+    # to read data from disk again. At the same time, uncompressing pages from ZRAM
+    # is not as expensive and is usually very fast on modern CPUs.
+    SYSCTL{vm.swappiness}="150"
+
+    LABEL="zram_end"
+
+    # SATA Active Link Power Management
+    ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", \
+        ATTR{link_power_management_policy}=="*", \
+        ATTR{link_power_management_policy}="max_performance"
+    
   '';
 
   boot = {
@@ -49,9 +70,18 @@
 			"vm.nr_hugepages" = 25;
 			"vm.nr_overcommit_hugepages" = 150;
 			# Prefer to keep filesystem cache memory over application memory
-			"vm.vfs_cache_pressure" = 75;
+			"vm.vfs_cache_pressure" = 50;
 			# Proper swappiness
-			"vm.swappiness" = 200;
+			"vm.swappiness" = 100;
+      # Contains, as bytes, the number of pages at which a process which is
+      # generating disk writes will itself start writing out dirty data.
+      "vm.dirty_bytes" = 268435456;
+      # Contains, as bytes, the number of pages at which the background kernel
+      # flusher threads will start writing out dirty data.
+      "vm.dirty_background_bytes" = 67108864;
+      # The kernel flusher threads will periodically wake up and write old data out to disk.  This
+      # tunable expresses the interval between those wakeups, in 100'ths of a second (Default is 500).
+      "vm.dirty_writeback_centisecs" = 1500;
 			# Best value, according to phoronix
 			"vm.page_lock_unfairness" = 3;
 			# Disable watermark boosting
@@ -64,14 +94,17 @@
       "vm.dirty_background_ratio" = 1;
       "vm.dirty_ratio" = 50;
 
-      "kernel.nmi_watchdog" = 0;
     };
   };
 
   services.fstrim.enable = lib.mkDefault true;
-  services.system76-scheduler.enable = true;
 
-  zramSwap.enable = true;
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd lz4 (type=huge)";
+    memoryPercent = 100;
+    priority = 100;
+  };
 
   fileSystems."/mnt/games" =
     { device = "/dev/disk/by-uuid/df022cf4-ed2f-4883-8da1-b5161367a8ea";

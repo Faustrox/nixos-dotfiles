@@ -47,10 +47,6 @@
 
     originPkgs = inputs.nixpkgs.legacyPackages.${system};
     pkgsPatches = [
-      # {
-      #   url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/368117.diff"; # suyu
-      #   sha256 = "Pjt8lgBZnxkaduoaFJ54lGROvz1SRn6H+v6znmy1p3Q=";  
-      # }
       {
         url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/371640.diff"; # suitesparse fix
         sha256 = "S4zTab4Mpsr3if4CANbeEUaEWcVTxTONbHKojIK7XZ4=";  

@@ -18,14 +18,14 @@ function PowerMenuEntry({icon, onClick}) {
   )
 }
 
-export default function PowerMenu() {
+export default function PowerMenu(monitor = 0) {
   const { TOP } = Astal.WindowAnchor
   const isMenuVisible = bind(open_powermenu).as((value) => value)
 
   return (
     <window
       visible={true}
-      monitor={0}
+      monitor={monitor}
       anchor={TOP}
       application={App}
     >
@@ -43,9 +43,9 @@ export default function PowerMenu() {
             valign="center" 
             halign="center"
             >
-            <PowerMenuEntry icon='󰐥' onClick='' />
-            <PowerMenuEntry icon='󰜉' onClick='' />
-            <PowerMenuEntry icon='󰗼' onClick='' />
+            <PowerMenuEntry icon='󰐥' onClick='systemctl poweroff' />
+            <PowerMenuEntry icon='󰜉' onClick='systemctl reboot' />
+            <PowerMenuEntry icon='󰗼' onClick='uwsm stop' />
             <PowerMenuEntry icon='󰅖' onClick={() => open_powermenu.set(false)} />
           </box>
           <box

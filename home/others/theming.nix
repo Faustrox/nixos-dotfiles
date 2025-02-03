@@ -68,6 +68,13 @@ in
 
     };
 
+    home.sessionVariables = {
+      XCURSOR_THEME = "catppuccin-mocha-dark-cursors";
+      XCURSOR_SIZE = 24;
+      HYPRCURSOR_THEME = "catppuccin-mocha-dark-cursors";
+      HYPRCURSOR_SIZE = 32;
+    };
+
   };
 
 }

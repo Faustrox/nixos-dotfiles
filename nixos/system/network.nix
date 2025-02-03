@@ -24,7 +24,7 @@
       firewall.enable = true;
       networkmanager = {
         enable = true;
-        dns = "dnsmasq";
+        dns = "systemd-resolved";
       };
       nameservers = [
         "1.1.1.1"
@@ -35,7 +35,9 @@
       };
     };
 
-    services.dnsmasq.enable = true;
+    systemd.services.systemd-networkd-wait-online.enable = lib.mkForce false;
+
+    services.resolved.enable = true;
 
   };
 

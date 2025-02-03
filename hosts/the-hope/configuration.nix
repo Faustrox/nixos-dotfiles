@@ -43,6 +43,7 @@
 
   # Services
   services = {
+    dbus.implementation = "broker";
     # Handle process when out of memory
     earlyoom.enable = true;
 
@@ -63,6 +64,27 @@
     #     SCARF_NO_ANALYTICS = "True";
     #   };
     # };
+  };
+
+  systemd = {
+    extraConfig = ''
+      [Manager]
+      DefaultLimitNOFILE=2048:2097152
+      [Time]
+      NTP=time.cloudflare.com
+      FallbackNTP=time.google.com 0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org
+    '';
+    user.extraConfig = ''
+      [Manager]
+      DefaultLimitNOFILE=1024:1048576
+    '';
+    tmpfiles.rules = [
+      "w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise"
+      "w! /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none - - - - 409"
+      "w! /sys/class/rtc/rtc0/max_user_freq - - - - 3072"
+      "w! /proc/sys/dev/hpet/max-user-freq  - - - - 3072"
+      "d /var/lib/systemd/coredump 0755 root root 3d"
+    ];
   };
 
   # This value determines the NixOS release from which the default
@@ -151,7 +173,7 @@
       clean = {
         enable = true;
         dates = "daily";
-        extraArgs = "--keep 5";
+        extraArgs = "--keep 3";
       };
     };
   };
@@ -170,7 +192,9 @@
     };
 
     fonts = {
+      sizes.applications = 12;
       sizes.popups = 14;
+      sizes.terminal = 12;
       monospace = {
         package = pkgs.nerd-fonts.ubuntu-sans;
         name = "UbuntuSans Nerd Font";

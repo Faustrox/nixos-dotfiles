@@ -14,9 +14,9 @@
         hidePodcasts
         shuffle # shuffle+ (special characters are sanitized out of extension names)
       ];
-      theme = spicetifyPkgs.themes.catppuccin;
-      colorScheme = "mocha";
+      # theme = spicetifyPkgs.themes.catppuccin;
+      # colorScheme = "mocha";
     };
   
-  stylix.targets.spicetify.enable = false;
+  stylix.targets.spicetify.enable = true;
 }
