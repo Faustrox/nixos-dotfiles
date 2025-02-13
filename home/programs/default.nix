@@ -1,11 +1,11 @@
-{ lib, ... }:
+{ ... }:
 
 {
 
   imports = [
     ./dunst.nix
     ./git.nix
-    ./neovim.nix
+    ./nvf.nix
     ./spicetify.nix
     ./waybar.nix
     ./wlogout.nix

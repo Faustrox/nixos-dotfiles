@@ -34,39 +34,39 @@ in
 
     # # QT Theming
 
-    home.packages = with pkgs; [
-      
-      qt5.qttools
-      qt6Packages.qtstyleplugin-kvantum
-      libsForQt5.qtstyleplugin-kvantum
+    # home.packages = with pkgs; [
+    #   
+    #   qt5.qttools
+    #   qt6Packages.qtstyleplugin-kvantum
+    #   libsForQt5.qtstyleplugin-kvantum
 
-      qtTheme
+    #   qtTheme
 
-    ];
+    # ];
 
-    qt = {
-      enable = true;
-      platformTheme.name = "kvantum";
-      style.name = "kvantum";
-    };
+    # qt = {
+    #   enable = true;
+    #   platformTheme.name = lib.mkForce "kvantum";
+    #   style.name = lib.mkForce "kvantum";
+    # };
 
-    xdg.configFile = 
-    let
-      qtDir = "${qtTheme}/share/Kvantum/${qtThemeName}";
-    in
-    {
+    # xdg.configFile = 
+    # let
+    #   qtDir = "${qtTheme}/share/Kvantum/${qtThemeName}";
+    # in
+    # {
 
-      "Kvantum/catppuccin/catppuccin.kvconfig".source = "${qtDir}/${qtThemeName}.kvconfig";
-      "Kvantum/catppuccin/catppuccin.svg".source = "${qtDir}/${qtThemeName}.svg";
-      "Kvantum/kvantum.kvconfig".text = "theme=catppuccin";
+    #   "Kvantum/catppuccin/catppuccin.kvconfig".source = "${qtDir}/${qtThemeName}.kvconfig";
+    #   "Kvantum/catppuccin/catppuccin.svg".source = "${qtDir}/${qtThemeName}.svg";
+    #   "Kvantum/kvantum.kvconfig".text = "theme=catppuccin";
 
-      "kdeglobals".source = "${(pkgs.catppuccin-kde.override {
-        flavour = ["mocha"];
-        accents = ["sapphire"];
-        winDecStyles = ["modern"];
-      })}/share/color-schemes/catppuccinmochasapphire.colors";
+    #   "kdeglobals".source = "${(pkgs.catppuccin-kde.override {
+    #     flavour = ["mocha"];
+    #     accents = ["sapphire"];
+    #     winDecStyles = ["modern"];
+    #   })}/share/color-schemes/catppuccinmochasapphire.colors";
 
-    };
+    # };
 
     home.sessionVariables = {
       XCURSOR_THEME = "catppuccin-mocha-dark-cursors";

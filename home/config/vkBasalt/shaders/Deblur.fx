@@ -33,7 +33,7 @@ uniform float DBL < __UNIFORM_SLIDER_FLOAT1
 	ui_min = 1.0; ui_max = 9.0;
 	ui_label = "Deblur Strength";
 	ui_tooltip = "Deblur Strength";
-> = 6.0; 
+> = 1.5; 
 
 uniform float SMART < __UNIFORM_SLIDER_FLOAT1
 	ui_min = 0.0; ui_max = 1.0;

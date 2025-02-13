@@ -103,6 +103,7 @@ export default function Bar(gdkmonitor) {
 			<window
 				className="Corner"
 				visible
+			  layer={Astal.Layer.BACKGROUND}
 				gdkmonitor={gdkmonitor}
 				anchor={BOTTOM | LEFT}
 			>
@@ -111,7 +112,8 @@ export default function Bar(gdkmonitor) {
 			<window
 				className="Corner"
 				visible
-				gdkmonitor={gdkmonitor}
+			  layer={Astal.Layer.BACKGROUND}
+        gdkmonitor={gdkmonitor}
 				anchor={BOTTOM | RIGHT}
 			>
 				<box className="bottom-right"/>
@@ -119,6 +121,7 @@ export default function Bar(gdkmonitor) {
 			<window
 				className="Corner"
 				visible
+        layer={Astal.Layer.BACKGROUND}
 				gdkmonitor={gdkmonitor}
 				anchor={TOP | LEFT}
 			>
@@ -127,7 +130,8 @@ export default function Bar(gdkmonitor) {
 			<window
 				className="Corner"
 				visible
-				gdkmonitor={gdkmonitor}
+				layer={Astal.Layer.BACKGROUND}
+        gdkmonitor={gdkmonitor}
 				anchor={TOP | RIGHT}
 			>
 				<box className="top-right"/>

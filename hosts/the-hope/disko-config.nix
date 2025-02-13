@@ -14,7 +14,7 @@
             ESP = {
               priority = 1;
               name = "ESP";
-              size = "512M";
+              size = "1G";
               type = "EF00";
               content = {
                 type = "filesystem";
@@ -46,11 +46,11 @@
                     mountpoint = "/var/tmp";
                     mountOptions = [ "compress=zstd" "noatime" "discard=async" ];
                   };
-                  "@/swap" = {
-                    mountpoint = "/swap";
-                    mountOptions = ["noatime" "nodatacow" "nodatasum" "discard=async"];
-                    # swap.swapfile.size = "24G";
-                  };
+                 # "@/swap" = {
+                 #   mountpoint = "/swap";
+                 #   mountOptions = ["noatime" "nodatacow" "nodatasum" "discard=async"];
+                 #   swap.swapfile.size = "24G";
+                 # };
                 };
               };
             };

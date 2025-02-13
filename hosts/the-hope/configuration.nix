@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
 
@@ -17,6 +17,7 @@
   # Optimize store
   nix.optimise.automatic = true;
   nix.settings.auto-optimise-store = true;
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -147,7 +148,7 @@
     # Other
     zenity
     sway
-
+    nixd
     cpuset
 
   ];
@@ -180,7 +181,7 @@
 
   stylix = {
     enable = true;
-    image = ../../assets/wallpapers/nix-black-4k.png;
+    image = ../../assets/wallpapers/nix-catppuccin-alt.png;
     polarity = "dark";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
     

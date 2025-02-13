@@ -1,9 +1,8 @@
-{ lib, config, pkgs, inputs, ... }: 
+{ inputs, ... }: 
 
 {
 
   nixpkgs.overlays = [
-    inputs.hyprpanel.overlay
     inputs.nvidia-patch.overlays.default
   ];
 

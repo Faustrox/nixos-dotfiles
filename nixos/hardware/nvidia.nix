@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, ... }:
 
 {
 
@@ -71,6 +71,10 @@
     nixpkgs.config.nvidia.acceptLicense = true;
     # nixpkgs.config.cudaSupport = true;
     # hardware.nvidia-container-toolkit.enable = true;
+
+    systemd.tmpfiles.rules = [
+        "d /home/${config.main-user.username}/.cache/nvidia 0770 ${config.main-user.username} users -"
+    ];
 
     environment.variables = {
       GBM_BACKEND = "nvidia-drm";

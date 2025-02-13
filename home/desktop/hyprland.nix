@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
 
@@ -41,19 +41,19 @@
           "$HOME/.config/hypr/themes/mocha.conf"
         ];
         monitor = [
-          "DP-1, highres, 1920x0, 1, vrr, 2, bitdepth, 8"
+          "DP-1, highres, 1930x0, 1, vrr, 2"
           "DP-2, highres, 0x360, 1"
         ];
 
         exec-once = [
           "uwsm app -- swww-daemon"
+          "swww img $HOME/Pictures/Wallpapaer/nix-catppuccin-alt.png"
           "uwsm app -- clipse --listen & wl-clip-persist --clipboard regular"
           "$HOME/.config/hypr/scripts/vrr-workaround.sh"
           "sleep 3 && $HOME/.scripts/start.sh"
 
           "[workspace 1 silent] uwsm app -- firefox"
           "[workspace 5 silent] uwsm app -- telegram-desktop"
-          "[workspace 5 silent] uwsm app -- firefoxpwa site launch 01JHYC1SG0EHMC6QK9EGM6FXFM"
 
           "sleep 5 && xrandr --output DP-1 --primary"
         ];
@@ -76,7 +76,7 @@
           # Set to true enable resizing windows by clicking and dragging on borders and gaps
           resize_on_border = false;
           allow_tearing = true;
-          layout = "dwindle";
+          layout = "master";
 
         };
 
@@ -102,7 +102,6 @@
             size = 9;
             passes = 4;
             new_optimizations = true;
-            vibrancy = 0.1696;
 
           };
         };
@@ -136,6 +135,12 @@
 
         };
 
+        master = {
+        
+          allow_small_split = true;
+
+        };
+
         #############
         ### INPUT ###
         #############
@@ -158,8 +163,10 @@
 
           enable_hyprcursor = true;
           inactive_timeout = 3;
-          no_break_fs_vrr = 2;
+          no_break_fs_vrr = 1;
           min_refresh_rate = 48;
+          no_hardware_cursors = 1;
+          use_cpu_buffer = 0;
 
         };
 
@@ -172,28 +179,28 @@
           force_default_wallpaper = 0; # Set to 0 or 1 to disable the anime mascot wallpapers
           disable_hyprland_logo = true; # If true disables the random hyprland logo / anime girl background. :(
           animate_manual_resizes = true;
-          vfr = false;
+          vfr = 1;
+          close_special_on_empty = false;
 
         };
 
         render = {
 
-          # explicit_sync = 0;
-          # explicit_sync_kms = 0;
+          explicit_sync = 2;
+          explicit_sync_kms = 2;
           direct_scanout = 0;
         
         };
-        # opengl.nvidia_anti_flicker = false;
+        #opengl.nvidia_anti_flicker = false;
 
-        # xwayland = {
-        #   force_zero_scaling = true;
-        # };
+        xwayland = {
+          force_zero_scaling = true;
+        };
 
         ecosystem = {
           no_update_news = true;
           no_donation_nag = true;
         };
-
       };
     };
 
@@ -244,44 +251,6 @@
 
       ];
     };
-
-
-    # systemd.user.services = lib.mkIf config.programs.hyprpanel.systemd.enable {
-    #   hyprpanel = {
-    #     Unit = {
-    #       Description = "A Bar/Panel for Hyprland with extensive customizability.";
-    #       Documentation = "https://hyprpanel.com";
-    #       PartOf = [ "graphical-session.target" ];
-    #       After = [ "graphical-session-pre.target" ];
-    #     };
-    #     Service = {
-    #       ExecStart = "${pkgs.hyprpanel}/bin/hyprpanel";
-    #       ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR1 $MAINPID";
-    #       Restart = "on-failure";
-    #       KillMode = "mixed";
-    #     };
-    #     Install = { WantedBy = [ "graphical-session.target" ]; };
-    #   };
-    # };
-
-  
-    # systemd.user.services = lib.mkIf config.programs.hyprpanel.systemd.enable {
-    #   hyprpanel = {
-    #     Unit = {
-    #       Description = "A Bar/Panel for Hyprland with extensive customizability.";
-    #       Documentation = "https://hyprpanel.com";
-    #       PartOf = [ "graphical-session.target" ];
-    #       After = [ "graphical-session-pre.target" ];
-    #     };
-    #     Service = {
-    #       ExecStart = "${pkgs.hyprpanel}/bin/hyprpanel";
-    #       ExecReload = "${pkgs.coreutils}/bin/kill -SIGUSR1 $MAINPID";
-    #       Restart = "on-failure";
-    #       KillMode = "mixed";
-    #     };
-    #     Install = { WantedBy = [ "graphical-session.target" ]; };
-    #   };
-    # };
 
     catppuccin.fuzzel.enable = false;
 

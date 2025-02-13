@@ -32,11 +32,16 @@
   # --- Programs Settings ---
 
   git.setup = true;
-  neovim.setup = true;
+  nvf.setup = true;
   wlogout.setup = true;
   zsh.setup = true;
 
-  stylix.targets.vscode.enable = false;
+
+  stylix = {
+    enable = true;
+    image = ../../assets/wallpapers/nix-catppuccin-alt.png;
+    targets.vscode.enable = false;
+  };
 
   programs = {
     btop = {
@@ -51,12 +56,16 @@
       nativeMessagingHosts = with pkgs; [ uget-integrator firefoxpwa ];
     };
     kitty = {
-      enable = true;
+      enable = true; 
+      shellIntegration.enableZshIntegration = true;
+      
+      settings = {
+        cursor_trail = 3;
+      };
       font = {
         name = lib.mkForce "Hack Nerd Font";
         package = lib.mkForce pkgs.nerd-fonts.hack;
       };
-      shellIntegration.enableZshIntegration = true;
     };
     obs-studio = {
       enable = false;
@@ -122,6 +131,12 @@
     libnotify
     
   ];
+
+  home.file = {
+    "Pictures/Wallpapers/nix-catppuccin-alt.png".source = ../../assets/wallpapers/nix-catppuccin-alt.png;
+    "Pictures/Wallpapers/nix-catppuccin-sapphire.png".source = ../../assets/wallpapers/nix-catppuccin-sapphire.png;
+    "Pictures/${config.home.username}.jpg".source = ../../assets/Faustrox.jpg;
+  };
 
   xdg = {
     enable = true;

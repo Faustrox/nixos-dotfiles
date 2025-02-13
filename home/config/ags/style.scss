@@ -41,7 +41,7 @@ window.Bar {
 	transition: 0.3s;
 	
 	>box {
-		background-image: url("/home/faustrox/Pictures/Faustrox.jpg");
+		background-image: url("/home/faustrox/Pictures/faustrox.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -220,4 +220,65 @@ window.Bar {
 		margin-left: 0;
 		box-shadow: -30px -30px 0px 0px colors.$background;
 	}
+}
+
+.Notification {
+
+  &.info {
+    background-color: colors.$background;
+    min-width: 500px;
+    padding: 1rem;
+    margin: 1rem;
+    margin-bottom: 0;
+    border-radius: 1rem;
+  }
+
+  &.image {
+    margin-right: 1rem;
+    border-radius: 1rem;
+    min-width: 100px;
+    min-height: 100px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  &.app {
+    font-weight: normal;
+    color: colors.$on-surface-variant
+  }
+
+  &.summary {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  &.body {
+    color: colors.$on-surface-variant;
+    font-weight: normal;
+  }
+
+  &.action {
+    &:hover {
+      background-color: color.mix(colors.$surface-variant, colors.$surface-variant, 70%);
+    }
+  }
+
+  &.action-box {
+    margin-left: 0.25rem;
+    margin-bottom: 1rem;
+  }
+
+  &.close {
+    background-color: colors.$background;
+    color: colors.$on-surface;
+    font-size: 1.2rem;
+    border-radius: 1rem;
+    padding: 0.25rem 0.55rem;
+    transition: 0.3s;
+
+    &:hover {
+      background-color: color.mix(colors.$surface-variant, colors.$on-surface-variant, 70%);
+    }
+  }
+
 }

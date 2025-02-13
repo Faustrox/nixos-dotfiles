@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
 
@@ -136,6 +136,14 @@
           }
           {
             name = "Spider-Man2.exe";
+            type = "Game";
+          }
+          {
+            name = "mgsvtpp.exe";
+            type = "Game";
+          }
+          {                       
+            name = "KingdomCome.exe";
             type = "Game";
           }
         ];

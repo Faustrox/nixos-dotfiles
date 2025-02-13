@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 {
   
@@ -22,7 +22,7 @@
     programs = {
       git = {
         enable = true;
-        userName  = config.git.userName;
+        userName = config.git.userName;
         userEmail = config.git.userEmail;
 
         aliases = {

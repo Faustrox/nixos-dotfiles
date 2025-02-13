@@ -1,13 +1,6 @@
-{ config, lib, pkgs, inputs, ... }: let
+{ config, lib, pkgs, inputs, ... }:
 
-  hyprclouds = pkgs.fetchFromGitHub {
-    owner = "arfan-on-clouds";
-    repo = "hyprclouds";
-    rev = "main";
-    sha256 = "7TQZ0YivAIbi2w5GdrfDyosx7tGzlCdVPI+gK1jn5SM=";
-  };
-
-in {
+{
 
   options = {
     hyprclouds.enable = 

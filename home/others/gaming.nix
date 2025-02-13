@@ -1,10 +1,6 @@
-{ lib, config, pkgs, inputs, ... }: let
-  inherit (pkgs.stdenv.hostPlatform) system;
-  umu = inputs.umu.packages.${system}.umu.override {
-    withTruststore = true;
-    withDeltaUpdates = true;
-  };
-in {
+{ lib, config, pkgs, ... }:
+ 
+{
 
   options = {
     gaming.setup = 
@@ -16,7 +12,7 @@ in {
     home.packages = with pkgs; [
 
       # Social
-      discord
+      # discord
       # vesktop
 
       # Emulators
@@ -37,7 +33,7 @@ in {
       rpcs3
 
       # Wine
-      wineWowPackages.stable
+      wineWowPackages.stableFull
       winetricks
       mono
 
@@ -52,6 +48,12 @@ in {
     ];
 
     programs = {
+      nixcord = {
+        enable = true;
+        discord.vencord.package = pkgs.vencord;
+        config.frameless = true;
+      };
+
       mangohud = {
         enable = true;
         settings = {
@@ -92,8 +94,8 @@ in {
           winesync = true;
           vkbasalt = true;
           #offset=-3
-          vsync = 2;
-          gl_vsync = 1;
+          vsync = 1;
+          gl_vsync = 0;
         };
       };
       java = {
@@ -104,7 +106,7 @@ in {
       zsh.shellAliases = {
         # umu-launcher = "LD_BIND_NOW=1 STAGING_WRITECOPY=1 STAGING_SHARED_MEMORY=1 WINEDEBUG=-all ENABLE_VKBASALT=1 gamemoderun mangohud umu-run";
         dayz-launch = "$HOME/.dotfiles/home/others/scripts/dayz-launcher.sh";
-        bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
+        # bdiscord-install = "nix run nixpkgs#betterdiscordctl install";
       };
     };
 
