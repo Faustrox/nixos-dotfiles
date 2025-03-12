@@ -33,8 +33,13 @@
     users.users.${config.main-user.username} = {
       isNormalUser = true;
       description = config.main-user.username;
-      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" "kvm" "adbusers" "firejail" ];
+      extraGroups = [ "networkmanager" "wheel" "audio" "gamemode" "i2c" "kvm" "adbusers" "firejail" ];
       shell = pkgs.zsh;
+    };
+
+    programs.neovim = {
+      enable = true;
+      defaultEditor = true;
     };
 
     services.getty.autologinUser = config.main-user.username;
@@ -46,10 +51,10 @@
     };
 
     console.earlySetup = true;
-    catppuccin.tty = {
-      enable = false;
-      flavor = "mocha";
-    };
+    # catppuccin.tty = {
+    #   enable = false;
+    #   flavor = "mocha";
+    # };
 
     nix.settings.trusted-users = [ config.main-user.username ];
 

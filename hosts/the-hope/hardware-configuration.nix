@@ -27,6 +27,11 @@
     # NVMe SSD
     ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
 
+    # SATA Active Link Power Management
+    ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", \
+        ATTR{link_power_management_policy}=="*", \
+        ATTR{link_power_management_policy}="max_performance"
+
     TEST!="/dev/zram0", GOTO="zram_end"
 
     # When used with ZRAM, it is better to prefer page out only anonymous pages,
@@ -41,11 +46,6 @@
     SYSCTL{vm.swappiness}="150"
 
     LABEL="zram_end"
-
-    # SATA Active Link Power Management
-    ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", \
-        ATTR{link_power_management_policy}=="*", \
-        ATTR{link_power_management_policy}="max_performance"
     
   '';
 
@@ -67,35 +67,37 @@
 			"vm.page-cluster" = 0;
 			# Hugepages configuration, mostly for xmrig
 			# Not needed anymore
-			"vm.nr_hugepages" = 25;
-			"vm.nr_overcommit_hugepages" = 150;
+			# "vm.nr_hugepages" = 25;
+			# "vm.nr_overcommit_hugepages" = 150;
 			# Prefer to keep filesystem cache memory over application memory
-			"vm.vfs_cache_pressure" = 50;
+			# "vm.vfs_cache_pressure" = 50;
 			# Proper swappiness
-			"vm.swappiness" = 100;
+			"vm.swappiness" = 180;
       # Contains, as bytes, the number of pages at which a process which is
       # generating disk writes will itself start writing out dirty data.
-      "vm.dirty_bytes" = 268435456;
+      # "vm.dirty_bytes" = 268435456;
       # Contains, as bytes, the number of pages at which the background kernel
       # flusher threads will start writing out dirty data.
-      "vm.dirty_background_bytes" = 67108864;
+      # "vm.dirty_background_bytes" = 67108864;
       # The kernel flusher threads will periodically wake up and write old data out to disk.  This
       # tunable expresses the interval between those wakeups, in 100'ths of a second (Default is 500).
-      "vm.dirty_writeback_centisecs" = 1500;
+      # "vm.dirty_writeback_centisecs" = 1500;
 			# Best value, according to phoronix
-			"vm.page_lock_unfairness" = 3;
+			# "vm.page_lock_unfairness" = 1;
 			# Disable watermark boosting
 			"vm.watermark_boost_factor" = 0; # Needed when not using the zen-kernel
 			# Increase kswapd activity
 			# When free memory is less than 1.5%, make kswapd kick in.
 			# https://unix.stackexchange.com/a/679203
-			"vm.watermark_scale_factor" = 75;
+			"vm.watermark_scale_factor" = 125;
 
-      "vm.dirty_background_ratio" = 1;
-      "vm.dirty_ratio" = 50;
+      # "vm.dirty_background_ratio" = 1;
+      # "vm.dirty_ratio" = 50;
 
     };
   };
+
+  powerManagement.cpuFreqGovernor = "performance";
 
   services.fstrim.enable = lib.mkDefault true;
 

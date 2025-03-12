@@ -18,7 +18,10 @@
         enable = true;
         enableCompletion = true;
         autosuggestion.enable = true;
-        syntaxHighlighting.enable = true;
+        syntaxHighlighting = {
+          enable = true;
+          catppuccin.enable = true;
+        };
 
         initExtra = ''
           export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
@@ -114,7 +117,7 @@
       };
     };
 
-    catppuccin.bat.enable = false;
+    # catppuccin.bat.enable = false;
 
 
     home.packages = with pkgs; [

@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 {
 
@@ -18,22 +18,18 @@
     # Load nvidia driver for Xorg and Wayland
     # boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
 
-    # Enable Gsync Compatible on displays that has it 
     services.xserver = {
       videoDrivers = [ "nvidia" ];
-      # screenSection = ''
-      #   Option "metamodes" "DP-1: 2560x1440_165 +1920+0 {AllowGSYNCCompatible=Off}, DP-2: 1920x1080_144 +0+360 {AllowGSYNCCompatible=Off}"
-      # '';
     };
 
     hardware.nvidia = let
       nvidiaPkg = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-        version = "570.86.16";
-        sha256_64bit = "sha256-RWPqS7ZUJH9JEAWlfHLGdqrNlavhaR1xMyzs8lJhy9U=";
+        version = "570.124.04";
+        sha256_64bit = "sha256-G3hqS3Ei18QhbFiuQAdoik93jBlsFI2RkWOBXuENU8Q=";
         sha256_aarch64 = "";
-        openSha256 = "sha256-DuVNA63+pJ8IB7Tw2gM4HbwlOh1bcDg2AN2mbEU9VPE=";
-        settingsSha256 = "sha256-9rtqh64TyhDF5fFAYiWl3oDHzKJqyOW3abpcf2iNRT8=";
-        persistencedSha256 = "sha256-3mp9X/oV8o2TH9720NnoXROxQ4g98nNee+DucXpQy3w=";
+        openSha256 = "sha256-KCGUyu/XtmgcBqJ8NLw/iXlaqB9/exg51KFx0Ta5ip0=";
+        settingsSha256 = "sha256-LNL0J/sYHD8vagkV1w8tb52gMtzj/F0QmJTV1cMaso8=";
+        persistencedSha256 = "sha256-SHSdnGyAiRH6e0gYMYKvlpRSH5KYlJSA1AJXPm7MDRk=";
       };
     in {
       # Modesetting is required.
@@ -52,21 +48,36 @@
 
       nvidiaPersistenced = true;
 
+      # dynamicBoost.enable = true;
+
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       package = nvidiaPkg;
     };
-
-          
+    
     boot.extraModprobeConfig = ''
       options nvidia_drm modeset=1 fbdev=1
       
-      options nvidia '' + lib.concatStringsSep " " [
-        "NVreg_UsePageAttributeTable=1"
-        "NVreg_InitializeSystemMemoryAllocations=0"
-        "NVreg_EnableStreamMemOPs=1"
-        "NVreg_EnablePCIeGen3=1"
-        "NVreg_EnableResizableBar=1"
-      ];
+      options nvidia 
+    '' + lib.concatStringsSep " " [
+      "NVreg_UsePageAttributeTable=1"
+      "NVreg_InitializeSystemMemoryAllocations=0"
+      "NVreg_EnableStreamMemOPs=1"
+      "NVreg_EnablePCIeGen3=1"
+      "NVreg_EnableResizableBar=1"
+      "NVreg_RegistryDwords=RMIntrLockingMode=1"
+    ];
+
+    services.udev.extraRules = ''
+      # Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
+      ACTION=="add|bind", SUBSYSTEM=="pci", DRIVERS=="nvidia", \
+          ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", \
+          TEST=="power/control", ATTR{power/control}="auto"
+
+      # Disable runtime PM for NVIDIA VGA/3D controller devices on driver unbind
+      ACTION=="remove|unbind", SUBSYSTEM=="pci", DRIVERS=="nvidia", \
+          ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", \
+          TEST=="power/control", ATTR{power/control}="on"
+    '';
 
     nixpkgs.config.nvidia.acceptLicense = true;
     # nixpkgs.config.cudaSupport = true;
@@ -75,6 +86,20 @@
     systemd.tmpfiles.rules = [
         "d /home/${config.main-user.username}/.cache/nvidia 0770 ${config.main-user.username} users -"
     ];
+
+    environment.systemPackages = with pkgs; [
+      lact
+    ];
+
+    systemd.services.lact = {
+      enable = true;
+      description = "AMDGPU Control Daemon";
+      after = ["multi-user.target"];
+      wantedBy = ["multi-user.target"];
+      serviceConfig = {
+        ExecStart = "${pkgs.lact}/bin/lact daemon";
+      };
+    };
 
     environment.variables = {
       GBM_BACKEND = "nvidia-drm";

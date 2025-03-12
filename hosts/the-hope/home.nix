@@ -5,9 +5,6 @@
   catppuccin = {
     flavor = "mocha";
     accent = "sapphire";
-    btop.enable = false;
-    kitty.enable = false;
-    # rofi.enable = true;
   };
 
   # --- Home Manager Settings ---
@@ -33,6 +30,7 @@
 
   git.setup = true;
   nvf.setup = true;
+  vscode.setup = true;
   wlogout.setup = true;
   zsh.setup = true;
 
@@ -101,7 +99,6 @@
     google-chrome
 
     # Developer
-    vscode-fhs
     nodejs_20
     yarn
     python3
@@ -142,25 +139,25 @@
     enable = true;
     userDirs.enable = true;
     userDirs.createDirectories = true;
-    # desktopEntries = {
-    #   code = {
-    #     name = "Visual Studio Code";
-    #     exec = "code --disable-gpu-compositing %F";
-    #     terminal = false;
-    #     genericName = "Text Editor";
-    #     type = "Application";
-    #     icon = "vscode";
-    #     categories = [
-    #       "Utility"
-    #       "TextEditor"
-    #       "Development"
-    #       "IDE"
-    #     ];
-    #     mimeType = [
-    #       "text/plain"
-    #     ];
-    #   };
-    # };
+    desktopEntries = {
+      code = {
+        name = "Visual Studio Code";
+        exec = "code";
+        terminal = false;
+        genericName = "Text Editor";
+        type = "Application";
+        icon = "vscode";
+        categories = [
+          "Utility"
+          "TextEditor"
+          "Development"
+          "IDE"
+        ];
+        mimeType = [
+          "text/plain"
+        ];
+      };
+    };
     mimeApps = {
       defaultApplications = {
         "default-web-browser" = [ "firefox.desktop" ];

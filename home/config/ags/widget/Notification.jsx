@@ -69,8 +69,7 @@ export default function Notification({ notification, onHoverLost, setup }) {
               label={n.body}
             />}
         </box>
-        {n.get_actions().length > 0 && <box
-          vertical
+        {n.get_actions().length > 0 && <box 
           className='Notification action-box'
         >
           {n.get_actions().map(({label, id}) => (

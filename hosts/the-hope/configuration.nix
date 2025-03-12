@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, inputs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
 
@@ -10,7 +10,10 @@
     ./hardware-configuration.nix
   ];
   
-  catppuccin.flavor = "mocha";
+  catppuccin = {
+    accent = "sapphire";
+    flavor = "mocha";
+  };
 
   # --- Nix Settings ---
 
@@ -21,11 +24,17 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  system.tools.nixos-option.enable = false;
+  system.tools.nixos-option.enable = true;
 
   # --- System Settings ---
 
   virt-machine.enable = false;
+
+  # Bootloader
+  bootloader = {
+    grub.enable = false;
+    systemd-boot.enable = true;
+  };
 
   # Enable Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -39,32 +48,37 @@
   # Setup main user
   main-user.enable = true;
 
-  # Set up docker for nixos
-  docker.enable = false;
+  # Set up podman rootless for nixos
+  podman.enable = true;
 
   # Services
+  systemd.oomd.enable = true;
+
   services = {
     dbus.implementation = "broker";
     # Handle process when out of memory
-    earlyoom.enable = true;
+    # earlyoom.enable = true;
 
     # help balance the cpu load generated
-    irqbalance.enable = true;
+    # irqbalance.enable = true;
 
     ollama = {
       enable = false;
       acceleration = "cuda";
+      openFirewall = true;
     };
-    # open-webui = {
-    #   enable = true;
-    #   openFirewall = true;
-    #   environment = {
-    #     OLLAMA_API_BASE_URL = "http://127.0.0.1:11434";
-    #     ANONYMIZED_TELEMETRY = "False";
-    #     DO_NOT_TRACK = "True";
-    #     SCARF_NO_ANALYTICS = "True";
-    #   };
-    # };
+    open-webui = {
+      enable = false;
+      openFirewall = true;
+      environment = {
+        OLLAMA_API_BASE_URL = "http://127.0.0.1:11434";
+        ANONYMIZED_TELEMETRY = "False";
+        DO_NOT_TRACK = "True";
+        SCARF_NO_ANALYTICS = "True";
+        # Disable authentication
+        WEBUI_AUTH = "False";
+      };
+    };
   };
 
   systemd = {
@@ -80,7 +94,10 @@
       DefaultLimitNOFILE=1024:1048576
     '';
     tmpfiles.rules = [
+      "w! /sys/kernel/mm/transparent_hugepage/enabled - - - - always"
+      "w! /sys/kernel/mm/transparent_hugepage/shmem_enabled - - - - advise"
       "w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise"
+      "w! /sys/kernel/mm/transparent_hugepage/khugepaged/defrag - - - - 0"
       "w! /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none - - - - 409"
       "w! /sys/class/rtc/rtc0/max_user_freq - - - - 3072"
       "w! /proc/sys/dev/hpet/max-user-freq  - - - - 3072"
@@ -187,9 +204,9 @@
     
 
     cursor = {
-      name = "catppuccin-mocha-dark-cursors";
-      package = pkgs.catppuccin-cursors.mochaDark;
-      size = 32;
+      name = "Simp1e-Catppuccin-Mocha";
+      package = pkgs.simp1e-cursors;
+      size = 24;
     };
 
     fonts = {

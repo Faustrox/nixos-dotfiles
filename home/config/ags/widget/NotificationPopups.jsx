@@ -3,7 +3,7 @@ import { bind, timeout, Variable } from "astal"
 import Notifd from "gi://AstalNotifd"
 import Notification from "./Notification.jsx"
 
-const TIMEOUT_DELAY = 5000
+const TIMEOUT_DELAY = 3000
 
 class NotificationMap {
     // the underlying map to keep track of id widget pairs
@@ -66,7 +66,7 @@ class NotificationMap {
         this.notifiy()
     }
 
-     delete(key) {
+    delete(key) {
         this.#map.get(key)?.destroy()
         this.#map.delete(key)
         this.notifiy()

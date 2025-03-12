@@ -1,20 +1,21 @@
 import { App, Astal, Gtk } from "astal/gtk3"
-import { Variable, GLib } from "astal"
+import { execAsync } from "astal/process"
+import { Variable, GLib, bind } from "astal"
 import Hyprland from "gi://AstalHyprland"
+import Wp from "gi://AstalWp"
 
 import Workspaces from './Bar/Workspaces'
 
 import { getMonitorName } from '../utils'
-import { open_powermenu } from '../variables'
+import { open_powermenu, open_calendar, open_systray } from '../variables'
 
 const hypr = Hyprland.get_default()
+const audio = Wp.get_default()?.audio
 
-function PowerButton({ monitor }) {
-	const monitorName = getMonitorName(monitor)
+function PowerButton() {
 
 	return (
 		<button
-			visible={hypr.get_monitor_by_name(monitorName).id == 0 ? true : false}
 			className='Power'
 			onClick={() => open_powermenu.set(!open_powermenu.get())}
 		>
@@ -23,26 +24,36 @@ function PowerButton({ monitor }) {
 	)
 }
 
-function Indicator({ }) {
+function VolumeIndicator() {
+
+	const speaker = audio.get_default_speaker()
 
 	return (
-		<button 
-			onClick="echo 'Here is control center'"
-			className='Indicator'
+		<button
+			onClick="uwsm-app -s b -- pavucontrol"
+			className='Button'
 		>
-			<label>
-				
-			</label>
+			<icon icon={bind(speaker, "volumeIcon")}/>
 		</button>
 	)
 }
 
-function Avatar({ monitor }) {
-	const monitorName = getMonitorName(monitor)
+function SysTrayButton() {
 
 	return (
 		<button 
-			visible={hypr.get_monitor_by_name(monitorName).id == 0 ? false : true}
+			className="Button" 
+			onClick={() => open_systray.set(!open_systray.get())}
+		>
+			
+		</button>
+	)
+}
+
+function Avatar() {
+
+	return (
+		<button 
 			className="Avatar"
 			onClicked="echo 'New launcher c:'"
 		>
@@ -57,7 +68,7 @@ function Clock({ format = "%I:%M %p" }) {
 	return (
 		<button
 			className="Clock"
-			onClicked="echo hello"
+			onClicked={() => open_calendar.set(!open_calendar.get())}
 			hexpand
 		>
 			<label
@@ -68,8 +79,64 @@ function Clock({ format = "%I:%M %p" }) {
 	)
 }
 
-export default function Bar(gdkmonitor) {
+function Weather() {
+
+	const codes = ["01d", "01n", "02d", "02n", "03d", "03n", "04d", "04n", "09d", "09n", "10d", "10n", "11d", "11n", "13d", "13n", "50d", "50n"]
+	const icons = ["", "", "", "", "󰖐", "󰖐", "", "", "", "", "", "", "", "", "󰖘", "󰖘", "", ""]
+
+	const weather = Variable({
+		icon: "",
+		temp: null,
+		description: ""
+	}).poll(60000, async () => {
+		const weather = {
+			token: "69c655f5c49d7a1612da1c5a0617d786",
+			units: 'metric',
+			lang: 'en',
+			city: "Mao,DO"
+		};
+
+		try {
+			const out = await execAsync(["curl", "-s", `https://api.openweathermap.org/data/2.5/weather?q=${weather.city}&appid=${weather.token}&lang=${weather.lang}&units=${weather.units}`])
+		
+			const data = JSON.parse(out);
+
+			return {
+				icon: icons[codes.indexOf(data.weather[0].icon)],
+				temp: Math.round(data.main.temp),
+				description: data.weather[0].description
+			}
+		} catch(err) {
+			console.error(err)
+		}
+
+	})
+
+	return (
+		<button
+			className="Weather box"
+			hexpand
+		>
+			<box>
+				<label
+					className="Weather icon"
+					label={bind(weather).as(value => value.icon)}
+				/>
+				<label
+					className="Weather temp"
+					label={bind(weather).as(value => value.temp ? `${value.temp.toString()}°` : "N/A")}
+				/>
+			</box>
+		</button>
+	)
+}
+
+export default function Bar( gdkmonitor ) {
 	const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor
+	const monitorName = getMonitorName(gdkmonitor)
+	const hyprMonitor = hypr.get_monitor_by_name(monitorName)
+
+	const mainMonitor = hyprMonitor.id == 0; // FIX: Hyprland sometimes change monitors
 
 	return (
 		<>
@@ -103,7 +170,7 @@ export default function Bar(gdkmonitor) {
 			<window
 				className="Corner"
 				visible
-			  layer={Astal.Layer.BACKGROUND}
+				layer={Astal.Layer.BACKGROUND}
 				gdkmonitor={gdkmonitor}
 				anchor={BOTTOM | LEFT}
 			>
@@ -112,7 +179,7 @@ export default function Bar(gdkmonitor) {
 			<window
 				className="Corner"
 				visible
-			  layer={Astal.Layer.BACKGROUND}
+				layer={Astal.Layer.BACKGROUND}
         gdkmonitor={gdkmonitor}
 				anchor={BOTTOM | RIGHT}
 			>
@@ -140,6 +207,7 @@ export default function Bar(gdkmonitor) {
 
 			<window
 				visible
+				name="Bar"
 				className="Bar"
 				gdkmonitor={gdkmonitor}
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
@@ -150,17 +218,19 @@ export default function Bar(gdkmonitor) {
 					<box
 						halign={Gtk.Align.START}
 					>
-						<Avatar monitor={gdkmonitor}/>
+						{!mainMonitor && <Avatar/>}
 						<Clock />
+						{!mainMonitor && <Weather/>}
 					</box>
 					<box>
-						<Workspaces monitor={gdkmonitor}/>
+						<Workspaces hyprMonitor={hyprMonitor}/>
 					</box>
 					<box
 						halign={Gtk.Align.END}
 					>
-						{/* <Indicator /> */}
-						<PowerButton monitor={gdkmonitor}/>
+						{!mainMonitor && <VolumeIndicator />}
+						{!mainMonitor && <SysTrayButton />}
+						{mainMonitor && <PowerButton />}
 					</box>
 				</centerbox>
 			</window>

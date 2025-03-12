@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
 
@@ -12,17 +12,16 @@
     users.users.${config.main-user.username}.extraGroups = [ "gamemode" ];
 
     # Kernel zen version
-    boot.kernelPackages = pkgs.linuxPackages_cachyos;
+    boot = {
+      kernelPackages = pkgs.linuxPackages_xanmod_latest;
+      kernelModules = [ "ntsync" ];
+    };
 
     # SCX Scheduler
     services.scx = {
       enable = true;
-      package = pkgs.scx_git.full;
-      scheduler = "scx_lavd";
-      extraArgs = [
-        "--performance"
-        "--no-core-compaction"
-      ];
+      package = pkgs.scx.rustscheds;
+      scheduler = "scx_rusty";
     };
     
     # Xbox controllers dongle
@@ -35,66 +34,83 @@
 
       gamescope = {
         enable = true;
-        package = pkgs.gamescope;
+        package = pkgs.gamescope.overrideAttrs (old: {
+          version = "3.16.1_nvidia";
+          enableWsi = false;
+
+          src = pkgs.fetchFromGitHub {
+            owner = "sharkautarch";
+            repo = "gamescope";
+            rev = "bafa15766a3488c3c59ef2b558891ae1e26d6efa";
+            fetchSubmodules = true;
+            hash = "sha256-TL/3JkWbfgjd1sVbJw9ROpQtEUgIJVwcfxeQwrt9cCE=";
+          };
+
+          NIX_CFLAGS_COMPILE = ["-fno-fast-math"];
+        });
         args = [
-          "-f"
+          # "-f"
+          # "-e"
           "-H 1440"
-          "-h 1440"
           "-r 165"
-          "-F nearest"
-          "--sharpness 10"
-          "--rt"
-          "--force-grab-cursor"
-          "--expose-wayland"
+          # "--force-grab-cursor"
+          # "--expose-wayland"
+          # "-F nearest"
+          # "--sharpness 10"
+          # "--rt"
+          # "--adaptive-sync"
         ];
         capSysNice = false;
       };
 
       gamemode = {
         enable = false;
-        enableRenice = false;
-        settings = {
-          # general = {
-          #   ioprio = "off"; # Ananicy handles this
-          # };
-          custom = {
-            start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
-            end = "${pkgs.libnotify}/bin/notify-send 'GameMode ended'";
-          };
-        };
+        # settings = {
+        #   general = {
+        #     renice = 10;
+        #     softrealtime = "auto";
+        #   };
+        #   custom = {
+        #     start = "${agsPkg}/bin/ags request 'Toggle Gamemode' --instance astal";
+        #     end = "${agsPkg}/bin/ags request 'Toggle Gamemode' --instance astal";
+        #   };
+        # };
       };
       
       steam = {
         enable = true;
-        # extest.enable = true;
-        extraCompatPackages = with pkgs; [ proton-ge-custom ];
+
         remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
         dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
         protontricks.enable = true;
-      };
 
-      alvr = {
-        enable = true;
-        openFirewall = true;
+        package = pkgs.steam.override {
+          extraEnv = {
+            DXVK_STATE_CACHE_PATH = "/home/${config.main-user.username}/.cache/dxvk";
+            PROTON_HIDE_NVIDIA_GPU = 0;
+            DXVK_HUD = "compiler";
+            DXVK_ASYNC = 1;
+            PROTON_ENABLE_NVAPI = 1;
+            PROTON_NO_WM_DECORATION = 1;
+            DXVK_NVAPI_DRS_SETTINGS = "NGX_DLSS_SR_OVERRIDE=on,NGX_DLSS_SR_OVERRIDE_RENDER_PRESET_SELECTION=render_preset_latest";
+          };
+        };
+
+        extraCompatPackages = with pkgs; [ 
+          proton-ge-custom
+          proton-cachyos-custom
+        ];
+
       };
       
     };
 
     services = {
-      udev.extraRules = ''
-        KERNEL=="ntsync", MODE="0644"
-      '';
+      
       ananicy = {
-        enable = true;
+        enable = false;
         package = pkgs.ananicy-cpp;
-        rulesProvider = pkgs.ananicy-rules-cachyos.overrideAttrs {
-          src = pkgs.fetchFromGitHub {
-            owner = "CachyOS";
-            repo = "ananicy-rules";
-            rev = "03cc642f7b8e38d3d3c4e9bb8754659c8c64fd38";
-            hash = "sha256-OoyQKuEzxNmrbNX5d3tzofH2Xvxi/T8bbe03So5CiuI=";
-          };
-        };
+        rulesProvider = pkgs.ananicy-rules-cachyos;
 
         settings = {
           check_freq = 15;
@@ -146,6 +162,10 @@
             name = "KingdomCome.exe";
             type = "Game";
           }
+          {                       
+            name = "GhostOfTsushima.exe";
+            type = "Game";
+          }
         ];
       };
     };
@@ -178,7 +198,7 @@
       };
     };
 
-    boot = {
+    boot = { # Kernel changes for performance
       kernelParams = [
         "retbleed=off"
         "mitigations=off"
@@ -189,7 +209,12 @@
       ];
       kernel.sysctl = {
 
-        # This action will speed up your boot and shutdown, because one less module is loaded. Additionally disabling watchdog timers increases performance and lowers power consumption
+        "kernel.sched_rt_runtime_us" = 980000;
+
+        # Enable the sysctl setting kernel.unprivileged_userns_clone to allow normal users to run unprivileged containers.
+        "kernel.unprivileged_userns_clone" = 1;
+
+        # This action will speed up = yes;our boot and shutdown, because one less module is loaded. Additionally disabling watchdog timers increases performance and lowers power consumption
         # Disable NMI watchdog
         "kernel.nmi_watchdog" = 0;
         # To hide any kernel messages from the console
@@ -222,7 +247,10 @@
         "vm.compaction_proactiveness" = 0;
 
         "vm.max_map_count" = 2147483642;
-        "fs.file-max" = 524288;
+        
+        # Set size of file handles and inode cache
+        "fs.file-max" = 2097152;
+
         # Increase writeback interval  for xfs
         "fs.xfs.xfssyncd_centisecs" = 10000;
       };
@@ -238,7 +266,8 @@
       WINEESYNC = 1;
       WINEFSYNC = 1;
       PROTON_ENABLE_NVAPI = 1;
-      # PROTON_ENABLE_NGX_UPDATER = 1;
+      PROTON_NO_WM_DECORATION = 1;
+      DXVK_NVAPI_DRS_SETTINGS = "NGX_DLSS_SR_OVERRIDE=on,NGX_DLSS_SR_OVERRIDE_RENDER_PRESET_SELECTION=render_preset_latest";
     };
   };
 

@@ -27,10 +27,10 @@ in
     };
 
     # Fix Catppuccin-cursor inconsistant size Hyprcursor (32) and XCursor (24)
-    gtk.cursorTheme = {
-      name = "catppuccin-mocha-dark-cursors";
-      size = lib.mkForce 24;
-    };
+    # gtk.cursorTheme = {
+    #   name = "Simp1e-Catppuccin-Mocha";
+    #   size = lib.mkForce 24;
+    # };
 
     # # QT Theming
 
@@ -67,13 +67,6 @@ in
     #   })}/share/color-schemes/catppuccinmochasapphire.colors";
 
     # };
-
-    home.sessionVariables = {
-      XCURSOR_THEME = "catppuccin-mocha-dark-cursors";
-      XCURSOR_SIZE = 24;
-      HYPRCURSOR_THEME = "catppuccin-mocha-dark-cursors";
-      HYPRCURSOR_SIZE = 32;
-    };
 
   };
 

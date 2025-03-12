@@ -31,17 +31,16 @@
           accountsservice
           inputs.ags.packages.${pkgs.system}.hyprland
           inputs.ags.packages.${pkgs.system}.notifd
+          inputs.ags.packages.${pkgs.system}.tray
+          inputs.ags.packages.${pkgs.system}.wireplumber
+          inputs.ags.packages.${pkgs.system}.apps
         ];
       };
       wofi.enable = false;
-      eww = {
-        enable = true;
-        configDir = ../config/eww;
-      };
-      zsh.shellAliases = {
-        # eww-start = "$HOME/.dotfiles/home/others/scripts/eww-start.sh";
-        ags-start = "$HOME/.scripts/start.sh";
-      };
+    };
+    
+    home.shellAliases = {
+      ags-start = "uwsm app -s b -t service -- $HOME/.scripts/start.sh";
     };
 
     home.file = {

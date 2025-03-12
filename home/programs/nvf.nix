@@ -8,6 +8,7 @@
   };
 
   config = lib.mkIf config.nvf.setup {
+    
 
     programs.nvf = {
       enable = true;
@@ -32,7 +33,7 @@
             enable = true;
             lspkind.enable = true;
             lsplines.enable = true;
-            lspsaga.enable = true;
+            # lspsaga.enable = true;
             lspSignature.enable = true;
             null-ls.enable = true;
             otter-nvim.enable = true;
@@ -41,7 +42,7 @@
 
           theme = {
             enable = true;
-            name = "catppuccin";
+            name = lib.mkForce "catppuccin";
             style = "mocha";
           };
 

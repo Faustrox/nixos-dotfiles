@@ -9,7 +9,10 @@
     ./xserver.nix
   ];
 
-  grub.enable = lib.mkDefault true;
+  bootloader = {
+    enable = lib.mkDefault true;
+    grub.enable = lib.mkDefault true;
+  };
 
   network.enable = lib.mkDefault true;
   time.enable = lib.mkDefault true;

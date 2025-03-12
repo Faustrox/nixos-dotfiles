@@ -11,11 +11,6 @@ in
 
   config = lib.mkIf config.hyprland.enable {
 
-    nix.settings = {
-      substituters = [ "https://hyprland.cachix.org" ];
-      trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ];
-    };
-
     programs = {
       uwsm.enable = true;
       ssh.startAgent = true;
@@ -28,11 +23,9 @@ in
       };
     };
 
-    services = {
-      gnome.gnome-keyring.enable = true;
-      gvfs.enable = true;
-    };
-    security.pam.services.gdm.enableGnomeKeyring = true;
+    environment.systemPackages = with pkgs; [ hyprpolkitagent ];
+
+    services.gvfs.enable = true;
 
     # Xwayland VRAM usage fix on Nvidia GPU
     environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-hyprland.txt".text = ''

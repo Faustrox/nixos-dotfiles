@@ -1,6 +1,15 @@
 // https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gtk/theme/Adwaita/_colors-public.scss
 @use 'colors';
 @use "sass:color";
+@use "sass:string";
+
+@function gtkalpha($c, $a) {
+    @return string.unquote("alpha(#{$c},#{$a})");
+}
+
+// https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gtk/theme/Adwaita/_colors-public.scss
+$fg-color: #{"@theme_fg_color"};
+$bg-color: #{"@theme_bg_color"};
 
 window {
 	background-color: transparent;
@@ -16,6 +25,19 @@ window.Bar {
 	}
 }
 
+.Button {
+	background-color: colors.$background;
+	border-radius: 1rem;
+	padding: 0 0.5rem;
+	margin: 0.5rem 0.5rem;
+	transition: 0.3s;
+	font-size: 1.5rem;
+
+	&:hover {
+		background-color: color.mix(colors.$surface-variant, colors.$secondary, 70%);
+	}
+}
+
 .Clock {
 	background-color: colors.$background;
 	color: colors.$text;
@@ -27,7 +49,11 @@ window.Bar {
 
 	&:hover {
 		// Nesting hover inside .clock for better specificity
-		background-color: color.mix(colors.$surface-variant, colors.$on-surface-variant, 70%);
+		background-color: color.mix(colors.$surface-variant, colors.$secondary, 70%);
+	}
+
+	&:active {
+		background-color: color.mix(colors.$surface-variant, colors.$secondary, 60%);
 	}
 }
 
@@ -67,14 +93,18 @@ window.Bar {
 	transition: 0.3s;
 
 	&.current {
-		background-color:  colors.$primary;
+		background-color: colors.$primary;
 		padding: 0 1.8rem;
+	}
+
+	&.busy {
+		background-color: color.mix(colors.$on-surface, colors.$background, 45%);
 	}
 
 	&:hover {
 		background-color: color.mix(colors.$on-primary, colors.$on-surface, 70%);
     &.current {
-        background-color: color.mix(colors.$primary, colors.$on-surface, 70%);
+			background-color: color.mix(colors.$primary, colors.$on-surface, 70%);
     }
 	}
 }
@@ -118,34 +148,11 @@ window.Bar {
 
 		&.top-left {
       box-shadow: -29px -25px 0px 0px colors.$background;
-
     }
     &.top-right {
       box-shadow: 29px -25px 0px 0px colors.$background;
     }
 	}
-}
-
-.Indicator {
-	background-color: colors.$background;
-	border-radius: 1rem;
-	padding: 0rem 32px;  // Corrected padding syntax
-	margin: 0 0.5rem;
-	margin-right: 0rem;
-	transition: 0.3s;
-
-	>label {
-		margin: 0 0.6rem;
-		font-size: 1.5rem;
-	}
-
-	&:hover {
-		background-color: color.mix(colors.$surface-variant, colors.$on-surface-variant, 70%);
-	}
-}
-
-.indicator:hover {
-	background-color: color.mix(colors.$surface-variant, colors.$on-surface-variant, 70%);
 }
 
 .Power {
@@ -281,4 +288,242 @@ window.Bar {
     }
   }
 
+}
+
+.Tray {
+	
+	&.box {
+		background-color: colors.$background;
+		border-top-left-radius: 1rem;
+		border-top-right-radius: 1rem;
+		padding: 0.5rem 0.5rem;
+		// min-width: 6rem;
+	}
+
+	&.app {
+		background-color: colors.$background;
+		min-width: 1rem;
+		min-height: 0.2rem;
+		margin: 0rem 0.5rem;
+
+		&:hover {
+			background-color: color.mix(colors.$surface-variant, colors.$secondary, 70%);
+		}
+
+		&:active {
+			background-color: color.mix(colors.$surface-variant, colors.$secondary, 60%);
+		}
+	}
+
+	&.corner {
+		background-color: transparent;
+		padding: 25px 35px;
+		border-radius: 100%;
+	
+		&.left {
+			margin-right: 0;
+			box-shadow: 25px 30px 0px 0px colors.$background;
+		}
+		
+		&.right {
+			margin-left: 0;
+			box-shadow: -25px 30px 0px 0px colors.$background;
+		}
+	}
+
+}
+
+.Launcher {
+
+	&.box {
+		background-color: colors.$background;
+		border-radius: 2rem;
+		margin: 1rem;
+		padding: 1rem;
+		box-shadow: 2px 3px 8px 0 gtkalpha(black, .4);
+	}
+
+	&.search {
+		color: colors.$on-surface;
+    padding: 0.25rem;
+    border-radius: 1rem;
+    transition: 0.3s;
+		outline: none;
+
+		&:focus {
+			box-shadow: 0 0 0 2pt colors.$secondary;
+		}
+
+		& icon {
+			color: colors.$on-surface;
+		}
+	}
+
+	&.items-holder {
+		margin-top: 0.8rem;
+	}
+
+	&.item {
+		background-color: colors.$background;
+		color: color.mix(colors.$on-surface, white, 60%);
+    padding: 0.25rem;
+    border-radius: 1rem;
+    transition: 0.3s;
+		outline: none;
+
+		&:hover {
+			color: white;
+			background-color: color.mix(colors.$primary, colors.$on-surface, 70%);
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2pt colors.$secondary;
+		}
+
+		&-icon {
+			font-size: 48px;
+		}
+
+		&-name {
+			margin-left: 0.5rem;
+			font-size: 1.1rem;
+		}
+	}
+
+	&.not-found {
+		padding: 1rem;
+
+		icon {
+				font-size: 6em;
+				color: gtkalpha($fg-color, .7);
+		}
+
+		label {
+				color: gtkalpha($fg-color, .9);
+				font-size: 1.2em;
+		}
+	}
+}
+
+.Calendar {
+	
+	&.box {
+		background-color: colors.$background;
+		padding: 1rem;
+		border-top-right-radius: 2rem;
+	}
+
+	&.clock {
+		&-time {
+			color: colors.$secondary;
+			font-size: 45px;
+			font-weight: bold;
+			padding: 0px;
+		}
+		&-date {
+			font-size: 18px;
+			padding: 1rem 0px;
+		}
+	}
+	
+	&.day {
+		color: colors.$secondary;
+		margin: 1rem;
+		min-width: 44px;
+
+		&.active {
+			color: colors.$background;
+			background-color: colors.$secondary;
+			border-radius: 0.7rem;
+			margin: 0rem 0.5rem;
+			padding: 0.5rem;
+		}
+
+		&.unactive {
+			color: colors.$surface;
+		}
+
+		&-indicator {
+			color: colors.$secondary;
+			margin: 1rem;
+			min-width: 44px;
+		}
+	}
+
+	&.corner {
+		background-color: transparent;
+		padding: 25px 35px;
+		border-radius: 100%;
+		margin-left: 0;
+		box-shadow: -25px 30px 0px 0px colors.$background;
+	}
+	
+}
+
+.Weather {
+	
+	&.box {
+		color: colors.$text;
+		background-color: colors.$background;
+		border-radius: 1rem;
+		padding: 0rem 0.9rem;
+		margin: 0.5rem 0.25rem;
+		transition: background-color 0.3s;
+		font-size: 1.5rem;
+
+		&:hover {
+			background-color: color.mix(colors.$surface-variant, colors.$secondary, 70%);
+		}
+	}
+
+	&.icon {
+		color: colors.$secondary;
+		margin-right: 0.4rem;
+	}
+
+}
+
+.OSD {
+
+	&.box {
+		background-color: colors.$background;
+		border-top-left-radius: 1rem;
+		border-top-right-radius: 1rem;
+		padding: 0.5rem 0.8rem;
+		min-width: 20rem;
+	}
+
+	&.icon {
+		color: color.mix(colors.$primary, colors.$text, 40%);
+		margin: 0rem 0.5rem;
+		font-size: 1.2rem;
+	}
+
+	&.holder {
+		margin: 0.5rem;
+		padding: 0;
+		border-radius: 0.7rem;
+		background-color: color.mix(colors.$secondary, colors.$background, 20%);
+	}
+
+	&.progress {
+		background-color: color.mix(colors.$secondary, colors.$background, 60%);
+		border-radius: 0.7rem;
+		padding: 0.5rem 0rem;
+		// padding-right: 14rem;
+		transition: padding-right 0.5s;
+	}
+
+	&.corner {
+		background-color: transparent;
+		padding: 25px 35px;
+		border-radius: 100%;
+			
+		&.left {
+			box-shadow: 25px 30px 0px 0px colors.$background;
+		}
+		&.right {
+			box-shadow: -25px 30px 0px 0px colors.$background;
+		}
+	}
 }

@@ -18,7 +18,7 @@ function PowerMenuEntry({icon, onClick}) {
   )
 }
 
-export default function PowerMenu(monitor = 0) {
+export default function PowerMenu(monitor = 1) {
   const { TOP } = Astal.WindowAnchor
   const isMenuVisible = bind(open_powermenu).as((value) => value)
 
