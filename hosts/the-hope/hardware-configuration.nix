@@ -54,8 +54,8 @@
     supportedFilesystems = [ "ntfs" ];
     
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
-    kernelModules = [ "kvm-amd" "zenpower" ];
-    extraModulePackages = [ config.boot.kernelPackages.zenpower ];
+    kernelModules = [ "kvm-amd" "zenergy" ];
+    extraModulePackages = [ config.boot.kernelPackages.zenergy ];
     blacklistedKernelModules = [ "k10temp" "ath3k" ];
 
     kernelParams = [ "amd_pstate=active" ];
@@ -70,9 +70,9 @@
 			# "vm.nr_hugepages" = 25;
 			# "vm.nr_overcommit_hugepages" = 150;
 			# Prefer to keep filesystem cache memory over application memory
-			# "vm.vfs_cache_pressure" = 50;
+			"vm.vfs_cache_pressure" = 200;
 			# Proper swappiness
-			"vm.swappiness" = 180;
+			"vm.swappiness" = 10;
       # Contains, as bytes, the number of pages at which a process which is
       # generating disk writes will itself start writing out dirty data.
       # "vm.dirty_bytes" = 268435456;
@@ -91,8 +91,8 @@
 			# https://unix.stackexchange.com/a/679203
 			"vm.watermark_scale_factor" = 125;
 
-      # "vm.dirty_background_ratio" = 1;
-      # "vm.dirty_ratio" = 50;
+      "vm.dirty_background_ratio" = 5;
+      "vm.dirty_ratio" = 10;
 
     };
   };
@@ -103,8 +103,8 @@
 
   zramSwap = {
     enable = true;
-    algorithm = "zstd lz4 (type=huge)";
-    memoryPercent = 100;
+    algorithm = "zstd";
+    memoryPercent = 50;
     priority = 100;
   };
 

@@ -52,7 +52,7 @@ function CalendarBox() {
   )
 }
 
-export default function Calendar(monitor = 0) {
+export default function Calendar(monitor = 1) {
   const { BOTTOM, LEFT } = Astal.WindowAnchor
   const { CENTER, START, END } = Gtk.Align;
 

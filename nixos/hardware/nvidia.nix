@@ -24,12 +24,12 @@
 
     hardware.nvidia = let
       nvidiaPkg = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-        version = "570.124.04";
-        sha256_64bit = "sha256-G3hqS3Ei18QhbFiuQAdoik93jBlsFI2RkWOBXuENU8Q=";
+        version = "575.51.02";
+        sha256_64bit = "sha256-XZ0N8ISmoAC8p28DrGHk/YN1rJsInJ2dZNL8O+Tuaa0=";
         sha256_aarch64 = "";
-        openSha256 = "sha256-KCGUyu/XtmgcBqJ8NLw/iXlaqB9/exg51KFx0Ta5ip0=";
-        settingsSha256 = "sha256-LNL0J/sYHD8vagkV1w8tb52gMtzj/F0QmJTV1cMaso8=";
-        persistencedSha256 = "sha256-SHSdnGyAiRH6e0gYMYKvlpRSH5KYlJSA1AJXPm7MDRk=";
+        openSha256 = "sha256-NQg+QDm9Gt+5bapbUO96UFsPnz1hG1dtEwT/g/vKHkw=";
+        settingsSha256 = "sha256-6n9mVkEL39wJj5FB1HBml7TTJhNAhS/j5hqpNGFQE4w=";
+        persistencedSha256 = "";
       };
     in {
       # Modesetting is required.
@@ -46,7 +46,7 @@
       # Enable the Nvidia settings menu,
       nvidiaSettings = true;
 
-      nvidiaPersistenced = true;
+      nvidiaPersistenced = false;
 
       # dynamicBoost.enable = true;
 
@@ -60,7 +60,7 @@
       options nvidia 
     '' + lib.concatStringsSep " " [
       "NVreg_UsePageAttributeTable=1"
-      "NVreg_InitializeSystemMemoryAllocations=0"
+      "NVreg_InitializeSystemMemoryAllocations=1"
       "NVreg_EnableStreamMemOPs=1"
       "NVreg_EnablePCIeGen3=1"
       "NVreg_EnableResizableBar=1"
@@ -83,23 +83,32 @@
     # nixpkgs.config.cudaSupport = true;
     # hardware.nvidia-container-toolkit.enable = true;
 
-    systemd.tmpfiles.rules = [
-        "d /home/${config.main-user.username}/.cache/nvidia 0770 ${config.main-user.username} users -"
-    ];
-
-    environment.systemPackages = with pkgs; [
-      lact
-    ];
-
-    systemd.services.lact = {
-      enable = true;
-      description = "AMDGPU Control Daemon";
-      after = ["multi-user.target"];
-      wantedBy = ["multi-user.target"];
-      serviceConfig = {
-        ExecStart = "${pkgs.lact}/bin/lact daemon";
+    systemd.tmpfiles.settings = {
+      "10-nvidia-glcache" = {
+        "/home/${config.main-user.username}/.cache/nvidia" = {
+          d = {
+            group = "users";
+            mode = "0770";
+            user = "${config.main-user.username}";
+          };
+        };
       };
     };
+
+    environment.systemPackages = with pkgs; [
+      libva-utils
+      vdpauinfo
+      vulkan-tools
+      vulkan-validation-layers
+      libvdpau-va-gl
+      egl-wayland
+      wgpu-utils
+      libglvnd
+      nvtopPackages.full
+      nvitop
+      libGL
+      gl-gsync-demo
+    ];
 
     environment.variables = {
       GBM_BACKEND = "nvidia-drm";
@@ -107,11 +116,12 @@
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
       NVD_BACKEND = "direct";
 
-      __GL_SHADER_DISK_CACHE = 1;
-      __GL_SHADER_DISK_CACHE_PATH = "/home/${config.main-user.username}/.cache/nvidia";
+      # __GL_SHADER_DISK_CACHE = 1;
+      # __GL_SHADER_DISK_CACHE_PATH = "/home/${config.main-user.username}/.cache/nvidia/";
       __GL_SHADER_DISK_CACHE_SIZE = "100000000000";
       __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = 1;
-      __GL_GSYNC_ALLOWED = 1;
+
+      # __GL_MaxFramesAllowed = 1;
     };
   };
 }

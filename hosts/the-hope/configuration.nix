@@ -132,6 +132,7 @@
   environment.systemPackages = with pkgs; [
 
     # Utils
+    teamviewer
     hwloc
     rivalcfg
     rar
@@ -157,7 +158,7 @@
     libgcc
     gtop
     p7zip
-    mesa-demos
+    # mesa-demos
 
     # Terminal
     kitty

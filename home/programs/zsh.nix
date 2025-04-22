@@ -9,6 +9,8 @@
 
   config = lib.mkIf config.zsh.setup {
 
+    catppuccin.zsh-syntax-highlighting.enable = true;
+
     programs = {
       fastfetch.enable = true;
       fd.enable = true;
@@ -18,10 +20,7 @@
         enable = true;
         enableCompletion = true;
         autosuggestion.enable = true;
-        syntaxHighlighting = {
-          enable = true;
-          catppuccin.enable = true;
-        };
+        syntaxHighlighting.enable = true;
 
         initExtra = ''
           export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"

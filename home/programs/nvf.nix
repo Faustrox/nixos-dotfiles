@@ -4,7 +4,7 @@
 
   options = {
     nvf.setup =
-      lib.mkEnableOption "Enables and configure Waybar";
+      lib.mkEnableOption "Enables and configure NVF";
   };
 
   config = lib.mkIf config.nvf.setup {
@@ -32,7 +32,7 @@
           lsp = {
             enable = true;
             lspkind.enable = true;
-            lsplines.enable = true;
+            # lsplines.enable = true;
             # lspsaga.enable = true;
             lspSignature.enable = true;
             null-ls.enable = true;

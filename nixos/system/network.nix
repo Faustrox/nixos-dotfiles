@@ -33,6 +33,10 @@
       hosts = {
         "127.0.0.1" = [ "${config.network.host}.local" ];
       };
+      firewall = {
+        allowedTCPPorts = [ 25565 ];
+        allowedUDPPorts = [ 25565 ];
+      };
     };
 
     systemd.services.systemd-networkd-wait-online.enable = lib.mkForce false;

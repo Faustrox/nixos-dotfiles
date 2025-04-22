@@ -17,7 +17,7 @@ uniform float sharp_strength < __UNIFORM_SLIDER_FLOAT1
 	ui_label = "Shapening strength";
 	ui_tooltip = "Strength of the sharpening";
 
-> = 0.435;
+> = 0.40;
 uniform float sharp_clamp < __UNIFORM_SLIDER_FLOAT1
 	ui_min = 0.0; ui_max = 1.0; ui_step = 0.005;
 	ui_label = "Sharpening limit";

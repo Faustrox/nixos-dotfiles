@@ -29,9 +29,8 @@
   # --- Programs Settings ---
 
   git.setup = true;
-  nvf.setup = true;
+  nvf.setup = false;
   vscode.setup = true;
-  wlogout.setup = true;
   zsh.setup = true;
 
 
@@ -42,19 +41,37 @@
   };
 
   programs = {
+    floorp.enable = true;
+
     btop = {
       enable = true;
       package = pkgs.btop.override { cudaSupport = true; };
     };
-    # cava = { # Build errors on nixos-unstable
-    #   enable = true;
-    # };
     firefox = {
-      enable = true;
+      enable = false;
       nativeMessagingHosts = with pkgs; [ uget-integrator firefoxpwa ];
     };
+
+    wezterm = {
+      enable = true;
+      enableZshIntegration = true;
+
+      extraConfig = ''
+        return {
+          font = wezterm.font("FiraCode Nerd Font"),
+          color_scheme = "Catppuccin Mocha",
+
+          tab_bar_at_bottom = true,
+          hide_tab_bar_if_only_one_tab = true,
+
+          default_cursor_style = "BlinkingBar",
+          cursor_blink_ease_in = "Ease",
+          cursor_blink_ease_out = "Ease"
+        }
+      '';
+    };
     kitty = {
-      enable = true; 
+      enable = false; 
       shellIntegration.enableZshIntegration = true;
       
       settings = {
@@ -65,6 +82,7 @@
         package = lib.mkForce pkgs.nerd-fonts.hack;
       };
     };
+
     obs-studio = {
       enable = false;
       plugins = with pkgs.obs-studio-plugins; [ droidcam-obs ]; 
@@ -94,14 +112,11 @@
     adw-gtk3
     adwsteamgtk
 
-    # Browsers
-    firefoxpwa
-    google-chrome
-
     # Developer
     nodejs_20
     yarn
     python3
+    insomnia
     
     # Dependencies
     spirv-headers
@@ -110,6 +125,7 @@
 
     # Utils
     transmission_4-gtk
+    varia
     httpie
     vrrtest
     qalculate-gtk
@@ -122,6 +138,9 @@
     # Design
     gimp
     inkscape
+
+    # Trading
+    tradingview
 
     # Others
     uget
@@ -159,13 +178,31 @@
       };
     };
     mimeApps = {
+      enable = true;
       defaultApplications = {
-        "default-web-browser" = [ "firefox.desktop" ];
-        "text/html" = [ "firefox.desktop" ];
-        "x-scheme-handler/http" = [ "firefox.desktop" ];
-        "x-scheme-handler/https" = [ "firefox.desktop" ];
-        "x-scheme-handler/about" = [ "firefox.desktop" ];
-        "x-scheme-handler/unknown" = [ "firefox.desktop" ];
+        "inode/directory" = "org.gnome.Nautilus.desktop";
+        "default-web-browser" = "floorp.desktop";
+        "application/pdf" = "floorp.desktop";
+        "application/vnd.apple.mpegurl" = "";
+        "application/x-extension-htm" = "floorp.desktop";
+        "application/x-extension-html" = "floorp.desktop";
+        "application/x-extension-shtml" = "floorp.desktop";
+        "application/x-extension-xht" = "floorp.desktop";
+        "application/x-extension-xhtml" = "floorp.desktop";
+        "application/x-shellscript" = "";
+        "application/xhtml+xml" = "floorp.desktop";
+        "x-scheme-handler/http" = "floorp.desktop";
+        "x-scheme-handler/https" = "floorp.desktop";
+        "x-scheme-handler/about" = "floorp.desktop";
+        "x-scheme-handler/unknown" = "floorp.desktop";
+        "image/png" = "feh.desktop";
+        "text/*" = "code.desktop";
+        "text/css" = "code.desktop";
+        "text/html" = "floorp.desktop";
+        "text/plain" = "code.desktop";
+      };
+      associations.removed = {
+        "inode/directory" = "code.desktop";
       };
     };
   };

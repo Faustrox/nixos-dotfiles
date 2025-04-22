@@ -83,7 +83,7 @@ class NotificationMap {
     }
 }
 
-export default function NotificationPopups(monitor = 0) {
+export default function NotificationPopups(monitor = 1) {
     const { TOP } = Astal.WindowAnchor
     const notifs = new NotificationMap()
 

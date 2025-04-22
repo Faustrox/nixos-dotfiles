@@ -1,6 +1,18 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }: let
 
-{
+  gamingEnv = {
+    DXVK_STATE_CACHE_PATH = "/home/${config.main-user.username}/.cache/dxvk/";
+    VKD3D_SHADER_CACHE_PATH = "/home/${config.main-user.username}/.cache/vkd3d/";
+    PROTON_ENABLE_NGX_UPDATER = 1;
+    DXVK_NVAPI_DRS_SETTINGS = "NGX_DLSS_RR_OVERRIDE=on,NGX_DLSS_SR_OVERRIDE=on,NGX_DLSS_RR_OVERRIDE_RENDER_PRESET_SELECTION=render_preset_latest,NGX_DLSS_SR_OVERRIDE_RENDER_PRESET_SELECTION=render_preset_latest";
+    WINEDEBUG = "-all";
+    DXVK_HUD = "compiler";
+    DXVK_ASYNC = 1;
+    PROTON_ENABLE_NVAPI = 1;
+    VKD3D_CONFIG = "dxr11,dxr";
+  };
+
+in {
 
   options = {
     gaming.setup = 
@@ -13,7 +25,7 @@
 
     # Kernel zen version
     boot = {
-      kernelPackages = pkgs.linuxPackages_xanmod_latest;
+      kernelPackages = pkgs.linuxPackages_zen;
       kernelModules = [ "ntsync" ];
     };
 
@@ -21,7 +33,10 @@
     services.scx = {
       enable = true;
       package = pkgs.scx.rustscheds;
-      scheduler = "scx_rusty";
+      scheduler = "scx_lavd";
+      extraArgs = [
+        "--performance"
+      ];
     };
     
     # Xbox controllers dongle
@@ -32,19 +47,38 @@
 
       gpu-screen-recorder.enable = true;
 
+      steam = {
+        enable = true;
+
+        remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+        dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+        protontricks.enable = true;
+
+        package = pkgs.steam.override {
+          extraEnv = gamingEnv // {
+            
+          };
+        };
+
+        extraCompatPackages = with pkgs; [ 
+          proton-ge-custom
+          proton-cachyos-custom
+          proton-xiv
+        ];
+      };
+
       gamescope = {
         enable = true;
         package = pkgs.gamescope.overrideAttrs (old: {
-          version = "3.16.1_nvidia";
-          enableWsi = false;
+          # version = "3.16.1_nvidia";
 
-          src = pkgs.fetchFromGitHub {
-            owner = "sharkautarch";
-            repo = "gamescope";
-            rev = "bafa15766a3488c3c59ef2b558891ae1e26d6efa";
-            fetchSubmodules = true;
-            hash = "sha256-TL/3JkWbfgjd1sVbJw9ROpQtEUgIJVwcfxeQwrt9cCE=";
-          };
+          # src = pkgs.fetchFromGitHub {
+          #   owner = "sharkautarch";
+          #   repo = "gamescope";
+          #   rev = "bafa15766a3488c3c59ef2b558891ae1e26d6efa";
+          #   fetchSubmodules = true;
+          #   hash = "sha256-TL/3JkWbfgjd1sVbJw9ROpQtEUgIJVwcfxeQwrt9cCE=";
+          # };
 
           NIX_CFLAGS_COMPILE = ["-fno-fast-math"];
         });
@@ -54,61 +88,38 @@
           "-H 1440"
           "-r 165"
           # "--force-grab-cursor"
-          # "--expose-wayland"
+          "--expose-wayland"
           # "-F nearest"
           # "--sharpness 10"
           # "--rt"
-          # "--adaptive-sync"
+          "--adaptive-sync"
+          "--immediate-flips"
         ];
         capSysNice = false;
       };
 
       gamemode = {
-        enable = false;
-        # settings = {
-        #   general = {
-        #     renice = 10;
-        #     softrealtime = "auto";
-        #   };
-        #   custom = {
-        #     start = "${agsPkg}/bin/ags request 'Toggle Gamemode' --instance astal";
-        #     end = "${agsPkg}/bin/ags request 'Toggle Gamemode' --instance astal";
-        #   };
-        # };
-      };
-      
-      steam = {
         enable = true;
+        enableRenice = if config.services.scx.enable then false else true;
 
-        remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-        dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-        protontricks.enable = true;
-
-        package = pkgs.steam.override {
-          extraEnv = {
-            DXVK_STATE_CACHE_PATH = "/home/${config.main-user.username}/.cache/dxvk";
-            PROTON_HIDE_NVIDIA_GPU = 0;
-            DXVK_HUD = "compiler";
-            DXVK_ASYNC = 1;
-            PROTON_ENABLE_NVAPI = 1;
-            PROTON_NO_WM_DECORATION = 1;
-            DXVK_NVAPI_DRS_SETTINGS = "NGX_DLSS_SR_OVERRIDE=on,NGX_DLSS_SR_OVERRIDE_RENDER_PRESET_SELECTION=render_preset_latest";
+        settings = {
+          general = {
+            renice = 10;
+            softrealtime = "auto";
           };
+          # custom = {
+          #   start = "${agsPkg}/bin/ags request 'Toggle Gamemode' --instance astal";
+          #   end = "${agsPkg}/bin/ags request 'Toggle Gamemode' --instance astal";
+          # };
         };
-
-        extraCompatPackages = with pkgs; [ 
-          proton-ge-custom
-          proton-cachyos-custom
-        ];
-
       };
       
     };
 
     services = {
-      
       ananicy = {
-        enable = false;
+
+        enable = if config.services.scx.enable then false else true;
         package = pkgs.ananicy-cpp;
         rulesProvider = pkgs.ananicy-rules-cachyos;
 
@@ -143,27 +154,15 @@
             type = "Game";
           }
           {
-            name = "Sifu.exe";
-            type = "Game";
-          }
-          {
-            name = "TheGreatCircle.exe";
-            type = "Game";
-          }
-          {
             name = "Spider-Man2.exe";
-            type = "Game";
-          }
-          {
-            name = "mgsvtpp.exe";
             type = "Game";
           }
           {                       
             name = "KingdomCome.exe";
             type = "Game";
           }
-          {                       
-            name = "GhostOfTsushima.exe";
+          {
+            name = "tlou-ii.exe";
             type = "Game";
           }
         ];
@@ -210,6 +209,12 @@
       kernel.sysctl = {
 
         "kernel.sched_rt_runtime_us" = 980000;
+        "kernel.sched_cfs_bandwidth_slice_us" = 3000;
+        "kernel.sched_latency_ns" = 3000000;
+        "kernel.sched_min_granularity_ns" = 300000;
+        "kernel.sched_wakeup_granularity_ns" = 500000;
+        "kernel.sched_migration_cost_ns" = 50000;
+        "kernel.sched_nr_migrate" = 128;
 
         # Enable the sysctl setting kernel.unprivileged_userns_clone to allow normal users to run unprivileged containers.
         "kernel.unprivileged_userns_clone" = 1;
@@ -225,7 +230,6 @@
         # Disable Kexec, which allows replacing the current running kernel.
         "kernel.kexec_load_disabled" = 1;
         "kernel.split_lock_mitigate" = 0;
-        "kernel.sched_cfs_bandwidth_slice_us" = 3000;
         # Internet
         "net.ipv4.tcp_fastopen" = 3;
         "net.ipv4.tcp_low_latency" = 1;
@@ -256,19 +260,21 @@
       };
     };
 
-
-    environment.sessionVariables = {
-      # STEAM_EXTRA_COMPAT_TOOLS_PATHS = "${pkgs.proton-ge-custom}/bin";
-      DXVK_STATE_CACHE_PATH = "/home/${config.main-user.username}/.cache/dxvk";
-      PROTON_HIDE_NVIDIA_GPU = 0;
-      DXVK_HUD = "compiler";
-      DXVK_ASYNC = 1;
-      WINEESYNC = 1;
-      WINEFSYNC = 1;
-      PROTON_ENABLE_NVAPI = 1;
-      PROTON_NO_WM_DECORATION = 1;
-      DXVK_NVAPI_DRS_SETTINGS = "NGX_DLSS_SR_OVERRIDE=on,NGX_DLSS_SR_OVERRIDE_RENDER_PRESET_SELECTION=render_preset_latest";
+    environment = {
+      systemPackages = with pkgs; [
+        # Wine
+        wineWowPackages.staging
+        winetricks
+      ];
+      sessionVariables = gamingEnv // {
+        # STEAM_EXTRA_COMPAT_TOOLS_PATHS = "${pkgs.proton-ge-custom}/bin";
+      };
     };
+
+    systemd.tmpfiles.rules = [
+      "d /home/${config.main-user.username}/.cache/dxvk 0770 ${config.main-user.username} users -"
+      "d /home/${config.main-user.username}/.cache/vkd3d 0770 ${config.main-user.username} users -"
+    ];
   };
 
 }

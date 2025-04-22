@@ -4,7 +4,7 @@ import Tray from "gi://AstalTray"
 
 import { open_systray } from '../variables'
 
-export default function SysTray(monitor = 0) {
+export default function SysTray(monitor = 1) {
   const { BOTTOM, RIGHT } = Astal.WindowAnchor
   
   const tray = Tray.get_default()

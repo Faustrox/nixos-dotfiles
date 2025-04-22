@@ -12,7 +12,7 @@ function hide() {
 function launchAppWithPrefix(app) {
   const executable = app.get_executable();
   if (executable) {
-      const command = `uwsm app -- ${executable}`;
+      const command = `app2unit -s a -- ${executable}`;
 
       try {
           GLib.spawn_command_line_async(command);

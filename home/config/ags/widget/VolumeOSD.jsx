@@ -72,7 +72,7 @@ function OnScreenProgress({visible}) {
   )
 }
 
-export default function VolumeOSD(monitor = 0) {
+export default function VolumeOSD(monitor = 1) {
   const { BOTTOM } = Astal.WindowAnchor
   const visible = Variable(false)
 

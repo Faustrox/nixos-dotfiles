@@ -27,7 +27,7 @@
         extraPackages = with pkgs; [
           bun
           gtksourceview
-          webkitgtk
+          # webkitgtk
           accountsservice
           inputs.ags.packages.${pkgs.system}.hyprland
           inputs.ags.packages.${pkgs.system}.notifd
@@ -39,14 +39,14 @@
       wofi.enable = false;
     };
     
-    home.shellAliases = {
-      ags-start = "uwsm app -s b -t service -- $HOME/.scripts/start.sh";
-    };
+    home = {
+      shellAliases = {
+        ags-start = "uwsm app -s b -- $HOME/.scripts/start.sh";
+      };
 
-    home.file = {
-
-      ".scripts/start.sh".source = ./scripts/ags-start.sh;
-
+      file = {
+        ".scripts/start.sh".source = ./scripts/ags-start.sh;
+      };
     };
 
   };

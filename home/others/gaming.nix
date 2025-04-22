@@ -37,7 +37,7 @@
   #   done
   # '');
 
-  nix-gaming = inputs.nix-gaming.packages.${pkgs.hostPlatform.system};
+  freesmlauncher = inputs.freesmlauncher.packages.${pkgs.system}.default;
 
 in {
 
@@ -52,10 +52,25 @@ in {
 
       (pkgs.writers.writeBashBin "gamix" ''
   
-        export LD_PRELOAD="" WINEDEBUG=-all WINEDLLOVERRIDES="$WINEDLLOVERRIDES;winmm=n,b" \
-                MANGOHUD=1 ENABLE_VKBASALT=1
+        USE_MANGOHUD=1
 
-        exec "$@"
+        for arg in "$@"; do
+          if [ "$arg" == "--no-hud" ]; then
+            USE_MANGOHUD=0
+            shift
+          fi
+        done
+
+        export ENABLE_VKBASALT=1 __GL_SHADER_DISK_CACHE=1
+
+        if [ "$USE_MANGOHUD" -eq 1 ]; then
+          export LD_PRELOAD="${pkgs.mangohud}/lib/mangohud/libMangoHud.so"
+
+          exec ${pkgs.mangohud}/bin/mangohud "$@"
+        else
+          export LD_PRELOAD=""
+          exec "$@"
+        fi
 
       '')
 
@@ -65,22 +80,29 @@ in {
 
       # Emulators
       suyu
-      rpcs3
+      # rpcs3
 
       # Launchers
-      prismlauncher
+      # (lutris.override {
+      #   extraPkgs = pkgs: [
+      #     wineWowPackages.stableFull
+      #   ];
+      # })
+      mcpelauncher-client
+      freesmlauncher
       heroic-unwrapped
       umu-launcher
       cartridges
+      mgba
 
       # Wine
-      wineWowPackages.stagingFull
+      # wineWowPackages.stagingFull
       winetricks
       mono
 
       # Utils
+      glfw3-minecraft
       exiftool
-      glfw-wayland
       goverlay
       protonplus
       protonup-qt
@@ -91,11 +113,18 @@ in {
     ];
 
     programs = {
+      java = {
+        enable = true;
+        package = pkgs.zulu;
+      };
+
       nixcord = {
         enable = true;
-        discord.enable = false;
-        vesktop.enable = true;
-        config.frameless = true;
+        discord.enable = true;
+
+        config.themeLinks = [
+          "https://catppuccin.github.io/discord/dist/catppuccin-mocha-mauve.theme.css"
+        ];
       };
 
       mangohud = {
@@ -131,7 +160,7 @@ in {
           engine_short_names = true;
           wine = true;
           frame_timing = true;
-          fps_limit_method = "late";
+          # fps_limit_method = "late";
           toggle_fps_limit = "Shift_R+F11";
           toggle_hud_position = "Shift_R+F10";
 
@@ -140,24 +169,26 @@ in {
           vkbasalt = true;
           # gamemode = true;
           # offset=-3
-          vsync = 2;
-          gl_vsync = 1;
+          # vsync = 2;
+          # gl_vsync = 1;
         };
       };
-      java = {
-        enable = true;
-        package = pkgs.jdk17;
-      };
+    };
 
+    stylix.targets = {
+      nixcord.enable = false;
+      vencord.enable = false;
     };
 
     xdg.configFile."vkBasalt".source = ../config/vkBasalt;
 
     home = {
       file = {
-        ".steam/steam/compatibilitytools.d/Proton-GE".source = "${pkgs.proton-ge-custom}/bin";
-        ".steam/steam/compatibilitytools.d/Proton-CachyOS".source = "${pkgs.proton-cachyos-custom}/bin";
+        ".steam/steam/compatibilitytools.d/Proton-GE/".source = "${pkgs.proton-ge-custom}/bin";
+        ".steam/steam/compatibilitytools.d/Proton-CachyOS/".source = "${pkgs.proton-cachyos-custom}/bin";
+        ".steam/steam/compatibilitytools.d/Proton-XIV/".source = "${pkgs.proton-xiv}/bin";
       };
+      
       sessionVariables = {
         # WEBKIT_DISABLE_COMPOSITING_MODE = 1; # Fixes problems for logins in Lutris and other apps
       };

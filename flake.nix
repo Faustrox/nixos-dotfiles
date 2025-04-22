@@ -2,21 +2,21 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nix-gaming.url = "github:fufexan/nix-gaming";
-    hyprland.url = "github:hyprwm/Hyprland";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable?shallow=1";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    # nix-gaming.url = "github:fufexan/nix-gaming";
+
+    # hyprland.url = "github:hyprwm/Hyprland";
+    ags.url = "github:Aylur/ags";
     catppuccin.url = "github:catppuccin/nix";
     stylix.url = "github:danth/stylix";
-    ags.url = "github:Aylur/ags";
-    umu.url = "github:Open-Wine-Components/umu-launcher?dir=packaging/nix";
-    nixcord.url = "github:kaylorben/nixcord";
-    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     
-    lix-module = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.92.0.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    umu.url = "github:Open-Wine-Components/umu-launcher?dir=packaging/nix";
+    freesmlauncher.url = "github:FreesmTeam/FreesmLauncher";
+    nixcord.url = "github:kaylorben/nixcord";
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
 
     nvf = {
       url = "github:notashelf/nvf";
@@ -33,25 +33,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
   };
 
-  outputs = { nixpkgs, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: let
     system = "x86_64-linux";
 
     originPkgs = inputs.nixpkgs.legacyPackages.${system};
     pkgsPatches = [
-      {
-        url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/374771.patch";
-        sha256 = "KR0VznIRIPFmebz2YD6ycUItB6jDQJy3s738/mMkRuU=";  
-      }
       # {
-      #   url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/388171.diff";
-      #   sha256 = "sha256-t8Sdg9JcBMac8Nqjbxvt/Q+0ZYW10bfgfvvIM8gEL4s=";  
+      #   url = "https://patch-diff.githubusercontent.com/raw/NixOS/nixpkgs/pull/391453.diff";
+      #   sha256 = "sha256-bmKan7GcWYWaX+IuGoZaGgwBAI3Ye+ZDc9ChzcfwCo4=";  
       # }
     ];
     patchedNixpkgs = originPkgs.applyPatches {
@@ -67,16 +58,16 @@
         inherit system;
 
         specialArgs = { 
-          inherit inputs system;
+          inherit inputs;
         };
 
         modules = [
           ./hosts/the-hope/configuration.nix
           ./nixos
           ./overlays.nix
-          inputs.home-manager.nixosModules.home-manager
+          home-manager.nixosModules.home-manager
+
           inputs.chaotic.nixosModules.default
-          inputs.lix-module.nixosModules.default
           inputs.catppuccin.nixosModules.catppuccin
           inputs.spicetify-nix.nixosModules.default
           inputs.disko.nixosModules.disko
@@ -91,9 +82,8 @@
               extraSpecialArgs = { inherit inputs; };
               sharedModules = [
                 ./home
-                inputs.chaotic.homeManagerModules.default
-                inputs.hyprland.homeManagerModules.default
-                inputs.catppuccin.homeManagerModules.catppuccin
+                inputs.chaotic.homeModules.default
+                inputs.catppuccin.homeModules.catppuccin
                 inputs.spicetify-nix.homeManagerModules.default
                 inputs.ags.homeManagerModules.default
                 inputs.nvf.homeManagerModules.default
@@ -103,11 +93,11 @@
           }
           {
             nix.settings = {
-              substituters = [ "https://lix.cachix.org/" "https://nix-gaming.cachix.org" "https://hyprland.cachix.org" ];
+              substituters = [ "https://nix-gaming.cachix.org" "https://hyprland.cachix.org" "https://freesmlauncher.cachix.org" ];
               trusted-public-keys = [ 
-                "lix.cachix.org-1:Jif3v4w4HXHq4DiGZKNmSQ+nSKtpLYBzQBsLNo507M8="
                 "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
                 "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+                "freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs="
               ];
             };
           }

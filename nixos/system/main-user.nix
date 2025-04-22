@@ -17,23 +17,11 @@
 
     hardware.i2c.enable = true;
 
-    security.sudo.extraRules = [
-      { 
-        users = [ config.main-user.username ];
-        commands = [
-          {
-            command = "/root/scripts/*";
-            options = [ "NOPASSWD" ];
-          }
-        ];
-      }
-    ];
-
     # Set up user
     users.users.${config.main-user.username} = {
       isNormalUser = true;
       description = config.main-user.username;
-      extraGroups = [ "networkmanager" "wheel" "audio" "gamemode" "i2c" "kvm" "adbusers" "firejail" ];
+      extraGroups = [ "networkmanager" "wheel" "audio" "pipewire" "gamemode" "i2c" "kvm" "adbusers" "firejail" ];
       shell = pkgs.zsh;
     };
 
@@ -58,6 +46,7 @@
 
     nix.settings.trusted-users = [ config.main-user.username ];
 
+    services.teamviewer.enable = true;
   };
 
 }

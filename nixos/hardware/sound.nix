@@ -1,13 +1,7 @@
-{ config, lib, pkgs, inputs, ... }: let
+{ config, lib, pkgs, inputs, ... }:
 
-  quantumRate = "${toString config.sound.quantum}/${toString config.sound.rate}";
+{
 
-in {
-
-  imports = [
-    inputs.nix-gaming.nixosModules.pipewireLowLatency
-  ];
-  
   options = {
     hardware.sound.setup =
       lib.mkEnableOption "Enables and configure sound.";
@@ -18,9 +12,10 @@ in {
     environment.systemPackages = with pkgs; [
       pavucontrol
       headsetcontrol
+      easyeffects
     ];
 
-    programs.noisetorch.enable = true;
+    programs.noisetorch.enable = false;
 
     services.udev = {
       extraRules = ''
@@ -33,35 +28,21 @@ in {
       packages = with pkgs; [ headsetcontrol ];
     };
 
-    security = {
-      rtkit.enable = true;
-
-      # Limits needed for pro audio
-      pam.loginLimits = [
-          {
-          domain = "@audio";
-          item = "memlock";
-          type = "-";
-          value = "unlimited";
-        }
-        {
-          domain = "@audio";
-          item = "rtprio";
-          type = "-";
-          value = "99";
-        }
-        {
-          domain = "@audio";
-          item = "nofile";
-          type = "soft";
-          value = "99999";
-        }
-        {
-          domain = "@audio";
-          item = "nofile";
-          type = "hard";
-          value = "99999";
-        }
+    security.rtkit = {
+      enable = true;
+      args = [
+        "--scheduling-policy=FIFO"
+        "--our-realtime-priority=89"
+        "--max-realtime-priority=88"
+        "--min-nice-level=-19"
+        "--rttime-usec-max=2000000"
+        "--users-max=100"
+        "--processes-per-user-max=1000"
+        "--threads-per-user-max=10000"
+        "--actions-burst-sec=10"
+        "--actions-per-burst-max=1000"
+        "--canary-cheep-msec=30000"
+        "--canary-watchdog-msec=60000"
       ];
     };
 
@@ -73,73 +54,61 @@ in {
         alsa.enable = true;
         alsa.support32Bit = true;
         pulse.enable = true;
-        lowLatency.enable = true;
-        # jack.enable = true;
-        # wireplumber.extraConfig = {
-        #   "92-wireplumber" = {
-        #     "monitor.alsa.rules" = [
-        #       {
-        #         matches = [
-        #           {
-        #             "device.name" = "alsa_card.usb-SteelSeries_Arctis_Nova_7-00";
-        #           }
-        #         ];
-        #         actions = {
-        #           "update-props" = {
-        #             # "device.profile" = "pro-audio";
-        #             "api.alsa.period-size" = 64;
-        #             "api.alsa.period-num" = 3;
-        #             "audio.rate" = 48000;
-        #           };
-        #         };
-        #       }
-        #     ];
-        #   };
-        # };
-        # extraConfig = {
-        #   pipewire = {
-        #     "92-pipewire" = {
-        #       "stream.properties" = {
-        #         "default.clock.rate" = 48000;
-        #         "default.clock.allowed-rates" = [ 32000 44100 48000 ];
-        #         "default.clock.min-quantum" = 32;
-        #         "default.clock.quantum" = 64;
-        #         "default.clock.max-quantum" = 64;
-        #         "default.clock.quantum-limit" = 64;
-        #       };
-        #     };
-        #   };
-        #   pipewire-pulse = {
-        #     "92-pulse" = {
-        #       "pulse.properties" = {
-        #         "pulse.min.req" = "64/48000";
-        #         "pulse.default.req" = "64/48000";
-        #         # "pulse.max.req" = "1024/48000";
-        #         "pulse.min.quantum" = "64/48000";
-        #         # "pulse.max.quantum" = "1024/48000";
-        #       };
-        #       "stream.properties" = {
-        #         "node.latency" = "1024/48000";
-        #         "resample.quality" = 1;
-        #       };
-        #       "context.modules" = [
-        #         {
-        #           name = "libpipewire-module-rt";
-        #           args = {
-        #             "nice.level" = -20;
-        #             "rt.prio" = 99;
-        #           };
-        #         }
-        #       ];
-        #     };
-        #   };
-          # jack = {
-          #   "92-jack-conf" = {
-          #     "node.latency" = "64/48000";
-          #     "node.quantum" = "64/48000";
-          #   }
+        extraConfig.pipewire = {
+          "10-clock-rate" = {
+            "context.properties" = {
+              "default.clock.rate" = 96000;
+              "defautlt.allowed-rates" = [ 48000 88200 96000 192000 ];
+              "default.clock.quantum" = 128;
+              "default.clock.min-quantum" = 64;
+              "default.clock.max-quantum" = 256;
+            };
+          };
+          # "99-input-denoising.conf" = {
+          #   "context.properties" = {
+          #     "link.max-buffers" = 16;
+          #     "core.daemon" = true;
+          #     "core.name" = "pipewire-0";
+          #     "module.x11.bell" = false;
+          #     "module.access" = true;
+          #     "module.jackdbus-detect" = false;
+          #   };
+          #   "context.modules" = [
+          #     {
+          #       "name" = "libpipewire-module-filter-chain";
+          #       "args" = {
+          #         "node.description" =  "Noise Canceling source";
+          #         "media.name" =  "Noise Canceling source";
+          #         "filter.graph" = {
+          #           "nodes" = [
+          #             {
+          #               "type" = "ladspa";
+          #               "name" = "rnnoise";
+          #               "plugin" = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
+          #               "label" = "noise_suppressor_stereo";
+          #               "control" = {
+          #                 "VAD Threshold (%)" = 50.0;
+          #                 # "VAD Grace Period (ms)" = 200;
+          #                 # "Retroactive VAD Grace (ms)" = 0;
+          #               };
+          #             }
+          #           ];
+          #         };
+          #         "capture.props" = {
+          #             "node.passive" = true;
+          #             # "node.name" =  "effect_input.rnnoise";
+          #             # "audio.rate" = 48000;
+          #         };
+          #         "playback.props" = {
+          #             "media.class" = "Audio/Source";
+          #             # "node.name" =  "effect_output.rnnoise";
+          #             # "audio.rate" = 48000;
+          #         };
+          #       };
+          #     }
+          #   ];
           # };
-        # };
+        };
       };
     };
   };
