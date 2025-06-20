@@ -7,6 +7,7 @@
   };
 
   config = lib.mkIf config.vscode.setup {
+
     home.packages = with pkgs; [
       nixfmt-rfc-style
       nil

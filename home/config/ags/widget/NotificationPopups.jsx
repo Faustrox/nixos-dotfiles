@@ -1,4 +1,4 @@
-import { Astal } from "astal/gtk3"
+import { Astal } from "astal/gtk4"
 import { bind, timeout, Variable } from "astal"
 import Notifd from "gi://AstalNotifd"
 import Notification from "./Notification.jsx"
@@ -61,13 +61,13 @@ class NotificationMap {
 
     set(key, value) {
         // in case of replacecment destroy previous widget
-        this.#map.get(key)?.destroy()
+        // this.#map.get(key)?.destroy()
         this.#map.set(key, value)
         this.notifiy()
     }
 
     delete(key) {
-        this.#map.get(key)?.destroy()
+        // this.#map.get(key)?.destroy()
         this.#map.delete(key)
         this.notifiy()
     }

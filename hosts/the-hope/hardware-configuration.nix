@@ -5,7 +5,7 @@
 
 {
   imports = [ 
-    (modulesPath + "/installer/scan/not-detected.nix")
+    # (modulesPath + "/installer/scan/not-detected.nix")
     ./disko-config.nix
   ];
 
@@ -31,32 +31,22 @@
     ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", \
         ATTR{link_power_management_policy}=="*", \
         ATTR{link_power_management_policy}="max_performance"
-
-    TEST!="/dev/zram0", GOTO="zram_end"
-
-    # When used with ZRAM, it is better to prefer page out only anonymous pages,
-    # because it ensures that they do not go out of memory, but will be just
-    # compressed. If we do frequent flushing of file pages, that increases the
-    # percentage of page cache misses, which in the long term gives additional
-    # cycles to re-read the same data from disk that was previously in page cache.
-    # This is the reason why it is recommended to use high values from 100 to keep
-    # the page cache as hermetic as possible, because otherwise it is "expensive"
-    # to read data from disk again. At the same time, uncompressing pages from ZRAM
-    # is not as expensive and is usually very fast on modern CPUs.
-    SYSCTL{vm.swappiness}="150"
-
-    LABEL="zram_end"
     
   '';
+
+  # NO TPM
+  services.tcsd.enable = lib.mkDefault false;
+  systemd.tpm2.enable = lib.mkDefault false;
+  boot.initrd.systemd.tpm2.enable = lib.mkDefault false;
 
   boot = {
 
     supportedFilesystems = [ "ntfs" ];
     
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
-    kernelModules = [ "kvm-amd" "zenergy" ];
+    kernelModules = [ "kvm-amd" "k10temp" ];
     extraModulePackages = [ config.boot.kernelPackages.zenergy ];
-    blacklistedKernelModules = [ "k10temp" "ath3k" ];
+    blacklistedKernelModules = [ ];
 
     kernelParams = [ "amd_pstate=active" ];
 
@@ -89,7 +79,7 @@
 			# Increase kswapd activity
 			# When free memory is less than 1.5%, make kswapd kick in.
 			# https://unix.stackexchange.com/a/679203
-			"vm.watermark_scale_factor" = 125;
+			"vm.watermark_scale_factor" = 500;
 
       "vm.dirty_background_ratio" = 5;
       "vm.dirty_ratio" = 10;
@@ -104,21 +94,21 @@
   zramSwap = {
     enable = true;
     algorithm = "zstd";
-    memoryPercent = 50;
+    memoryPercent = 100;
     priority = 100;
   };
 
   fileSystems."/mnt/games" =
     { device = "/dev/disk/by-uuid/df022cf4-ed2f-4883-8da1-b5161367a8ea";
       fsType = "btrfs";
-      options = [ "compress=zstd" "noatime" "discard=async" ];
+      options = [ "compress=zstd:1" "noatime" "discard=async" ];
     };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  networking.useDHCP = lib.mkDefault true;
+  # networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp4s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

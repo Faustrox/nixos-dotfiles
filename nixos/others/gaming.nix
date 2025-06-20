@@ -1,15 +1,16 @@
-{ config, lib, pkgs, inputs, ... }: let
+{ config, lib, pkgs, ... }: let
 
   gamingEnv = {
     DXVK_STATE_CACHE_PATH = "/home/${config.main-user.username}/.cache/dxvk/";
     VKD3D_SHADER_CACHE_PATH = "/home/${config.main-user.username}/.cache/vkd3d/";
     PROTON_ENABLE_NGX_UPDATER = 1;
+    PROTON_ENABLE_NVAPI = 1;
+    PROTON_HIDE_NVIDIA_GPU = 0;
     DXVK_NVAPI_DRS_SETTINGS = "NGX_DLSS_RR_OVERRIDE=on,NGX_DLSS_SR_OVERRIDE=on,NGX_DLSS_RR_OVERRIDE_RENDER_PRESET_SELECTION=render_preset_latest,NGX_DLSS_SR_OVERRIDE_RENDER_PRESET_SELECTION=render_preset_latest";
     WINEDEBUG = "-all";
     DXVK_HUD = "compiler";
     DXVK_ASYNC = 1;
-    PROTON_ENABLE_NVAPI = 1;
-    VKD3D_CONFIG = "dxr11,dxr";
+    VKD3D_CONFIG = "dxr";
   };
 
 in {
@@ -23,9 +24,9 @@ in {
 
     users.users.${config.main-user.username}.extraGroups = [ "gamemode" ];
 
-    # Kernel zen version
+    # Kernel settings
     boot = {
-      kernelPackages = pkgs.linuxPackages_zen;
+      kernelPackages = pkgs.linuxPackages_cachyos-lto;
       kernelModules = [ "ntsync" ];
     };
 
@@ -33,14 +34,19 @@ in {
     services.scx = {
       enable = true;
       package = pkgs.scx.rustscheds;
-      scheduler = "scx_lavd";
+      scheduler = "scx_bpfland";
       extraArgs = [
-        "--performance"
+        "--slice-us"
+        "3000"
+        "--primary-domain" 
+        "performance"
+        "--no-wake-sync"
       ];
     };
     
     # Xbox controllers dongle
-    hardware.xone.enable = true;
+    # hardware.xone.enable = true;
+    hardware.xpadneo.enable = true;
 
     # Setup Steam, Gamescope, gamemode
     programs = {
@@ -49,21 +55,18 @@ in {
 
       steam = {
         enable = true;
-
-        remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-        dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
         protontricks.enable = true;
+        # remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+        # dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+        # localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
 
         package = pkgs.steam.override {
-          extraEnv = gamingEnv // {
-            
-          };
+          extraEnv = gamingEnv // {};
         };
 
         extraCompatPackages = with pkgs; [ 
           proton-ge-custom
-          proton-cachyos-custom
-          proton-xiv
+          
         ];
       };
 
@@ -99,8 +102,8 @@ in {
       };
 
       gamemode = {
-        enable = true;
-        enableRenice = if config.services.scx.enable then false else true;
+        enable = false;
+        enableRenice = true;
 
         settings = {
           general = {
@@ -113,61 +116,40 @@ in {
           # };
         };
       };
-      
     };
 
-    services = {
-      ananicy = {
+    # services = {
+    #   ananicy = {
 
-        enable = if config.services.scx.enable then false else true;
-        package = pkgs.ananicy-cpp;
-        rulesProvider = pkgs.ananicy-rules-cachyos;
+    #     enable = if config.services.scx.enable then false else true;
+    #     package = pkgs.ananicy-cpp;
+    #     rulesProvider = pkgs.ananicy-rules-cachyos;
 
-        settings = {
-          check_freq = 15;
-          cgroup_load = true;
-          type_load = true;
-          rule_load = true;
+    #     settings = {
+    #       check_freq = 15;
+    #       cgroup_load = true;
+    #       type_load = true;
+    #       rule_load = true;
 
-          apply_nice = true;
-          apply_latnice = true;
-          apply_ionice = true;
-          apply_sched = true;
-          apply_oom_score_adj = true;
-          apply_cgroup = true;
+    #       apply_nice = true;
+    #       apply_latnice = true;
+    #       apply_ionice = true;
+    #       apply_sched = true;
+    #       apply_oom_score_adj = true;
+    #       apply_cgroup = true;
 
-          loglevel = "info";
+    #       loglevel = "info";
 
-          log_applied_rule = false;
+    #       log_applied_rule = false;
 
-          cgroup_realtime_workaround = lib.mkForce false;
+    #       cgroup_realtime_workaround = lib.mkForce false;
 
-        };
+    #     };
 
-        extraRules = [
-          {
-            name = "Marvel.exe";
-            type = "Game";
-          }
-          {
-            name = "isaac-ng.exe";
-            type = "Game";
-          }
-          {
-            name = "Spider-Man2.exe";
-            type = "Game";
-          }
-          {                       
-            name = "KingdomCome.exe";
-            type = "Game";
-          }
-          {
-            name = "tlou-ii.exe";
-            type = "Game";
-          }
-        ];
-      };
-    };
+    #     extraRules = [
+    #     ];
+    #   };
+    # };
 
     systemd.services."pci-latency" = {
       description = "Adjust latency timers for PCI peripherals";
@@ -199,14 +181,24 @@ in {
 
     boot = { # Kernel changes for performance
       kernelParams = [
-        "retbleed=off"
+        "idle=nomwait"
         "mitigations=off"
+        "retbleed=off"
+        "pti=off"
+        "amd_iommu=off"
+        "intel_iommu=off"
+        # "random.trust_cpu=off"
+        # "random.trust_bootloader=off"
         "tsc=reliable"
         "clocksource=tsc"
-        "clearcpuid=514"
+        # "clearcpuid=514"
         "preempt=full"
+        "threadirqs"
       ];
       kernel.sysctl = {
+        
+        # Cachyos Kernel only
+        "kernel.sched_bore" = "1";
 
         "kernel.sched_rt_runtime_us" = 980000;
         "kernel.sched_cfs_bandwidth_slice_us" = 3000;
@@ -251,6 +243,8 @@ in {
         "vm.compaction_proactiveness" = 0;
 
         "vm.max_map_count" = 2147483642;
+
+        "vm.min_free_kbytes" = 1048576;
         
         # Set size of file handles and inode cache
         "fs.file-max" = 2097152;
@@ -263,8 +257,10 @@ in {
     environment = {
       systemPackages = with pkgs; [
         # Wine
-        wineWowPackages.staging
+        wineWowPackages.full
         winetricks
+        gpu-screen-recorder-gtk
+        gpu-screen-recorder
       ];
       sessionVariables = gamingEnv // {
         # STEAM_EXTRA_COMPAT_TOOLS_PATHS = "${pkgs.proton-ge-custom}/bin";

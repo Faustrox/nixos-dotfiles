@@ -18,9 +18,9 @@ window {
 window.Bar {
 	color: colors.$text;
 	font-weight: bold;
+	background: colors.$background;
 
 	>centerbox {
-		background: colors.$background;
 		padding: 0.4rem 1rem;
 	}
 }
@@ -66,8 +66,9 @@ window.Bar {
 	padding: 0;
 	transition: 0.3s;
 	
+	
 	>box {
-		background-image: url("/home/faustrox/Pictures/faustrox.jpg");
+		background-image: url("file:///home/faustrox/Pictures/faustrox.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -302,9 +303,10 @@ window.Bar {
 
 	&.app {
 		background-color: colors.$background;
-		min-width: 1rem;
+		min-width: 2.5rem;
 		min-height: 0.2rem;
 		margin: 0rem 0.5rem;
+		border-radius: 0.5rem;
 
 		&:hover {
 			background-color: color.mix(colors.$surface-variant, colors.$secondary, 70%);
@@ -313,6 +315,7 @@ window.Bar {
 		&:active {
 			background-color: color.mix(colors.$surface-variant, colors.$secondary, 60%);
 		}
+
 	}
 
 	&.corner {
@@ -334,6 +337,10 @@ window.Bar {
 }
 
 .Launcher {
+
+	&.container {
+		padding: 10rem 0px;
+	}
 
 	&.box {
 		background-color: colors.$background;
@@ -381,7 +388,7 @@ window.Bar {
 		}
 
 		&-icon {
-			font-size: 48px;
+			-gtk-icon-size: 48px;
 		}
 
 		&-name {
@@ -526,4 +533,44 @@ window.Bar {
 			box-shadow: -25px 30px 0px 0px colors.$background;
 		}
 	}
+}
+
+.Recorder {
+	padding: 10px;
+
+	>button {
+		font-size: 2rem;
+		font-weight: bolder;
+		background-color: transparent;
+		color: colors.$text;
+		border-radius: 2rem;
+		padding: 0 0.3rem;
+		// margin-top: 0.7rem;
+		// margin-right: 1.2rem;
+		transition: 0.3s;
+		box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+		animation: pulse 1.5s infinite;
+		transition: background-color 0.3s;
+
+
+		&:hover {
+			background-color: color.mix(colors.$background, colors.$error, 70%);
+		}
+
+		>label {
+			color: red;
+		}
+	}
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
 }

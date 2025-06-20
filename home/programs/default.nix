@@ -3,8 +3,9 @@
 {
 
   imports = [
+    ./fish.nix
     ./git.nix
-    ./nvf.nix
+    ./nushell.nix
     ./spicetify.nix
     ./vscode.nix
     ./zsh.nix

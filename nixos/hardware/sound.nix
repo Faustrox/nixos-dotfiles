@@ -45,69 +45,56 @@
         "--canary-watchdog-msec=60000"
       ];
     };
-
+    
     services = {
       pulseaudio.enable = false;
       
       pipewire = {
         enable = true;
-        alsa.enable = true;
-        alsa.support32Bit = true;
+        # alsa.enable = true;
+        # alsa.support32Bit = true;
         pulse.enable = true;
-        extraConfig.pipewire = {
+        extraConfig.pipewire = { # Using wireless headset, letting pipewire to process
           "10-clock-rate" = {
             "context.properties" = {
-              "default.clock.rate" = 96000;
-              "defautlt.allowed-rates" = [ 48000 88200 96000 192000 ];
-              "default.clock.quantum" = 128;
-              "default.clock.min-quantum" = 64;
-              "default.clock.max-quantum" = 256;
+              "default.clock.rate" = 48000;
+              "default.clock.quantum" = 3600;
+              "default.clock.force-quantum" = 3600;
             };
           };
-          # "99-input-denoising.conf" = {
-          #   "context.properties" = {
-          #     "link.max-buffers" = 16;
-          #     "core.daemon" = true;
-          #     "core.name" = "pipewire-0";
-          #     "module.x11.bell" = false;
-          #     "module.access" = true;
-          #     "module.jackdbus-detect" = false;
-          #   };
-          #   "context.modules" = [
-          #     {
-          #       "name" = "libpipewire-module-filter-chain";
-          #       "args" = {
-          #         "node.description" =  "Noise Canceling source";
-          #         "media.name" =  "Noise Canceling source";
-          #         "filter.graph" = {
-          #           "nodes" = [
-          #             {
-          #               "type" = "ladspa";
-          #               "name" = "rnnoise";
-          #               "plugin" = "${pkgs.rnnoise-plugin}/lib/ladspa/librnnoise_ladspa.so";
-          #               "label" = "noise_suppressor_stereo";
-          #               "control" = {
-          #                 "VAD Threshold (%)" = 50.0;
-          #                 # "VAD Grace Period (ms)" = 200;
-          #                 # "Retroactive VAD Grace (ms)" = 0;
-          #               };
-          #             }
-          #           ];
-          #         };
-          #         "capture.props" = {
-          #             "node.passive" = true;
-          #             # "node.name" =  "effect_input.rnnoise";
-          #             # "audio.rate" = 48000;
-          #         };
-          #         "playback.props" = {
-          #             "media.class" = "Audio/Source";
-          #             # "node.name" =  "effect_output.rnnoise";
-          #             # "audio.rate" = 48000;
-          #         };
-          #       };
-          #     }
-          #   ];
-          # };
+        };
+        extraConfig.pipewire-pulse = {
+          "99-buffer" = {
+            "pulse.properties" = {
+              "default.clock.rate" = 48000;
+              "default.clock.quantum" = 3600;
+              "default.clock.force-quantum" = 3600;
+            };
+          };
+        };
+        wireplumber.extraConfig.bluetoothEnhancements = {
+          "monitor.bluez.properties" = {
+            "bluez5.enable-sbc-xq" = true;
+            "bluez5.enable-msbc" = true;
+            "bluez5.enable-hw-volume" = true;
+            "bluez5.hfphsp-backend" = "native";
+            
+            "bluez5.roles" = [ "a2dp_sink" "a2dp_source" "bap_sink" "bap_source" "hsp_hs" "hsp_ag" "hfp_hf" "hfp_ag" ];
+            "bluez5.codecs" = [
+              "ldac"
+              "aptx"
+              "aptx_ll_duplex"
+              "aptx_ll"
+              "aptx_hd"
+              "opus_05_pro"
+              "opus_05_71"
+              "opus_05_51"
+              "opus_05"
+              "opus_05_duplex"
+              "aac"
+              "sbc_xq"
+            ];
+          };
         };
       };
     };

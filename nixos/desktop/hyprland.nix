@@ -1,7 +1,7 @@
 { config, pkgs, lib, inputs, ... }:
-let
-  # hyprPackages = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system};
-in
+# let
+#   hyprPackages = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system};
+# in
 {
 
   options = {
@@ -11,19 +11,17 @@ in
 
   config = lib.mkIf config.hyprland.enable {
 
-    chaotic.appmenu-gtk3-module.enable = true;
-
     programs = {
       uwsm.enable = true;
-      ssh.startAgent = true;
+      # ssh.startAgent = true; # GnuPG need this disabled
       xwayland.enable = true;
 
       hyprland = {
         enable = true;
         withUWSM  = true;
         xwayland.enable = true;
-        # package = hyprPackages.hyprland;
-        # portalPackage = hyprPackages.xdg-desktop-portal-hyprland;
+        package = pkgs.hyprland;
+        portalPackage = pkgs.xdg-desktop-portal-hyprland;
       };
 
       nautilus-open-any-terminal = {
@@ -32,26 +30,23 @@ in
       };
     };
 
-    # services.greetd = let
+    services.greetd = let
 
-    #   tuigreet = "${pkgs.greetd.tuigreet}/bin/tuigreet";
-    #   session = "${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop";
-    #   username = config.main-user.username;
+      tuigreet = "${pkgs.greetd.tuigreet}/bin/tuigreet";
+      session = "${pkgs.uwsm}/bin/uwsm start hyprland-uwsm.desktop";
+      username = config.main-user.username;
 
-    # in {
-    #   enable = true;
+    in {
+      enable = true;
       
-    #   settings = {
-    #     initial_session = {
-    #       command = "${session}";
-    #       user = "${username}";
-    #     };
-    #     default_session = {
-    #       command = "${tuigreet} --greeting 'Welcome to NixOS!' --asterisks --remember --remember-user-session --time --cmd ${session}";
-    #       user = "greeter";
-    #     };
-    #   };
-    # };
+      settings = {
+        default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --remember-session";
+        initial_session = {
+          command = "${session}";
+          user = "${username}";
+        };
+      };
+    };
 
     environment.systemPackages = with pkgs; [
 
@@ -94,18 +89,18 @@ in
     
     # Hyprland VRAM usage fix
 
-    boot.kernelParams = [
-      "video=DP-1:D"
-      "video=DP-2:D"
-    ];
+    # boot.kernelParams = [
+    #   "video=DP-1:D"
+    #   "video=DP-2:D"
+    # ];
 
-    # Xwayland VRAM usage fix on Nvidia GPU
-    environment.etc."nvidia/nvidia-application-profiles-rc.d/hyprland.txt".text = ''
+    # VRAM usage fix on Nvidia GPU procname
+    environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool.json".text = ''
       {
         "rules": [
           {
             "pattern": {
-              "feature": "procname",
+              "feature": "cmdline",
               "matches": "Hyprland"
             },
             "profile": "Limit Free Buffer Pool On Hyprland"
@@ -116,8 +111,8 @@ in
             "name": "Limit Free Buffer Pool On Hyprland",
             "settings": [
               {
-                  "key": "GLVidHeapReuseRatio",
-                  "value": 1
+                "key": "GLVidHeapReuseRatio",
+                "value": 1
               }
             ]
           }
@@ -143,21 +138,20 @@ in
       QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
 
       XDG_CURRENT_DESKTOP = "Hyprland";
-      XDG_SESSION_TYPE = "wayland";
+      # XDG_SESSION_TYPE = "wayland";
       XDG_SESSION_DESKTOP = "Hyprland";
 
       # Using dbus-broker, won't need VARS and NOTIFY
       HYPRLAND_NO_SD_VARS = 1;
       HYPRLAND_NO_SD_NOTIFY = 1;
-      # HYPRLAND_NO_RT = 1;
+      HYPRLAND_NO_RT = 1;
 
       # Nvidia Settings
       # AQ_NO_ATOMIC = 1;
       # AQ_NO_MODIFIERS = 1;
-      WLR_NO_HARDWARE_CURSORS = 1;
-      __GL_VRR_ALLOWED = 1;
-      __GL_GSYNC_ALLOWED = 1;
-      __GL_MaxFramesAllowed = 1;
+      # __GL_VRR_ALLOWED = 1;
+      # __GL_GSYNC_ALLOWED = 1;
+      # __GL_MaxFramesAllowed = 1;
     };
     
   };

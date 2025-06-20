@@ -1,5 +1,5 @@
-import { App, Astal, Gtk } from "astal/gtk3"
-import { bind, timeout } from "astal"
+import { App, Astal, Gtk, Gdk } from "astal/gtk4"
+import GLib from "gi://GLib"
 
 import { open_powermenu } from '../variables'
 
@@ -7,9 +7,9 @@ function PowerMenuEntry({icon, onClick}) {
   return (
     <box 
       vertical
-      className='Powermenu-entry'
+      cssClasses={['Powermenu-entry']}
     >
-      <button onClick={onClick}>
+      <button onClicked={onClick}>
         <label>
           {icon}
         </label>
@@ -20,36 +20,48 @@ function PowerMenuEntry({icon, onClick}) {
 
 export default function PowerMenu(monitor = 0) {
   const { TOP } = Astal.WindowAnchor
-  const isMenuVisible = bind(open_powermenu).as((value) => value)
+  let widgetRef;
 
   return (
     <window
-      visible={true}
+      visible={false}
       monitor={monitor}
       anchor={TOP}
       application={App}
+      keymode={Astal.Keymode.ON_DEMAND}
+      setup={self => {
+        widgetRef = self
+      }}
+      onKeyPressed={(self, event) => {
+        if (event === Gdk.KEY_Escape)
+          open_powermenu.set(!open_powermenu.get())
+      }}
     >
       <revealer
-        revealChild={isMenuVisible}
-        transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
+        setup={(self) => {
+          open_powermenu.subscribe((value) => {
+            self.revealChild = value
+            widgetRef.visible = value
+          })
+        }}
+        transitionType={Gtk.RevealerTransitionType.CROSSFADE}
       >
         <centerbox>
           <box
-            className='Powercorner left'
+            cssClasses={['Powercorner', 'left']}
             valign={Gtk.Align.START}
             />
           <box 
-            className='Powermenu' 
+            cssClasses={['Powermenu']}
             valign="center" 
             halign="center"
             >
-            <PowerMenuEntry icon='󰐥' onClick='systemctl poweroff' />
-            <PowerMenuEntry icon='󰜉' onClick='systemctl reboot' />
-            <PowerMenuEntry icon='󰗼' onClick='uwsm stop' />
-            <PowerMenuEntry icon='󰅖' onClick={() => open_powermenu.set(false)} />
+            <PowerMenuEntry icon='󰐥' onClick={() => GLib.spawn_command_line_async('systemctl poweroff')} />
+            <PowerMenuEntry icon='󰜉' onClick={() => GLib.spawn_command_line_async('systemctl reboot')} />
+            <PowerMenuEntry icon='󰗼' onClick={() => GLib.spawn_command_line_async('uwsm stop')} />
           </box>
           <box
-            className='Powercorner right'
+            cssClasses={['Powercorner', 'right']}
             valign={Gtk.Align.START}
             />
         </centerbox>

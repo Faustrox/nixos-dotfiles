@@ -3,8 +3,8 @@
 {
 
   imports = [
+    ./fullFlake.nix
     ./gaming.nix
-    ./virt-machine.nix
   ];
 
 }

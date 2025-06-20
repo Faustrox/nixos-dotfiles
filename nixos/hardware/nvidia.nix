@@ -9,74 +9,168 @@
 
   config = lib.mkIf config.nvidia.enable {
 
+    # Enable early KMS for NVIDIA
+    boot.initrd.kernelModules = [
+      "nvidia"
+      "nvidia_modeset"
+      "nvidia_drm"
+      "nvidia_uvm"
+    ];
+
+    # Enable the NVIDIA kernel modules
+    boot.kernelModules = [
+      "nvidia"
+      "nvidia_drm"
+    ];
+
+    # Blacklist nouveau to avoid conflicts
+    boot.blacklistedKernelModules = [ "nouveau" ];
+
     # Enable OpenGL
     hardware.graphics = {
       enable = true;
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
       enable32Bit = true;
+      extraPackages = with pkgs; [
+        nvidia-vaapi-driver
+        vaapiVdpau
+        libvdpau-va-gl
+        mesa
+        egl-wayland
+        vulkan-loader
+        vulkan-validation-layers
+        libva
+      ];
     };
 
-    # Load nvidia driver for Xorg and Wayland
-    # boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
-
-    services.xserver = {
-      videoDrivers = [ "nvidia" ];
-    };
-
+    services.xserver.videoDrivers = [ "nvidia" ];
+    services.lact.enable = true;
+    # boot.initrd.availableKernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+    
     hardware.nvidia = let
+
       nvidiaPkg = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-        version = "575.51.02";
-        sha256_64bit = "sha256-XZ0N8ISmoAC8p28DrGHk/YN1rJsInJ2dZNL8O+Tuaa0=";
+        version = "575.64";
+        sha256_64bit = "sha256-6wG8/nOwbH0ktgg8J+ZBT2l5VC8G5lYBQhtkzMCtaLE=";
         sha256_aarch64 = "";
-        openSha256 = "sha256-NQg+QDm9Gt+5bapbUO96UFsPnz1hG1dtEwT/g/vKHkw=";
-        settingsSha256 = "sha256-6n9mVkEL39wJj5FB1HBml7TTJhNAhS/j5hqpNGFQE4w=";
-        persistencedSha256 = "";
+        openSha256 = "sha256-y93FdR5TZuurDlxc/p5D5+a7OH93qU4hwQqMXorcs/g=";
+        settingsSha256 = "sha256-3BvryH7p0ioweNN4S8oLDCTSS47fQPWVYwNq4AuWQgQ=";
+        persistencedSha256 = "sha256-QkDNQKwCsakZOLcSie1NBiFCM5e5NFGiIKtPSFeWdXs=";
       };
     in {
-      # Modesetting is required.
-      modesetting.enable = true;
-
       open = true;
-
-      # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
-      powerManagement.enable = false;
-
-      # Nvidia fine grainder power management, super experimental.
-      powerManagement.finegrained = false;
-
-      # Enable the Nvidia settings menu,
       nvidiaSettings = true;
-
-      nvidiaPersistenced = false;
-
-      # dynamicBoost.enable = true;
-
-      # Optionally, you may need to select the appropriate driver version for your specific GPU.
+      nvidiaPersistenced = true;
       package = nvidiaPkg;
+
+      gsp.enable = config.hardware.nvidia.open;
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      powerManagement.finegrained = false;
+      # dynamicBoost.enable = true;
+      
     };
+
+    environment.etc."nvidia/nvidia-application-profiles-rc.d/limit-vram-usage".text = ''
+      {
+        "rules": [
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "vesktop"
+            },
+            "profile": "No VidMem Reuse"
+          },
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "spotify"
+            },
+            "profile": "No VidMem Reuse"
+          },
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "discord"
+            },
+            "profile": "No VidMem Reuse"
+          },
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "chromium"
+            },
+            "profile": "No VidMem Reuse"
+          },
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "chrome"
+            },
+            "profile": "No VidMem Reuse"
+          },
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "ghostty"
+            },
+            "profile": "No VidMem Reuse"
+          },
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "webcord"
+            },
+            "profile": "No VidMem Reuse"
+          },
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "brave"
+            },
+            "profile": "No VidMem Reuse"
+          },
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": "wezterm"
+            },
+            "profile": "No VidMem Reuse"
+          }
+        ],
+        "profiles": [
+          {
+            "name": "No VidMem Reuse",
+            "settings": [
+              {
+                "key": "GLVidHeapReuseRatio",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      }
+    '';
     
     boot.extraModprobeConfig = ''
-      options nvidia_drm modeset=1 fbdev=1
-      
-      options nvidia 
-    '' + lib.concatStringsSep " " [
-      "NVreg_UsePageAttributeTable=1"
-      "NVreg_InitializeSystemMemoryAllocations=1"
-      "NVreg_EnableStreamMemOPs=1"
-      "NVreg_EnablePCIeGen3=1"
-      "NVreg_EnableResizableBar=1"
-      "NVreg_RegistryDwords=RMIntrLockingMode=1"
-    ];
+      options nvidia \
+        NVreg_EnablePCIeGen3=1 \
+        NVreg_EnableStreamMemOPs=1 \
+        NVreg_UsePageAttributeTable=1 \
+        NVreg_InitializeSystemMemoryAllocations=0 \
+        NVreg_PreserveVideoMemoryAllocations=0 \
+        NVreg_EnableResizableBar=1 \
+        NVreg_RegistryDwords="RMIntrLockingMode=1"
+    '';
 
     services.udev.extraRules = ''
       # Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
-      ACTION=="add|bind", SUBSYSTEM=="pci", DRIVERS=="nvidia", \
-          ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", \
-          TEST=="power/control", ATTR{power/control}="auto"
+      ACTION=="add|bind", SUBSYSTEM=="pci", DRIVERS=="nvidia", ATTR{vendor}=="0x10de", \
+          ATTR{class}=="0x03[0-9]*", TEST=="power/control", ATTR{power/control}="auto"
 
       # Disable runtime PM for NVIDIA VGA/3D controller devices on driver unbind
-      ACTION=="remove|unbind", SUBSYSTEM=="pci", DRIVERS=="nvidia", \
-          ATTR{vendor}=="0x10de", ATTR{class}=="0x03[0-9]*", \
-          TEST=="power/control", ATTR{power/control}="on"
+      ACTION=="remove|unbind", SUBSYSTEM=="pci", DRIVERS=="nvidia", ATTR{vendor}=="0x10de", \
+          ATTR{class}=="0x03[0-9]*", TEST=="power/control", ATTR{power/control}="on"
     '';
 
     nixpkgs.config.nvidia.acceptLicense = true;
@@ -95,33 +189,18 @@
       };
     };
 
-    environment.systemPackages = with pkgs; [
-      libva-utils
-      vdpauinfo
-      vulkan-tools
-      vulkan-validation-layers
-      libvdpau-va-gl
-      egl-wayland
-      wgpu-utils
-      libglvnd
-      nvtopPackages.full
-      nvitop
-      libGL
-      gl-gsync-demo
-    ];
-
     environment.variables = {
-      GBM_BACKEND = "nvidia-drm";
+      # GBM_BACKEND = "nvidia-drm";
       LIBVA_DRIVER_NAME = "nvidia";
       __GLX_VENDOR_LIBRARY_NAME = "nvidia";
       NVD_BACKEND = "direct";
 
+      __GL_MaxFramesAllowed = 1;
+      __GL_YIELD = "USLEEP";
       # __GL_SHADER_DISK_CACHE = 1;
       # __GL_SHADER_DISK_CACHE_PATH = "/home/${config.main-user.username}/.cache/nvidia/";
       __GL_SHADER_DISK_CACHE_SIZE = "100000000000";
       __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = 1;
-
-      # __GL_MaxFramesAllowed = 1;
     };
   };
 }

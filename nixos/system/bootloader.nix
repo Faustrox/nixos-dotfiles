@@ -25,9 +25,11 @@
       consoleLogLevel = 0;
       kernelParams = [
         "quiet"
-        "splash"
+        "plymouth.use-simpledrm"
+        "console=/dev/null"
         "boot.shell_on_fail"
-        "loglevel=3"
+        "loglevel=4"
+        "systemd.show_status=0"
         "rd.systemd.show_status=false"
         "rd.udev.log_level=3"
         "udev.log_priority=3"
@@ -35,6 +37,7 @@
       ];
       initrd = {
         verbose = false;
+        kernelModules = [];
         systemd.enable = true;
       };
 
@@ -45,7 +48,8 @@
 
         systemd-boot = lib.mkIf config.bootloader.systemd-boot.enable {
           enable = true;
-          consoleMode = "auto";
+          editor = false;
+          consoleMode = "max";
           configurationLimit = 5;
         };
         grub = lib.mkIf config.bootloader.grub.enable {

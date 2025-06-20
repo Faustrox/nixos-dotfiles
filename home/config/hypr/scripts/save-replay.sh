@@ -8,6 +8,7 @@ else
   sleep 1 && wait $!
 
   notify-send "Clip saved"
+  ags toggle recorder
   killall -SIGINT gpu-screen-recorder
 
   exit $?

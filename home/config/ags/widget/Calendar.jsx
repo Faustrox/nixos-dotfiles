@@ -1,4 +1,4 @@
-import { App, Astal, Gtk } from "astal/gtk3"
+import { App, Astal, Gtk, Gdk } from "astal/gtk4"
 import { bind, Variable, GLib } from "astal"
 
 import { open_calendar } from '../variables'
@@ -24,8 +24,10 @@ function CalendarBox() {
           const isToday = currentDate.toLocaleDateString("en-us",) == holderDate.toLocaleDateString("en-us");
           const isCurrentMonth = currentDate.getMonth() == holderDate.getMonth();
 
+          const calendarClasses = ["Calendar", "day", isToday ? "active" : !isCurrentMonth ? "unactive" : ""]
+
           return <label
-            className={`Calendar ${isToday ? "day active" : isCurrentMonth ? "day" : "day unactive"}`}
+            cssClasses={calendarClasses}
             label={holderDate.getDate().toString()}
           />
         })}
@@ -36,11 +38,11 @@ function CalendarBox() {
   }
 
   return (
-    <box vertical className="Calendar days">
+    <box vertical cssClasses={["Calendar", "days"]}>
       <box halign={CENTER}>
         {days.map(day => 
           <label
-            className="Calendar day-indicator"
+            cssClasses={["Calendar", "day-indicator"]}
             label={day}
           />
         )}
@@ -59,60 +61,72 @@ export default function Calendar(monitor = 1) {
   const time = Variable("").poll(1000, () => GLib.DateTime.new_now_local().format("%I:%M"))
   const currentDate = new Date();
 
-  const isCalendarVisible = bind(open_calendar).as((value) => value)
+  let widgetRef;
 
   return (
     <window
-      visible={true}
+      visible={false}
       monitor={monitor}
       anchor={BOTTOM | LEFT}
       application={App}
+      setup={self => {
+        widgetRef = self
+      }}
+      onKeyPressed={(self, event) => {
+        if (event === Gdk.KEY_Escape)
+          open_calendar.set(!open_calendar.get())
+      }}
     >
-      <eventbox onHoverLost={open_calendar.set(false)}>
+      {/* <box> */}
         <revealer
-          revealChild={isCalendarVisible}
-          transitionType={Gtk.RevealerTransitionType.SLIDE_UP}
+          transitionType={Gtk.RevealerTransitionType.CROSSFADE}
+          setup={(self) => {
+            open_calendar.subscribe((value) => {
+              self.revealChild = value
+              widgetRef.visible = value
+            })
+          }}
         >
           <centerbox>
             <box vertical>
               <box 
-                className="Calendar corner"
+                cssClasses={["Calendar", "corner"]}
                 halign={START}
               />
               <box
-                className="Calendar box"
+                cssClasses={["Calendar", "box"]}
                 vertical
               >
                 <box vertical halign={CENTER}>
                   {/* Clock and Date Box */}
                   <box 
-                    className="Calendar clock-box"
+                    cssClasses={["Calendar", "clock-box"]}
                     vertical
                   >
                     <label 
-                      className="Calendar clock-time"
+                      cssClasses={["Calendar", "clock-time"]}
                       label={time()}
                     />
                     <label
-                      className="Calendar clock-date"
+                      cssClasses={["Calendar", "clock-date"]}
                       label={currentDate.toLocaleDateString("en-us", { month: "long", day: "numeric" })}
                     />
                   </box>
 
                   {/* Calendar Box */}
-                  <box className="Calendar container">
+                  <box cssClasses={["Calendar", "container"]}>
                     <CalendarBox />
                   </box>
                 </box>
               </box>
             </box>
           <box 
-          className="Calendar corner"
-          valign={END}
+            cssClasses={["Calendar", "corner"]}
+            valign={END}
           />
           </centerbox>
         </revealer>
-      </eventbox>
+      {/* </box> */}
     </window>
   )
 }

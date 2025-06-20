@@ -12,10 +12,17 @@
     home.packages = with pkgs; [
       # matugen
       # rofi
-      gtk3
+      # gtk3
       socat
       ripgrep
       pulseaudio
+
+      (pkgs.writers.writeBashBin "ags-start" ''
+        ${pkgs.procps}/bin/pkill gjs
+        while ${pkgs.procps}/bin/pgrep gjs >/dev/null; do ${pkgs.coreutils}/bin/sleep 0.1; done
+        ${pkgs.uwsm}/bin/uwsm-app -- ags run --gtk4 &
+      '')
+
     ];
 
     programs = {
@@ -33,20 +40,12 @@
           inputs.ags.packages.${pkgs.system}.notifd
           inputs.ags.packages.${pkgs.system}.tray
           inputs.ags.packages.${pkgs.system}.wireplumber
+          inputs.ags.packages.${pkgs.system}.network
+          inputs.ags.packages.${pkgs.system}.bluetooth
           inputs.ags.packages.${pkgs.system}.apps
         ];
       };
       wofi.enable = false;
-    };
-    
-    home = {
-      shellAliases = {
-        ags-start = "uwsm app -s b -- $HOME/.scripts/start.sh";
-      };
-
-      file = {
-        ".scripts/start.sh".source = ./scripts/ags-start.sh;
-      };
     };
 
   };

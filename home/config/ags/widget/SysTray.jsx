@@ -1,4 +1,4 @@
-import { App, Astal, Gtk } from "astal/gtk3"
+import { App, Astal, Gtk } from "astal/gtk4"
 import { bind } from "astal"
 import Tray from "gi://AstalTray"
 
@@ -21,32 +21,30 @@ export default function SysTray(monitor = 1) {
     >
       <revealer
         revealChild={isTrayVisible}
-        transitionType={Gtk.RevealerTransitionType.SLIDE_UP}
+        transitionType={Gtk.RevealerTransitionType.CROSSFADE}
       >
         <centerbox>
           <box 
-            className="Tray corner left"
+            cssClasses={["Tray", "corner", "left"]}
             valign={Gtk.Align.START}
           />
           <box 
             halign={Gtk.Align.CENTER} 
-            className="Tray box"
+            cssClasses={["Tray", "box"]}
           >
             {bind(tray, "items").as(items => items.map(item => (
               <menubutton
                 visible={item.gicon != null}
-                className="Tray app"
-                tooltipMarkup={bind(item, "tooltipMarkup")}
-                usePopover={false}
-                actionGroup={bind(item, "actionGroup").as(ag => ["dbusmenu", ag])}
-                menuModel={bind(item, "menuModel")}
+                cssClasses={["Tray", "app"]}
+                tooltipMarkup={bind(item, "tooltip-markup")}
+                menuModel={bind(item, "menu-model")}
               >
-                <icon gicon={bind(item, "gicon")} />
+                <image gicon={bind(item, "gicon").as(value => value)} />
               </menubutton>
             )))}
           </box>
           <box 
-            className="Tray corner right"
+            cssClasses={["Tray", "corner", "right"]}
             valign={Gtk.Align.START}
           />
         </centerbox>

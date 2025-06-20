@@ -29,9 +29,10 @@
   # --- Programs Settings ---
 
   git.setup = true;
-  nvf.setup = false;
   vscode.setup = true;
-  zsh.setup = true;
+  fish.setup = true;
+  # zsh.setup = true;
+  # nushell.setup = true;
 
 
   stylix = {
@@ -42,19 +43,23 @@
 
   programs = {
     floorp.enable = true;
+    fastfetch.enable = true;
+    fd.enable = true;
+    bat.enable = true;
+
+    nix-index = {
+      enable = true;
+      enableFishIntegration = true;
+    };
 
     btop = {
       enable = true;
       package = pkgs.btop.override { cudaSupport = true; };
     };
-    firefox = {
-      enable = false;
-      nativeMessagingHosts = with pkgs; [ uget-integrator firefoxpwa ];
-    };
 
     wezterm = {
       enable = true;
-      enableZshIntegration = true;
+      # enableZshIntegration = true;
 
       extraConfig = ''
         return {
@@ -70,49 +75,32 @@
         }
       '';
     };
-    kitty = {
-      enable = false; 
-      shellIntegration.enableZshIntegration = true;
-      
-      settings = {
-        cursor_trail = 3;
-      };
-      font = {
-        name = lib.mkForce "Hack Nerd Font";
-        package = lib.mkForce pkgs.nerd-fonts.hack;
-      };
-    };
-
-    obs-studio = {
-      enable = false;
-      plugins = with pkgs.obs-studio-plugins; [ droidcam-obs ]; 
-    };
-    rofi = {
-      enable = false;
-    };
   };
   
   home.packages = with pkgs; [
 
+    # google-chrome
+
     # Terminal
-    zsh-powerlevel10k
+    # zsh-powerlevel10k
 
     # Social media
     telegram-desktop
 
     # Multimedia
+    loupe
     stremio
-    ani-cli
-    mpv
-    celluloid
+    # mpv # Wayland flicks
+    vlc
     ffmpeg-full
     gifsicle
 
     # Themes, cursors and icons
-    adw-gtk3
+    # adw-gtk3
     adwsteamgtk
 
     # Developer
+    code-cursor
     nodejs_20
     yarn
     python3
@@ -131,20 +119,19 @@
     qalculate-gtk
     jq
     usbimager
-    gpu-screen-recorder
-    gpu-screen-recorder-gtk
-    kdePackages.kruler
 
     # Design
-    gimp
-    inkscape
+    # gimp
+    # inkscape
 
     # Trading
     tradingview
 
     # Others
+    obsidian
     uget
     libnotify
+    rquickshare
     
   ];
 
@@ -156,12 +143,13 @@
 
   xdg = {
     enable = true;
+    mime.enable = true;
     userDirs.enable = true;
     userDirs.createDirectories = true;
     desktopEntries = {
       code = {
         name = "Visual Studio Code";
-        exec = "code";
+        exec = "cursor";
         terminal = false;
         genericName = "Text Editor";
         type = "Application";
@@ -195,14 +183,56 @@
         "x-scheme-handler/https" = "floorp.desktop";
         "x-scheme-handler/about" = "floorp.desktop";
         "x-scheme-handler/unknown" = "floorp.desktop";
-        "image/png" = "feh.desktop";
+
+        # Images
+        "image/jpeg" = "loupe.desktop";
+        "image/png" = "loupe.desktop";
+        "image/gif" = "loupe.desktop";
+        "image/webp" = "loupe.desktop";
+        "image/bmp" = "loupe.desktop";
+        "image/tiff" = "loupe.desktop";
+        "image/svg+xml" = "loupe.desktop";
+        "image/x-xbitmap" = "loupe.desktop";
+        "image/x-icon" = "loupe.desktop";
+        "image/vnd.microsoft.icon" = "loupe.desktop";
+        "image/*" = ["loupe.desktop" "feh.desktop"];
+
+        # Videos
+        "video/mp4" = "vlc.desktop";
+        "video/x-matroska" = "vlc.desktop";
+        "video/x-msvideo" = "vlc.desktop";
+        "video/webm" = "vlc.desktop";
+        "video/*" = "vlc.desktop";
+
         "text/*" = "code.desktop";
         "text/css" = "code.desktop";
         "text/html" = "floorp.desktop";
         "text/plain" = "code.desktop";
       };
+      associations.added = {
+        "image/jpeg" = ["loupe.desktop" "feh.desktop"];
+        "image/png" = ["loupe.desktop" "feh.desktop"];
+        "image/gif" = ["loupe.desktop" "feh.desktop"];
+        "image/webp" = ["loupe.desktop" "feh.desktop"];
+        "image/bmp" = ["loupe.desktop" "feh.desktop"];
+        "image/tiff" = ["loupe.desktop" "feh.desktop"];
+        "image/svg+xml" = ["loupe.desktop" "feh.desktop"];
+        "image/x-xbitmap" = ["loupe.desktop" "feh.desktop"];
+        "image/x-icon" = ["loupe.desktop" "feh.desktop"];
+        "image/vnd.microsoft.icon" = ["loupe.desktop" "feh.desktop"];
+        "image/*" = ["loupe.desktop" "feh.desktop"];
+        "video/mp4" = "vlc.desktop";
+        "video/x-matroska" = "vlc.desktop";
+        "video/x-msvideo" = "vlc.desktop";
+        "video/webm" = "vlc.desktop";
+        "video/*" = "vlc.desktop";
+      };
       associations.removed = {
         "inode/directory" = "code.desktop";
+        "image/*" = "google-chrome.desktop";
+        "video/mp4" = "stremio.desktop";
+        "video/x-matroska" = "stremio.desktop";
+        "video/*" = "stremio.desktop";
       };
     };
   };

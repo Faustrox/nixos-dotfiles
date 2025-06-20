@@ -1,4 +1,4 @@
-import { Astal, Gtk } from "astal/gtk3"
+import { Astal, Gtk } from "astal/gtk4"
 import { GLib } from "astal"
 
 const isIcon = (icon) =>
@@ -12,27 +12,27 @@ export default function Notification({ notification, onHoverLost, setup }) {
   const { START, END } = Gtk.Align
   
   return (
-    <eventbox 
+    <box 
       hexpand
       vertical
       setup={setup}
-      onHoverLost={onHoverLost}
+      // onHoverLost={onHoverLost}
     >
       <box 
         hexpand
-        className='Notification info'
+        cssClasses={['Notification', 'info']}
       >
         {n.image && fileExists(n.image) && <box
           valign={START}
-          className='Notification image'
+          cssClasses={['Notification', 'image']}
           css={`background-image: url("${n.image}");`}
         />}
         {n.image && isIcon(n.image) && <box
           expand={false}
           valign={START}
-          className='Notificaton image'
+          cssClasses={['Notification', 'image']}
         >
-          <icon icon={n.image} />
+          <image iconName={n.image} />
         </box>}
         <box 
           hexpand
@@ -41,14 +41,14 @@ export default function Notification({ notification, onHoverLost, setup }) {
         >
           <box >
             {n.appName && <label
-              className='Notification app'
+              cssClasses={['Notification', 'app']}
               halign={START}
               label={n.appName || "Unkown"}
             />}
             <button
               hexpand
               halign={END}
-              className='Notification close'
+              cssClasses={['Notification', 'close']}
               onClicked={() => n.dismiss()}
             >
               X
@@ -57,24 +57,24 @@ export default function Notification({ notification, onHoverLost, setup }) {
             <label 
               wrap
               useMarkup
-              className='Notification summary'
+              cssClasses={['Notification', 'summary']}
               halign={START}
               label={n.summary}
             />
             {n.body && <label
               wrap
               useMarkup
-              className='Notification body'
+              cssClasses={['Notification', 'body']}
               halign={START}
               label={n.body}
             />}
         </box>
         {n.get_actions().length > 0 && <box 
-          className='Notification action-box'
+          cssClasses={['Notification', 'action-box']}
         >
           {n.get_actions().map(({label, id}) => (
             <button
-              className='Notification action'
+              cssClasses={['Notification', 'action']}
               onClicked={() => n.invoke(id)}
             >
               {label}
@@ -82,7 +82,7 @@ export default function Notification({ notification, onHoverLost, setup }) {
           ))}
         </box>}
       </box>
-    </eventbox>
+    </box>
   )
 }
 

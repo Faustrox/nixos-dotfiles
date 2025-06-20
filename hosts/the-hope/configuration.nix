@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+{ lib, config, pkgs, inputs, ... }:
 
 {
 
@@ -22,13 +22,61 @@
   nix.settings.auto-optimise-store = true;
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  # Allow unfree packages --!
+
+  # ---!
   system.tools.nixos-option.enable = true;
 
   # --- System Settings ---
 
-  virt-machine.enable = false;
+  virtualisation.libvirtd.enable = true;
+
+  # ---!
+  systemd.extraConfig = ''
+    DefaultLimitNOFILE=524288
+
+    DefaultTimeoutStopSec=10s
+  '';
+  systemd.user.extraConfig = ''
+    DefaultLimitNOFILE=524288
+  
+    DefaultTimeoutStopSec=10s
+  '';
+  security.pam.loginLimits = [
+    {
+      domain = "*";
+      item = "memlock";
+      type = "-";
+      value = "unlimited";
+    }
+    {
+      domain = "*";
+      item = "rtprio";
+      type = "-";
+      value = "99";
+    }
+    {
+      domain = "*";
+      item = "nofile";
+      type = "soft";
+      value = "16777216";
+    }
+    {
+      domain = "*";
+      item = "nofile";
+      type = "hard";
+      value = "16777216";
+    }
+    {
+      domain = "*";
+      item = "nice";
+      type = "-";
+      value = "-19";
+    }
+  ];
+
+  # Hostname
+  network.host = "the-hope";
 
   # Bootloader
   bootloader = {
@@ -39,33 +87,47 @@
   # Enable Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Network Settings
-  network.host = "the-hope";
-
   # Enable Security Polkit
   security.polkit.enable = true;
+  services.seatd.enable = true;
+  services.openssh.enable = true;
+
+  # Some programs need SUID wrappers, can be configured further or are started in user sessions.
+  programs.mtr.enable = true;
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
+  programs.gnupg.dirmngr.enable = true;
 
   # Setup main user
   main-user.enable = true;
 
-  # Set up podman rootless for nixos
-  podman.enable = true;
-
   # Services
-  systemd.oomd.enable = true;
+  systemd.oomd.enable = true; # Out-of-Memory killer
 
   services = {
+    # auto-cpufreq.enable = true;
+    # envfs.enable = true;
+    # nscd.enableNsncd = true;
+    chrony.enable = true;
+    fwupd.enable = true;
+    udisks2.enable = true;
     dbus.implementation = "broker";
-    # Handle process when out of memory
-    # earlyoom.enable = true;
-
-    # help balance the cpu load generated
-    # irqbalance.enable = true;
+    das_watchdog.enable = lib.mkForce true;
 
     ollama = {
-      enable = false;
+      enable = true;
       acceleration = "cuda";
       openFirewall = true;
+    };
+    nixai = {
+      enable = true;
+      mcp = {
+        enable = true;
+        aiProvider = "ollama";  # Options: "ollama", "gemini", "openai"
+        aiModel = "gemma3";
+      };
     };
     open-webui = {
       enable = false;
@@ -81,30 +143,6 @@
     };
   };
 
-  systemd = {
-    extraConfig = ''
-      [Manager]
-      DefaultLimitNOFILE=2048:2097152
-      [Time]
-      NTP=time.cloudflare.com
-      FallbackNTP=time.google.com 0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org
-    '';
-    user.extraConfig = ''
-      [Manager]
-      DefaultLimitNOFILE=1024:1048576
-    '';
-    tmpfiles.rules = [
-      "w! /sys/kernel/mm/transparent_hugepage/enabled - - - - always"
-      "w! /sys/kernel/mm/transparent_hugepage/shmem_enabled - - - - advise"
-      "w! /sys/kernel/mm/transparent_hugepage/defrag - - - - defer+madvise"
-      "w! /sys/kernel/mm/transparent_hugepage/khugepaged/defrag - - - - 0"
-      "w! /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none - - - - 409"
-      "w! /sys/class/rtc/rtc0/max_user_freq - - - - 3072"
-      "w! /proc/sys/dev/hpet/max-user-freq  - - - - 3072"
-      "d /var/lib/systemd/coredump 0755 root root 3d"
-    ];
-  };
-
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
@@ -115,17 +153,16 @@
 
   # --- Hardware Settings ---
 
-  bluetooth.enable = false;
+  bluetooth.enable = true;
   hardware.sound.setup = true;
+  hardware.enableRedistributableFirmware = false;
 
   nvidia.enable = true;
 
   # --- Desktop Settings ---
 
-  gnome.enable = false;
+  # gnome.enable = false;
   hyprland.enable = true;
-  portals.enable = true;
-  portals.extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
 
   # --- System wide programs ---
 
@@ -152,6 +189,11 @@
     zenmonitor
     lm_sensors
     killall
+    evtest
+    bubblewrap
+    payload-dumper-go
+    nurl
+    inputs.nixos-needsreboot.packages.${pkgs.system}.default
 
     # Dependencies
     gcc
@@ -159,11 +201,11 @@
     gtop
     p7zip
     # mesa-demos
-
-    # Terminal
-    kitty
+    icu
 
     # Other
+    pdm
+    alpaca
     zenity
     sway
     nixd
@@ -194,6 +236,17 @@
         dates = "daily";
         extraArgs = "--keep 3";
       };
+    };
+
+    nix-ld = {
+      enable = true;
+      # put whatever libraries you think you might need
+      # nix-ld includes a strong sane-default as well
+      # in addition to these
+      libraries = with pkgs; [
+        stdenv.cc.cc.lib
+        zlib
+      ];
     };
   };
 

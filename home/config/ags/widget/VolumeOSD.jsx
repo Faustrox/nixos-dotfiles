@@ -1,11 +1,9 @@
-import { App, Astal, Gtk } from "astal/gtk3"
+import { App, Astal, Gtk } from "astal/gtk4"
 import { Variable, bind, timeout } from "astal"
-import Wp from "gi://AstalWp"
-
-const audio = Wp.get_default()?.audio
+import AstalWp from "gi://AstalWp"
 
 function OnScreenProgress({visible}) {
-  const speaker = audio.get_default_speaker()
+  const speaker = AstalWp.get_default()?.defaultSpeaker
 
   const iconName = Variable("")
   const value = Variable(0)
@@ -37,34 +35,34 @@ function OnScreenProgress({visible}) {
       >
         <centerbox>
           <box
-            className="OSD corner left"
+            cssClasses={["OSD", "corner", "left"]}
             halign={Gtk.Align.START}
           />
-          <box className="OSD box">
+          <box cssClasses={["OSD", "box"]} >
             <box 
               hexpand
-              className="OSD holder"
+              cssClasses={["OSD", "holder"]}
             >
               <box 
-                className="OSD progress"
+                cssClasses={["OSD", "progress"]}
                 css={bind(value).as(v => `
                   * {
                     padding-right: ${v * 17}rem;
                   }
                 `)}
               >
-                <icon 
-                  className="OSD icon"
+                <image 
+                  cssClasses={["OSD", "icon"]}
                   vexpand
                   halign={Gtk.Align.START}
                   // valign={Gtk.Align.CENTER}
-                  icon={bind(iconName).as(value => value)} 
+                  iconName={bind(iconName).as(value => value)} 
                 />
               </box>
             </box>
           </box>
           <box
-            className="OSD corner right"
+            cssClasses={["OSD", "corner", "right"]}
             halign={Gtk.Align.START}
           />
         </centerbox>
@@ -85,7 +83,7 @@ export default function VolumeOSD(monitor = 1) {
       keymode={Astal.Keymode.ON_DEMAND}
       anchor={BOTTOM}
     >
-      <eventbox onClick={() => visible.set(false)}>
+      <eventbox onClicked={() => visible.set(false)}>
         <OnScreenProgress visible={visible} />
       </eventbox>
     </window>

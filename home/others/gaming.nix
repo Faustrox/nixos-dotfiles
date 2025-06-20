@@ -51,26 +51,99 @@ in {
     home.packages = with pkgs; [
 
       (pkgs.writers.writeBashBin "gamix" ''
-  
-        USE_MANGOHUD=1
 
-        for arg in "$@"; do
-          if [ "$arg" == "--no-hud" ]; then
-            USE_MANGOHUD=0
-            shift
-          fi
+        set -euo pipefail
+
+        MANGOHUD=1
+        SDL=1
+        FORCE_WAYLAND=0
+        USE_GAMESCOPE=0
+        USE_UMU=0
+        DEFAULT_PREFIX="$HOME/.umu-game"
+        DEFAULT_PROTON="${pkgs.proton-ge-custom}/bin"
+        OPENGL=0
+
+        REMAINING_ARGS=()
+
+        if [[ " $* " == *" --help "* ]]; then
+          echo "Use: gamix [--no-hud] [--no-sdl] [--wine-wayland] [--gamescope] [--umu] [--prefix] [--proton] [--opengl] %command%"
+          exit 0
+        fi
+
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --no-hud)
+              MANGOHUD=0
+            ;;
+            --wine-wayland)
+              FORCE_WAYLAND=1
+            ;;
+            --no-sdl)
+              SDL=0
+            ;;
+            --gamescope)
+              USE_GAMESCOPE=1
+            ;;
+            --umu)
+              USE_UMU=1
+            ;;
+            --prefix)
+              shift
+              DEFAULT_PREFIX="$1"
+            ;;
+            --proton)
+              shift
+              DEFAULT_PROTON="$1"
+            ;;
+            --opengl)
+              OPENGL=1
+            ;;
+            *)
+              REMAINING_ARGS+=("$1")
+            ;;
+          esac
+          shift
         done
 
-        export ENABLE_VKBASALT=1 __GL_SHADER_DISK_CACHE=1
+        export ENABLE_VKBASALT=1
+        export __GL_SHADER_DISK_CACHE=1
+        export PROTON_ENABLE_WAYLAND="$FORCE_WAYLAND"
 
-        if [ "$USE_MANGOHUD" -eq 1 ]; then
-          export LD_PRELOAD="${pkgs.mangohud}/lib/mangohud/libMangoHud.so"
+        export DXVK_CONFIG_FILE="$HOME/Games/dxvk.conf"
+        export __GL_THREADED_OPTIMIZATIONS=$((1 - OPENGL))
 
-          exec ${pkgs.mangohud}/bin/mangohud "$@"
-        else
-          export LD_PRELOAD=""
-          exec "$@"
+        if [ "$SDL" -eq 0 ]; then
+          unset SDL_VIDEODRIVER
         fi
+
+        CMD=("${pkgs.uwsm}/bin/uwsm-app" "--")
+
+        if [ "$USE_GAMESCOPE" -eq 1 ]; then
+          CMD+=("${pkgs.gamescope}/bin/gamescope" "--force-grab-cursor" "--")
+        fi
+
+        if [ "$MANGOHUD" -eq 1 ]; then
+          export MANGOHUD=1
+          export MANGOHUD_OPENGL_LIBS="${pkgs.mangohud}/lib/mangohud/libMangoHud_opengl.so"
+          export LD_PRELOAD="''${LD_PRELOAD:+$LD_PRELOAD:}${pkgs.mangohud}/lib/mangohud/libMangoHud.so:${pkgs.mangohud}/lib/mangohud/libMangoHud_opengl.so"
+
+          if [ "$OPENGL" -eq 1 ]; then
+            CMD+=("${pkgs.mangohud}/bin/mangohud" "--dlsym")
+          else
+            CMD+=("${pkgs.mangohud}/bin/mangohud")
+          fi
+        fi
+
+        if [ "$USE_UMU" -eq 1 ]; then
+          export WINEPREFIX="$DEFAULT_PREFIX"
+          export PROTONPATH="$DEFAULT_PROTON"
+
+          CMD+=("${pkgs.umu-launcher}/bin/umu-run")
+        fi
+
+        CMD+=("''${REMAINING_ARGS[@]}")
+
+        exec "''${CMD[@]}"
 
       '')
 
@@ -79,7 +152,8 @@ in {
       # vesktop
 
       # Emulators
-      suyu
+      ryubing
+      # suyu
       # rpcs3
 
       # Launchers
@@ -96,11 +170,12 @@ in {
       mgba
 
       # Wine
-      # wineWowPackages.stagingFull
-      winetricks
-      mono
+      # mono
 
       # Utils
+      nvibrant_git
+      gamepad-tool
+      antimicrox
       glfw3-minecraft
       exiftool
       goverlay
@@ -120,11 +195,15 @@ in {
 
       nixcord = {
         enable = true;
-        discord.enable = true;
+        discord.enable = false;
+        vesktop.enable = true;
 
-        config.themeLinks = [
-          "https://catppuccin.github.io/discord/dist/catppuccin-mocha-mauve.theme.css"
-        ];
+        config = {
+          frameless = true; # set some Vencord options
+          themeLinks = [
+            "https://catppuccin.github.io/discord/dist/catppuccin-mocha-mauve.theme.css"
+          ];
+        };
       };
 
       mangohud = {
@@ -141,38 +220,46 @@ in {
           gpu_load_change = true;
           gpu_load_value = "50,90";
           gpu_temp = true;
-          cpu_text = "R5 5600x";
-          cpu_stats = true;
-          core_load = true;
 
           font_size = lib.mkForce 16;
           font_size_text = lib.mkForce 16;
 
+          cpu_text = "R5 5600x";
+          cpu_stats = true;
           cpu_load_change = true;
           cpu_load_value = "50,90";
           cpu_temp = true;
+          cpu_power = true;
+          core_load = true;
           swap = true;
           vram = true;
           ram = true;
           fps = true;
-          fps_metrics = "0.01";
+          fps_value = "60,144";
+          fps_color_change = true;
+          fps_color = lib.mkForce "f38ba8,f9e2af,a6e3a1";
+          fps_metrics = "avg,0.01";
           engine_version = true;
           engine_short_names = true;
           wine = true;
           frame_timing = true;
-          # fps_limit_method = "late";
+          fps_limit_method = "early";
           toggle_fps_limit = "Shift_R+F11";
           toggle_hud_position = "Shift_R+F10";
-
-          fps_limit = "0,162,120,90";
+          fps_limit = "165,120,90";
+          show_fps_limit = true;
+          
           winesync = true;
           vkbasalt = true;
           # gamemode = true;
           # offset=-3
-          # vsync = 2;
-          # gl_vsync = 1;
+          vsync = 0;
+          gl_vsync = 1;
         };
       };
+    };
+    home.shellAliases = {
+      run-exe = "WINEPREFIX=~/.umu-exe PROTONPATH=${pkgs.proton-ge-custom}/bin umu-run"; # Using umu
     };
 
     stylix.targets = {
@@ -185,8 +272,6 @@ in {
     home = {
       file = {
         ".steam/steam/compatibilitytools.d/Proton-GE/".source = "${pkgs.proton-ge-custom}/bin";
-        ".steam/steam/compatibilitytools.d/Proton-CachyOS/".source = "${pkgs.proton-cachyos-custom}/bin";
-        ".steam/steam/compatibilitytools.d/Proton-XIV/".source = "${pkgs.proton-xiv}/bin";
       };
       
       sessionVariables = {

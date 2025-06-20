@@ -1,4 +1,4 @@
-import { App, Astal, Gdk, Gtk } from "astal/gtk3"
+import { App, Astal, Gdk, Gtk } from "astal/gtk4"
 import { Variable } from "astal"
 import Apps from "gi://AstalApps"
 import GLib from "gi://GLib"
@@ -12,7 +12,7 @@ function hide() {
 function launchAppWithPrefix(app) {
   const executable = app.get_executable();
   if (executable) {
-      const command = `app2unit -s a -- ${executable}`;
+      const command = `uwsm-app -- ${executable}`;
 
       try {
           GLib.spawn_command_line_async(command);
@@ -28,20 +28,20 @@ function launchAppWithPrefix(app) {
 function LauncherItem({ app }) {
   return (
     <button
-      className="Launcher item"
+      cssClasses={["Launcher", "item"]}
       onClicked={() => { 
         hide(); 
         launchAppWithPrefix(app)
       }}
     >
       <box>
-        <icon
-          icon={app.iconName}
-          className="Launcher item-icon"
+        <image
+          iconName={app.iconName}
+          cssClasses={["Launcher", "item-icon"]}
         />
         <box valign={Gtk.Align.CENTER} vertical>
           <label
-            className="Launcher item-name"
+            cssClasses={["Launcher", "item-name"]}
             truncate
             xalign={0}
             label={app.name}
@@ -58,7 +58,7 @@ export default function Applauncher() {
   const width = Variable(1000)
 
   const text = Variable("")
-  const list = text(text => apps.fuzzy_query(text).slice(0, MAX_ITEMS))
+  const list = text(text => (apps.fuzzy_query(text) ?? []).slice(0, MAX_ITEMS))
   const onEnter = () => {
     apps.fuzzy_query(text.get())?.[0].launch()
     hide()
@@ -66,34 +66,32 @@ export default function Applauncher() {
 
   let searchRef;
 
-  return <window
-    visible={false}
-    name="launcher"
-    anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM}
-    exclusivity={Astal.Exclusivity.IGNORE}
-    keymode={Astal.Keymode.ON_DEMAND}
-    application={App}
-    onShow={(self) => {
-      text.set("")
-      width.set(self.get_current_monitor().workarea.width)
-      
-      if (searchRef) {
-        searchRef.grab_focus();
-      }
-
-    }}
-    onKeyPressEvent={function (self, event) {
-      if (event.get_keyval()[1] === Gdk.KEY_Escape)
-        self.hide()
-    }}>
-    <box>
-      <eventbox widthRequest={width(w => w / 2)} expand onClick={hide} />
+  return (
+    <window
+      visible={false}
+      modal={true}
+      name="launcher"
+      anchor={Astal.WindowAnchor.TOP | Astal.WindowAnchor.BOTTOM}
+      exclusivity={Astal.Exclusivity.IGNORE}
+      keymode={Astal.Keymode.ON_DEMAND}
+      application={App}
+      onShow={(self) => {
+        text.set("")
+        if (searchRef) {
+          searchRef.grab_focus();
+        }
+      }}
+      onKeyPressed={(self, event) => {
+        if (event === Gdk.KEY_Escape)
+          self.hide()
+      }}
+    >
+    <box cssClasses={["Launcher", "container"]}>
       <box 
         hexpand={false}
         vertical
       >
-        <eventbox heightRequest={100} onClick={hide} />
-        <box widthRequest={500} className="Launcher box" vertical>
+        <box widthRequest={500} heightRequest={600} cssClasses={["Launcher", "box"]} vertical >
           <entry
             setup={self => {
               searchRef = self;
@@ -101,13 +99,13 @@ export default function Applauncher() {
             name="launcher-search"
             placeholderText="Search"
             primaryIconName="system-search"
-            className="Launcher search"
-            text={text()}
+            cssClasses={["Launcher", "search"]}
+            text={text.get()}
             onChanged={self => text.set(self.text)}
             onActivate={onEnter}
           />
           <box
-            className="Launcher items-holder"
+            cssClasses={["Launcher", "items-holder"]}
             spacing={12}
             vertical
           >
@@ -117,17 +115,15 @@ export default function Applauncher() {
           </box>
           <box
             halign={CENTER}
-            className="Launcher not-found"
+            cssClasses={["Launcher", "not-found"]}
             vertical
             visible={list.as(l => l.length === 0)}
           >
-            <icon icon="system-search-symbolic" />
+            <image iconName="system-search-symbolic" />
             <label label="No match found" />
           </box>
         </box>
-        <eventbox expand onClick={hide} />
       </box>
-      <eventbox widthRequest={width(w => w / 2)} expand onClick={hide} />
     </box>
-  </window>
+  </window>)
 }

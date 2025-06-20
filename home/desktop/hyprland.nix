@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: 
+{ config, lib, pkgs, inputs, ... }: 
 
 {
 
@@ -9,11 +9,11 @@
 
   config = lib.mkIf config.hyprland.setup {
 
-    programs.zsh.initExtra = ''
-      if uwsm check may-start 1>/dev/null; then
-        exec uwsm start hyprland-uwsm.desktop
-      fi
-    '';
+    # programs.zsh.initContent = ''
+    #   if uwsm check may-start 1>/dev/null; then
+    #     exec uwsm start hyprland-uwsm.desktop
+    #   fi
+    # '';
 
     stylix.targets.hyprland.enable = false;
 
@@ -23,6 +23,11 @@
       systemd.enable = false;
       package = null; # Package managed from NixOS
       portalPackage = null;
+      
+      plugins = with pkgs.hyprlandPlugins; [
+        hypr-dynamic-cursors
+        hyprsplit
+      ];
 
       settings = {
         
@@ -40,23 +45,18 @@
           "$HOME/.config/hypr/themes/mocha.conf"
         ];
         monitor = [
-          "DP-1, highres, 0x0, 1"
-          "DP-2, highres, -1920x360, 1"
+          "DP-1, 2560x1440@164.64, 0x0, 1"
+          "DP-2, 1920x1080@143.99, -1920x360, 1"
         ];
 
+        # ... other settings ...
         exec-once = [
           "systemctl --user enable --now hyprpolkitagent"
-          "app2unit -s b -t service -- swww-daemon"
-          "swww img $HOME/Pictures/Wallpapers/nix-catppuccin-alt.png"
-          "app2unit -s b -t service -- clipse -listen"
-          "app2unit -s b -t service -- wl-clip-persist --clipboard regular"
-          "app2unit -s b -- $HOME/.scripts/start.sh"
-          "app2unit -s b -- udiskie"
-          
-          "[workspace 5 silent] app2unit -s a -- telegram-desktop"
+          "ags-start"
 
-          "sleep 5 && xrandr --output DP-1 --primary"
-          "sleep 5 && steam-run ~/Games/nvibrant-linux-amd64-575.51.02-v1.0.3.bin 128 0 128"
+          "[workspace 5 silent] app2unit -s a -- Telegram"
+          
+          "sleep 3 && xrandr --output DP-1 --primary"
         ];
 
         #####################
@@ -68,10 +68,10 @@
         # https://wiki.hyprland.org/Configuring/Variables/#general
         general = { 
 
-          gaps_in = 10;
-          gaps_out = 20;
+          gaps_in = 0;
+          gaps_out = 0;
 
-          border_size = 3;
+          border_size = 0;
           "col.active_border" = "$mauve $sapphire 45deg";
           "col.inactive_border" = "$overlay0";
           # Set to true enable resizing windows by clicking and dragging on borders and gaps
@@ -83,7 +83,7 @@
 
         decoration = {
 
-          rounding = 15;
+          rounding = 32;
           # Change transparency of focused and unfocused windows
           active_opacity = 1.0;
           inactive_opacity = 1.0;
@@ -107,34 +107,44 @@
           };
         };
 
-        # animations = {
+        animations = {
 
-        #   enabled = true;
+          enabled = true;
 
-        #   bezier = [
-        #     "myBezier, 0.05, 0.9, 0.1, 1.05"
-        #     "myBezier2, 0.65, 0, 0.35, 1"
-        #     "slow,0,0.85,0.3,1"
-        #     "overshot,0.7,0.6,0.1,1.1"
-        #     "bounce,1,1.6,0.1,0.85"
-        #     "slingshot,1,-1,0.15,1.25"
-        #     "nice,0,6.9,0.5,-4.20"
-        #   ];
-        #   animation = [
-        #     "windows,1,5,bounce,popin"
-        #     "border,1,20,default"
-        #     "fade,1,5,default"
-        #     "workspaces,1,5,overshot,slide"
-        #   ];
-
-        # };
-
-        dwindle = {
-
-          pseudotile = true; # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-          preserve_split = true; # You probably want this
+          bezier = [
+            "wind, 0.05, 0.9, 0.1, 1.05"
+            "winIn, 0.1, 1.1, 0.1, 1.1"
+            "winOut, 0.3, -0.3, 0, 1"
+            "liner, 1, 1, 1, 1"
+            # "bounce,1,1.6,0.1,0.85"
+            # "slingshot,1,-1,0.15,1.25"
+            # "nice,0,6.9,0.5,-4.20"
+          ];
+          animation = [
+            "windows, 1, 6, wind, slide"
+            "windowsIn, 1, 6, winIn, slide"
+            "windowsOut, 1, 5, winOut, slide"
+            "windowsMove, 1, 5, wind, slide"
+            "fade, 1, 10, default"
+            "workspaces, 1, 5, wind"
+          ];
 
         };
+
+        master = {
+
+          mfact = 0.55;
+          allow_small_split = true;
+
+        };
+
+        # dwindle = {
+
+        #   pseudotile = true; # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+        #   preserve_split = true; # You probably want this
+        #   force_split = 2;
+
+        # };
 
         #############
         ### INPUT ###
@@ -147,7 +157,7 @@
           kb_model = "";
           kb_options = "";
           kb_rules = "";
-          follow_mouse = 2;
+          follow_mouse = 1;
 
           mouse_refocus = false;
           sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
@@ -160,8 +170,8 @@
           enable_hyprcursor = true;
           default_monitor = "DP-1";
           # inactive_timeout = 3;
-          no_break_fs_vrr = 2;
-          min_refresh_rate = 48;
+          no_break_fs_vrr = 1;
+          min_refresh_rate = 0;
           no_hardware_cursors = 1;
           use_cpu_buffer = 0;
 
@@ -177,7 +187,7 @@
           disable_hyprland_logo = true; # If true disables the random hyprland logo / anime girl background. :(
           animate_manual_resizes = true;
           vfr = true;
-          vrr = 1;
+          vrr = 3;
           close_special_on_empty = false;
           render_unfocused_fps = 60;
           enable_anr_dialog = false;
@@ -188,21 +198,41 @@
           
           explicit_sync = 1;
           explicit_sync_kms = 1;
-          direct_scanout = 2;
+          direct_scanout = 1;
+          cm_fs_passthrough = 1;
         
         };
-        opengl.nvidia_anti_flicker = false;
+        # opengl.nvidia_anti_flicker = false;
         # debug.damage_tracking = 1;
 
         xwayland = {
           force_zero_scaling = true;
-          create_abstract_socket = true;
+          # create_abstract_socket = true;
         };
 
         ecosystem = {
           no_update_news = true;
           no_donation_nag = true;
         };
+
+        plugin = {
+          hyprsplit = {
+            num_workspaces = 4;
+            persistent_workspaces = true;
+          };
+
+          dynamic-cursors = {
+            shake.enabled = false;
+            tilt.limit = 5750;
+
+            shaperule = [
+              "text, rotate:offset: 90"
+              "grab, stretch, stretch:limit: 2000"
+              # "clientside, none"
+            ];
+          };
+        };
+
       };
     };
 

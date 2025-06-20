@@ -3,28 +3,24 @@
 {
 
   options = {
-    zsh.setup = 
-      lib.mkEnableOption "Enables and configure zsh";
+    fish.setup = 
+      lib.mkEnableOption "Enables and configure fish";
   };
 
-  config = lib.mkIf config.zsh.setup {
+  config = lib.mkIf config.fish.setup {
 
-    catppuccin.zsh-syntax-highlighting.enable = true;
-    home.shell.enableZshIntegration = true;
+    # catppuccin.zsh-syntax-highlighting.enable = true;
+    home.shell.enableFishIntegration = true;
 
     home.packages = with pkgs; [
-      zsh-fzf-tab
       fzf-git-sh
     ];
 
     programs = {
-      zsh = {
+      fish = {
         enable = true;
-        enableCompletion = true;
-        autosuggestion.enable = true;
-        syntaxHighlighting.enable = true;
-
-        initContent = ''
+        
+        shellInit = ''
           export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
           export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
           export FZF_DEFAULT_OPTS=" \
@@ -34,36 +30,9 @@
             --color=selected-bg:#45475a \
             --multi"
 
-          _fzf_compgen_path() {
-            fd --hidden --exclude .git . "$1"
-          }
-
-          _fzf_compgen_dir() {
-            fd --type=d --hidden --exclude .git . "$1"
-          }
-
-          _fzf_comprun() {
-            local command=$1
-            shift
-
-            case "$command" in
-              cd)   fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-              export|unset) fzf --preview "eval 'echo \$' {}" "$@" ;;
-              ssh) fzf --preview 'dig {}' "$@" ;;
-              *) fzf --preview "--preview 'bat -n --color=always --line-range= :500 {}'" "$@" ;;
-            esac
-          }
-
-          source ${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh
+          function fish_greeting
+          end
         '';
-
-        plugins = [
-          {
-            name = "fzf-tab";
-            src = pkgs.zsh-fzf-tab;
-            file = "share/fzf-tab/fzf-tab.plugin.zsh";
-          }
-        ];
 
         shellAliases = {
           g = "git";
@@ -82,40 +51,40 @@
 
       # thefuck = {
       #   enable = true;
-      #   enableZshIntegration = true;
+      #   enableFishIntegration = true;
       # };
 
       pay-respects = {
         enable = true;
-        enableZshIntegration = true;
+        enableFishIntegration = true;
       };
 
       yazi = { 
         enable = true;
-        enableZshIntegration = true;
+        enableFishIntegration = true;
       };
       
       eza = {
         enable = true;
-        enableZshIntegration = true;
+        enableFishIntegration = true;
         git = true;
         # icons = true;
       };
 
       fzf = {
         enable = true;
-        enableZshIntegration = true;
+        enableFishIntegration = true;
         defaultCommand = "fd --hidden --strip-cwd-prefix --exclude .git";
       };
       
       zoxide = {
         enable = true;
-        enableZshIntegration = true;
+        enableFishIntegration = true;
       };
 
       starship = { 
         enable = true;
-        enableZshIntegration = true;
+        enableFishIntegration = true;
 
         settings = {
           format = lib.concatStrings [

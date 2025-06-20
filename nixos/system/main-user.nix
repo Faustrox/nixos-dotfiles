@@ -7,9 +7,7 @@
       lib.mkEnableOption "Enables main user";
     main-user.username = lib.mkOption {
       default = "faustrox";
-      description = ''
-        username
-      '';
+      description = "username";
     };
   };
 
@@ -21,8 +19,8 @@
     users.users.${config.main-user.username} = {
       isNormalUser = true;
       description = config.main-user.username;
-      extraGroups = [ "networkmanager" "wheel" "audio" "pipewire" "gamemode" "i2c" "kvm" "adbusers" "firejail" ];
-      shell = pkgs.zsh;
+      extraGroups = [ "networkmanager" "wheel" "audio" "i2c" "docker" "libvird" "adbusers" ];
+      shell = pkgs.fish;
     };
 
     programs.neovim = {
@@ -32,11 +30,13 @@
 
     services.getty.autologinUser = config.main-user.username;
 
-    programs.zsh = {
-      enable = true;
-      syntaxHighlighting.enable = true;
-      autosuggestions.enable = true;
-    };
+    programs.fish.enable = true;
+    # programs.zsh = {
+    #   enable = true;
+    #   enableCompletion = true;
+    #   syntaxHighlighting.enable = true;
+    #   autosuggestions.enable = true;
+    # };
 
     console.earlySetup = true;
     # catppuccin.tty = {
@@ -46,7 +46,7 @@
 
     nix.settings.trusted-users = [ config.main-user.username ];
 
-    services.teamviewer.enable = true;
+    services.teamviewer.enable = false;
   };
 
 }

@@ -20,7 +20,7 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = [ "umask=0077" ];
+                mountOptions = [ "fmask=0077" "dmask=0077" ];
               };
             };
             root = {
@@ -32,25 +32,25 @@
                   "@" = {};
                   "@/root" = {
                     mountpoint = "/";
-                    mountOptions = [ "compress=zstd" "noatime" "discard=async" ];
+                    mountOptions = [ "compress=zstd:1" "noatime" "discard=async" ];
                   };
                   "@/home" = {
                     mountpoint = "/home";
-                    mountOptions = [ "compress=zstd" "noatime" "discard=async" ];
+                    mountOptions = [ "compress=zstd:1" "noatime" "discard=async" ];
                   };
                   "@/nix" = {
                     mountpoint = "/nix";
-                    mountOptions = [ "compress=zstd" "noatime" "discard=async" ];
+                    mountOptions = [ "compress=zstd:1" "noatime" "discard=async" ];
                   };
                   "@/var-tmp" = {
                     mountpoint = "/var/tmp";
-                    mountOptions = [ "compress=zstd" "noatime" "discard=async" ];
+                    mountOptions = [ "compress=zstd:1" "noatime" "discard=async" ];
                   };
-                 # "@/swap" = {
-                 #   mountpoint = "/swap";
-                 #   mountOptions = ["noatime" "nodatacow" "nodatasum" "discard=async"];
-                 #   swap.swapfile.size = "24G";
-                 # };
+                  # "@/swap" = {
+                  #   mountpoint = "/swap";
+                  #   mountOptions = ["noatime" "nodatacow" "nodatasum" "discard=async"];
+                  #   swap.swapfile.size = "24G";
+                  # };
                 };
               };
             };

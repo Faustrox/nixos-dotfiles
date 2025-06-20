@@ -17,31 +17,37 @@
 
   config = lib.mkIf config.network.enable {
 
-    networking = {
-      hostName = config.network.host;
-      enableIPv6  = false;
-      wireless.enable = config.network.wifi; 
-      firewall.enable = true;
-      networkmanager = {
-        enable = true;
-        dns = "systemd-resolved";
-      };
-      nameservers = [
-        "1.1.1.1"
-        "1.0.0.1"
-      ];
-      hosts = {
-        "127.0.0.1" = [ "${config.network.host}.local" ];
-      };
-      firewall = {
-        allowedTCPPorts = [ 25565 ];
-        allowedUDPPorts = [ 25565 ];
-      };
+    boot.initrd.network.enable = true;
+
+    # Configure network proxy if necessary
+    # networking.proxy.default = "http://user:password@proxy:port/";
+    # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
+    services.resolved = {
+      enable = false;
+      dnssec = "false";
     };
 
-    systemd.services.systemd-networkd-wait-online.enable = lib.mkForce false;
+    networking = {
+      enableIPv6 = false;
+      hostName = config.network.host;
+      useDHCP = false;
+      dhcpcd.enable = false;
+      wireless.enable = config.network.wifi;
+      nftables.enable = true;
+      nameservers = [ "1.1.1.1" "1.0.0.1" ];
+      
+      networkmanager = {
+        enable = true;
+        dns = "none";
+      };
 
-    services.resolved.enable = true;
+      firewall = {
+        enable = false; 
+        allowedTCPPorts = [ 80 443 ];
+        # allowedUDPPorts = [ 80 443 ];
+      }; 
+    };
 
   };
 

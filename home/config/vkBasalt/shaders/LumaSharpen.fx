@@ -1,49 +1,34 @@
 /**
-   LumaSharpen version 1.5.0
-   by Christian Cann Schuldt Jensen ~ CeeJay.dk
-  
-   It blurs the original pixel with the surrounding pixels and then subtracts this blur to sharpen the image.
-   It does this in luma to avoid color artifacts and allows limiting the maximum sharpning to avoid or lessen halo artifacts.
-   This is similar to using Unsharp Mask in Photoshop.
-
-   Version 1.5.1
-  - UI improvements for Reshade 3.x
+ * LumaSharpen version 1.5.0
+ * by Christian Cann Schuldt Jensen ~ CeeJay.dk
+ *
+ * It blurs the original pixel with the surrounding pixels and then subtracts this blur to sharpen the image.
+ * It does this in luma to avoid color artifacts and allows limiting the maximum sharpning to avoid or lessen halo artifacts.
+ * This is similar to using Unsharp Mask in Photoshop.
  */
 
-#include "ReShadeUI.fxh"
-
-uniform float sharp_strength < __UNIFORM_SLIDER_FLOAT1
+uniform float sharp_strength <
+	ui_type = "drag";
 	ui_min = 0.1; ui_max = 3.0;
-	ui_label = "Shapening strength";
 	ui_tooltip = "Strength of the sharpening";
-
-> = 0.40;
-uniform float sharp_clamp < __UNIFORM_SLIDER_FLOAT1
+> = 0.65;
+uniform float sharp_clamp <
+	ui_type = "drag";
 	ui_min = 0.0; ui_max = 1.0; ui_step = 0.005;
-	ui_label = "Sharpening limit";
-	ui_tooltip = "Limits maximum amount of sharpening a pixel receives\nThis helps avoid \"haloing\" artifacts which would otherwise occur when you raised the strength too much.";
+	ui_tooltip = "Limits maximum amount of sharpening a pixel receives";
 > = 0.035;
 uniform int pattern <
 	ui_type = "combo";
-	ui_items =	"Fast" "\0"
-				"Normal" "\0"
-				"Wider"	"\0"
-				"Pyramid shaped" "\0";
-	ui_label = "Sample pattern";
-	ui_tooltip = "Choose a sample pattern.\n"
-	"Fast is faster but slightly lower quality.\n"
-	"Normal is normal.\n"
-	"Wider is less sensitive to noise but also to fine details.\n"
-	"Pyramid has a slightly more aggresive look.";
+	ui_items = "Fast\0Normal\0Wider\0Pyramid shaped\0";
+	ui_tooltip = "Choose a sample pattern";
 > = 1;
-uniform float offset_bias < __UNIFORM_SLIDER_FLOAT1
+uniform float offset_bias <
+	ui_type = "drag";
 	ui_min = 0.0; ui_max = 6.0;
-	ui_label = "Offset bias";
-	ui_tooltip = "Offset bias adjusts the radius of the sampling pattern. I designed the pattern for an offset bias of 1.0, but feel free to experiment.";
-> = 0.325;
+	ui_tooltip = "Offset bias adjusts the radius of the sampling pattern. I designed the pattern for offset_bias 1.0, but feel free to experiment.";
+> = 1.0;
 uniform bool show_sharpen <
-	ui_label = "Show sharpening pattern";
-	ui_tooltip = "Visualize the strength of the sharpen\nThis is useful for seeing what areas the sharpning affects the most";
+	ui_tooltip = "Visualize the strength of the sharpen (multiplied by 4 to see it better)";
 > = false;
 
 #include "ReShade.fxh"
@@ -59,7 +44,7 @@ uniform bool show_sharpen <
   /                          Main code                          /
   '-----------------------------------------------------------*/
 
-float3 LumaSharpenPass(float4 position : SV_Position, float2 tex : TEXCOORD) : SV_Target
+float3 LumaSharpenPass(float4 position : SV_Position, float2 tex : TEXCOORD0) : SV_Target
 {
 	// -- Get the original pixel --
 	float3 ori = tex2D(ReShade::BackBuffer, tex).rgb; // ori = original pixel
@@ -84,11 +69,11 @@ float3 LumaSharpenPass(float4 position : SV_Position, float2 tex : TEXCOORD) : S
 		//   [ 2/9, 8/9, 2/9]  =  [ 2 , 8 , 2 ]
 		//   [    , 2/9, 1/9]     [   , 2 , 1 ]
 
-		blur_ori  = tex2D(ReShade::BackBuffer, tex + (BUFFER_PIXEL_SIZE / 3.0) * offset_bias).rgb;  // North West
-		blur_ori += tex2D(ReShade::BackBuffer, tex + (-BUFFER_PIXEL_SIZE / 3.0) * offset_bias).rgb; // South East
+		blur_ori  = tex2D(ReShade::BackBuffer, tex + (ReShade::PixelSize / 3.0) * offset_bias).rgb;  // North West
+		blur_ori += tex2D(ReShade::BackBuffer, tex + (-ReShade::PixelSize / 3.0) * offset_bias).rgb; // South East
 
-		//blur_ori += tex2D(ReShade::BackBuffer, tex + (BUFFER_PIXEL_SIZE / 3.0) * offset_bias); // North East
-		//blur_ori += tex2D(ReShade::BackBuffer, tex + (-BUFFER_PIXEL_SIZE / 3.0) * offset_bias); // South West
+		//blur_ori += tex2D(ReShade::BackBuffer, tex + (ReShade::PixelSize / 3.0) * offset_bias); // North East
+		//blur_ori += tex2D(ReShade::BackBuffer, tex + (-ReShade::PixelSize / 3.0) * offset_bias); // South West
 
 		blur_ori /= 2;  //Divide by the number of texture fetches
 
@@ -103,10 +88,10 @@ float3 LumaSharpenPass(float4 position : SV_Position, float2 tex : TEXCOORD) : S
 		//   [ .50,   1, .50]  =  [ 2 , 4 , 2 ]
 		//   [ .25, .50, .25]     [ 1 , 2 , 1 ]
 
-		blur_ori  = tex2D(ReShade::BackBuffer, tex + float2(BUFFER_PIXEL_SIZE.x, -BUFFER_PIXEL_SIZE.y) * 0.5 * offset_bias).rgb; // South East
-		blur_ori += tex2D(ReShade::BackBuffer, tex - BUFFER_PIXEL_SIZE * 0.5 * offset_bias).rgb;  // South West
-		blur_ori += tex2D(ReShade::BackBuffer, tex + BUFFER_PIXEL_SIZE * 0.5 * offset_bias).rgb; // North East
-		blur_ori += tex2D(ReShade::BackBuffer, tex - float2(BUFFER_PIXEL_SIZE.x, -BUFFER_PIXEL_SIZE.y) * 0.5 * offset_bias).rgb; // North West
+		blur_ori  = tex2D(ReShade::BackBuffer, tex + float2(ReShade::PixelSize.x, -ReShade::PixelSize.y) * 0.5 * offset_bias).rgb; // South East
+		blur_ori += tex2D(ReShade::BackBuffer, tex - ReShade::PixelSize * 0.5 * offset_bias).rgb;  // South West
+		blur_ori += tex2D(ReShade::BackBuffer, tex + ReShade::PixelSize * 0.5 * offset_bias).rgb; // North East
+		blur_ori += tex2D(ReShade::BackBuffer, tex - float2(ReShade::PixelSize.x, -ReShade::PixelSize.y) * 0.5 * offset_bias).rgb; // North West
 
 		blur_ori *= 0.25;  // ( /= 4) Divide by the number of texture fetches
 	}
@@ -121,10 +106,10 @@ float3 LumaSharpenPass(float4 position : SV_Position, float2 tex : TEXCOORD) : S
 		//   [ 4 ,16 ,24 ,16 ,   ]
 		//   [   ,   , 6 , 4 ,   ]
 
-		blur_ori  = tex2D(ReShade::BackBuffer, tex + BUFFER_PIXEL_SIZE * float2(0.4, -1.2) * offset_bias).rgb;  // South South East
-		blur_ori += tex2D(ReShade::BackBuffer, tex - BUFFER_PIXEL_SIZE * float2(1.2, 0.4) * offset_bias).rgb; // West South West
-		blur_ori += tex2D(ReShade::BackBuffer, tex + BUFFER_PIXEL_SIZE * float2(1.2, 0.4) * offset_bias).rgb; // East North East
-		blur_ori += tex2D(ReShade::BackBuffer, tex - BUFFER_PIXEL_SIZE * float2(0.4, -1.2) * offset_bias).rgb; // North North West
+		blur_ori  = tex2D(ReShade::BackBuffer, tex + ReShade::PixelSize * float2(0.4, -1.2) * offset_bias).rgb;  // South South East
+		blur_ori += tex2D(ReShade::BackBuffer, tex - ReShade::PixelSize * float2(1.2, 0.4) * offset_bias).rgb; // West South West
+		blur_ori += tex2D(ReShade::BackBuffer, tex + ReShade::PixelSize * float2(1.2, 0.4) * offset_bias).rgb; // East North East
+		blur_ori += tex2D(ReShade::BackBuffer, tex - ReShade::PixelSize * float2(0.4, -1.2) * offset_bias).rgb; // North North West
 
 		blur_ori *= 0.25;  // ( /= 4) Divide by the number of texture fetches
 
@@ -139,10 +124,10 @@ float3 LumaSharpenPass(float4 position : SV_Position, float2 tex : TEXCOORD) : S
 		//   [ .50,    , .50]  =  [ 1 ,   , 1 ]
 		//   [ .50, .50, .50]     [ 1 , 1 , 1 ]
 
-		blur_ori  = tex2D(ReShade::BackBuffer, tex + float2(0.5 * BUFFER_PIXEL_SIZE.x, -BUFFER_PIXEL_SIZE.y * offset_bias)).rgb;  // South South East
-		blur_ori += tex2D(ReShade::BackBuffer, tex + float2(offset_bias * -BUFFER_PIXEL_SIZE.x, 0.5 * -BUFFER_PIXEL_SIZE.y)).rgb; // West South West
-		blur_ori += tex2D(ReShade::BackBuffer, tex + float2(offset_bias * BUFFER_PIXEL_SIZE.x, 0.5 * BUFFER_PIXEL_SIZE.y)).rgb; // East North East
-		blur_ori += tex2D(ReShade::BackBuffer, tex + float2(0.5 * -BUFFER_PIXEL_SIZE.x, BUFFER_PIXEL_SIZE.y * offset_bias)).rgb; // North North West
+		blur_ori  = tex2D(ReShade::BackBuffer, tex + float2(0.5 * ReShade::PixelSize.x, -ReShade::PixelSize.y * offset_bias)).rgb;  // South South East
+		blur_ori += tex2D(ReShade::BackBuffer, tex + float2(offset_bias * -ReShade::PixelSize.x, 0.5 * -ReShade::PixelSize.y)).rgb; // West South West
+		blur_ori += tex2D(ReShade::BackBuffer, tex + float2(offset_bias * ReShade::PixelSize.x, 0.5 * ReShade::PixelSize.y)).rgb; // East North East
+		blur_ori += tex2D(ReShade::BackBuffer, tex + float2(0.5 * -ReShade::PixelSize.x, ReShade::PixelSize.y * offset_bias)).rgb; // North North West
 
 		//blur_ori += (2 * ori); // Probably not needed. Only serves to lessen the effect.
 
@@ -151,14 +136,14 @@ float3 LumaSharpenPass(float4 position : SV_Position, float2 tex : TEXCOORD) : S
 		sharp_strength_luma *= 0.666; // Adjust strength to aproximate the strength of pattern 2
 	}
 
-	 /*-----------------------------------------------------------.
+	/*-----------------------------------------------------------.
 	/                            Sharpen                          /
 	'-----------------------------------------------------------*/
 
 	// -- Calculate the sharpening --
 	float3 sharp = ori - blur_ori;  //Subtracting the blurred image from the original image
 
-#if 0 //older 1.4 code (included here because the new code while faster can be difficult to understand)
+#if 0 //older CeeJay 1.4 code (included here because the new code while faster can be difficult to understand)
 	// -- Adjust strength of the sharpening --
 	float sharp_luma = dot(sharp, sharp_strength_luma); //Calculate the luma and adjust the strength
 

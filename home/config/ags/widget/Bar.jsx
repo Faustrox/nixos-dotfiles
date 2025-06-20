@@ -1,23 +1,22 @@
-import { App, Astal, Gtk } from "astal/gtk3"
+import { App, Astal, Gtk } from "astal/gtk4"
 import { execAsync } from "astal/process"
 import { Variable, GLib, bind } from "astal"
 import Hyprland from "gi://AstalHyprland"
-import Wp from "gi://AstalWp"
+import AstalWp from "gi://AstalWp"
 
 import Workspaces from './Bar/Workspaces'
 
 import { getMonitorName } from '../utils'
-import { open_powermenu, open_calendar, open_systray } from '../variables'
+import { open_powermenu, open_calendar } from '../variables'
 
 const hypr = Hyprland.get_default()
-const audio = Wp.get_default()?.audio
 
 function PowerButton() {
 
 	return (
 		<button
-			className='Power'
-			onClick={() => open_powermenu.set(!open_powermenu.get())}
+			cssClasses={['Power']}
+			onClicked={() => open_powermenu.set(!open_powermenu.get())}
 		>
 			<label>⏻</label>
 		</button>
@@ -26,36 +25,37 @@ function PowerButton() {
 
 function VolumeIndicator() {
 
-	const speaker = audio.get_default_speaker()
+	const speaker = AstalWp.get_default()?.defaultSpeaker
+	const volumeIcon = bind(speaker, "volume-icon").as(value => value)
 
 	return (
 		<button
-			onClick="uwsm-app -s b -- pavucontrol"
-			className='Button'
+			onClicked={() => GLib.spawn_command_line_async("uwsm-app -s b -- pavucontrol")}
+			cssClasses={['Button']}
 		>
-			<icon icon={bind(speaker, "volumeIcon")}/>
+			<image iconName={volumeIcon}/>
 		</button>
 	)
 }
 
-function SysTrayButton() {
+// function SysTrayButton() {
 
-	return (
-		<button 
-			className="Button" 
-			onClick={() => open_systray.set(!open_systray.get())}
-		>
-			
-		</button>
-	)
-}
+// 	return (
+// 		<button 
+// 			cssClasses={["Button" ]}
+// 			onClicked={() => open_systray.set(!open_systray.get())}
+// 		>
+// 			
+// 		</button>
+// 	)
+// }
 
 function Avatar() {
 
 	return (
 		<button 
-			className="Avatar"
-			onClicked="echo 'New launcher c:'"
+			cssClasses={["Avatar"]}
+			onClicked={() => GLib.spawn_command_line_async("echo 'New launcher c:'")}
 		>
 			<box />
 		</button>
@@ -67,13 +67,13 @@ function Clock({ format = "%I:%M %p" }) {
 
 	return (
 		<button
-			className="Clock"
+			cssClasses={["Clock"]}
 			onClicked={() => open_calendar.set(!open_calendar.get())}
 			hexpand
 		>
 			<label
 				onDestroy={() => time.drop()}
-				label={time()}
+				label={bind(time)}
 			/>
 		</button>
 	)
@@ -114,16 +114,16 @@ function Weather() {
 
 	return (
 		<button
-			className="Weather box"
+			cssClasses={["Weather", "box"]}
 			hexpand
 		>
 			<box>
 				<label
-					className="Weather icon"
-					label={bind(weather).as(value => value.icon)}
+					cssClasses={["Weather", "icon"]}
+					label={bind(weather).as(value => value?.icon ?? "N/A")}
 				/>
 				<label
-					className="Weather temp"
+					cssClasses={["Weather", "temp"]}
 					label={bind(weather).as(value => value.temp ? `${value.temp.toString()}°` : "N/A")}
 				/>
 			</box>
@@ -135,7 +135,6 @@ export default function Bar( gdkmonitor ) {
 	const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor
 	const monitorName = getMonitorName(gdkmonitor)
 	const hyprMonitor = hypr.get_monitor_by_name(monitorName)
-
 	const mainMonitor = hyprMonitor.id == 0; // FIX: Hyprland sometimes change monitors
 
 	return (
@@ -146,7 +145,7 @@ export default function Bar( gdkmonitor ) {
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
 				anchor={LEFT | TOP | RIGHT}
 			>
-				<box className="Edge topside"/>
+				<box cssClasses={["Edge","", "topside"]}/>
 			</window>
 			<window 
 				visible
@@ -154,61 +153,60 @@ export default function Bar( gdkmonitor ) {
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
 				anchor={TOP | BOTTOM | LEFT}
 			>
-				<box className="Edge leftside"/>
+				<box cssClasses={["Edge", "leftside"]}/>
 			</window>
 			<window 
 				visible
 				gdkmonitor={gdkmonitor}
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
 				anchor={TOP | BOTTOM | RIGHT}
-				application={App}
 			>
-				<box className="Edge rightside"/>
+				<box cssClasses={["Edge", "rightside"]}/>
 			</window>
 
 
 			<window
-				className="Corner"
+				cssClasses={["Corner"]}
 				visible
 				layer={Astal.Layer.BACKGROUND}
 				gdkmonitor={gdkmonitor}
 				anchor={BOTTOM | LEFT}
 			>
-				<box className="bottom-left"/>
+				<box cssClasses={["bottom-left"]}/>
 			</window>
 			<window
-				className="Corner"
+				cssClasses={["Corner"]}
 				visible
 				layer={Astal.Layer.BACKGROUND}
         gdkmonitor={gdkmonitor}
 				anchor={BOTTOM | RIGHT}
 			>
-				<box className="bottom-right"/>
+				<box cssClasses={["bottom-right"]}/>
 			</window>
 			<window
-				className="Corner"
+				cssClasses={["Corner"]}
 				visible
         layer={Astal.Layer.BACKGROUND}
 				gdkmonitor={gdkmonitor}
 				anchor={TOP | LEFT}
 			>
-				<box className="top-left"/>
+				<box cssClasses={["top-left"]}/>
 			</window>
 			<window
-				className="Corner"
+				cssClasses={["Corner"]}
 				visible
 				layer={Astal.Layer.BACKGROUND}
         gdkmonitor={gdkmonitor}
 				anchor={TOP | RIGHT}
 			>
-				<box className="top-right"/>
+				<box cssClasses={["top-right"]}/>
 			</window>
 
 
 			<window
 				visible
 				name="Bar"
-				className="Bar"
+				cssClasses={["Bar"]}
 				gdkmonitor={gdkmonitor}
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
 				anchor={LEFT | BOTTOM | RIGHT}
@@ -229,7 +227,7 @@ export default function Bar( gdkmonitor ) {
 						halign={Gtk.Align.END}
 					>
 						{!mainMonitor && <VolumeIndicator />}
-						{!mainMonitor && <SysTrayButton />}
+						{/* {!mainMonitor && <SysTrayButton />} */}
 						{mainMonitor && <PowerButton />}
 					</box>
 				</centerbox>
