@@ -1,68 +1,64 @@
-import { App, Astal, Gtk, Gdk } from "astal/gtk4"
+import App from "ags/gtk4/app"
 import GLib from "gi://GLib"
+import Astal from "gi://Astal?version=4.0"
+import Gtk from "gi://Gtk?version=4.0"
+import Gdk from "gi://Gdk?version=4.0"
 
-import { open_powermenu } from '../variables'
+import { powerMenu, setPowerMenu } from '../variables'
 
 function PowerMenuEntry({icon, onClick}) {
   return (
     <box 
-      vertical
-      cssClasses={['Powermenu-entry']}
+      orientation={Gtk.Orientation.VERTICAL}
+      class={'Powermenu-entry'}
     >
       <button onClicked={onClick}>
-        <label>
-          {icon}
-        </label>
+        <label label={icon} />
       </button>
     </box>
   )
 }
 
-export default function PowerMenu(monitor = 0) {
+export default function PowerMenu(monitor = 1) {
   const { TOP } = Astal.WindowAnchor
   let widgetRef;
 
   return (
     <window
-      visible={false}
+      visible={powerMenu}
       monitor={monitor}
       anchor={TOP}
       application={App}
       keymode={Astal.Keymode.ON_DEMAND}
-      setup={self => {
-        widgetRef = self
-      }}
-      onKeyPressed={(self, event) => {
-        if (event === Gdk.KEY_Escape)
-          open_powermenu.set(!open_powermenu.get())
-      }}
+      // onKeyPressed={(self, event) => {
+      //   if (event === Gdk.KEY_Escape)
+      //     setPowerMenu(false)
+      // }}
     >
       <revealer
-        setup={(self) => {
-          open_powermenu.subscribe((value) => {
-            self.revealChild = value
-            widgetRef.visible = value
-          })
-        }}
+        revealChild={powerMenu}
         transitionType={Gtk.RevealerTransitionType.CROSSFADE}
       >
         <centerbox>
           <box
-            cssClasses={['Powercorner', 'left']}
+            class={'Powercorner left'}
             valign={Gtk.Align.START}
+            $type="start"
             />
           <box 
-            cssClasses={['Powermenu']}
+            class={'Powermenu'}
             valign="center" 
             halign="center"
+            $type="center"
             >
             <PowerMenuEntry icon='󰐥' onClick={() => GLib.spawn_command_line_async('systemctl poweroff')} />
             <PowerMenuEntry icon='󰜉' onClick={() => GLib.spawn_command_line_async('systemctl reboot')} />
             <PowerMenuEntry icon='󰗼' onClick={() => GLib.spawn_command_line_async('uwsm stop')} />
           </box>
           <box
-            cssClasses={['Powercorner', 'right']}
+            class={'Powercorner right'}
             valign={Gtk.Align.START}
+            $type="end"
             />
         </centerbox>
       </revealer>

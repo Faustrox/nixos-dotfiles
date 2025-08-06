@@ -1,13 +1,17 @@
-import { App, Astal, Gtk } from "astal/gtk4"
-import { execAsync } from "astal/process"
-import { Variable, GLib, bind } from "astal"
-import Hyprland from "gi://AstalHyprland"
+import App from "ags/gtk4/app"
+import GLib from "gi://GLib"
+import Astal from "gi://Astal?version=4.0"
+import Gtk from "gi://Gtk?version=4.0"
 import AstalWp from "gi://AstalWp"
+import Hyprland from "gi://AstalHyprland"
+import { execAsync } from "ags/process"
+import { createBinding } from "ags"
+import { createPoll } from "ags/time"
 
-import Workspaces from './Bar/Workspaces'
+import Workspaces from './modules/Workspaces'
 
-import { getMonitorName } from '../utils'
-import { open_powermenu, open_calendar } from '../variables'
+import { getMonitorName } from '../../utils'
+import { setPowerMenu, setCalendar } from '../../variables'
 
 const hypr = Hyprland.get_default()
 
@@ -15,10 +19,10 @@ function PowerButton() {
 
 	return (
 		<button
-			cssClasses={['Power']}
-			onClicked={() => open_powermenu.set(!open_powermenu.get())}
+			class={'Power'}
+			onClicked={() => setPowerMenu((prev) => !prev)}
 		>
-			<label>⏻</label>
+			<label label="⏻"/>
 		</button>
 	)
 }
@@ -26,14 +30,14 @@ function PowerButton() {
 function VolumeIndicator() {
 
 	const speaker = AstalWp.get_default()?.defaultSpeaker
-	const volumeIcon = bind(speaker, "volume-icon").as(value => value)
+	const volumeIcon = createBinding(speaker, "volume-icon")
 
 	return (
 		<button
-			onClicked={() => GLib.spawn_command_line_async("uwsm-app -s b -- pavucontrol")}
-			cssClasses={['Button']}
+			onClicked={() => GLib.spawn_command_line_async("app2unit -s b -t scope -- pavucontrol")}
+			class={'Button'}
 		>
-			<image iconName={volumeIcon}/>
+			<image iconName={volumeIcon(icon => icon)}/>
 		</button>
 	)
 }
@@ -42,7 +46,7 @@ function VolumeIndicator() {
 
 // 	return (
 // 		<button 
-// 			cssClasses={["Button" ]}
+// 			class={["Button" ]}
 // 			onClicked={() => open_systray.set(!open_systray.get())}
 // 		>
 // 			
@@ -54,7 +58,7 @@ function Avatar() {
 
 	return (
 		<button 
-			cssClasses={["Avatar"]}
+			class={"Avatar"}
 			onClicked={() => GLib.spawn_command_line_async("echo 'New launcher c:'")}
 		>
 			<box />
@@ -63,17 +67,16 @@ function Avatar() {
 }
 
 function Clock({ format = "%I:%M %p" }) {
-	const time = Variable("").poll(1000, () => GLib.DateTime.new_now_local().format(format))
+	const time = createPoll("", 1000, () => GLib.DateTime.new_now_local().format(format))
 
 	return (
 		<button
-			cssClasses={["Clock"]}
-			onClicked={() => open_calendar.set(!open_calendar.get())}
+			class={"Clock"}
+			onClicked={() => setCalendar((prev) => !prev)}
 			hexpand
 		>
 			<label
-				onDestroy={() => time.drop()}
-				label={bind(time)}
+				label={time}
 			/>
 		</button>
 	)
@@ -81,14 +84,34 @@ function Clock({ format = "%I:%M %p" }) {
 
 function Weather() {
 
-	const codes = ["01d", "01n", "02d", "02n", "03d", "03n", "04d", "04n", "09d", "09n", "10d", "10n", "11d", "11n", "13d", "13n", "50d", "50n"]
-	const icons = ["", "", "", "", "󰖐", "󰖐", "", "", "", "", "", "", "", "", "󰖘", "󰖘", "", ""]
+	const codes = [
+		"01d", "01n", "02d", "02n", "03d", "03n",
+		"04d", "04n", "09d", "09n", "10d", "10n",
+		"11d", "11n", "13d", "13n", "50d", "50n"
+	]
+	
+	const icons = [
+		"", // 01d - Sun
+		"", // 01n - Moon
+		"", // 02d - Few clouds (day)
+		"", // 02n - Few clouds (night)
+		"󰖕", // 03d - Scattered clouds
+		"󰼱", // 03n - Scattered clouds
+		"", // 04d - Overcast
+		"", // 04n - Overcast
+		"", // 09d - Light rain
+		"", // 09n - Light rain
+		"", // 10d - Rain
+		"", // 10n - Rain (night)
+		"", // 11d - Thunderstorm
+		"", // 11n - Thunderstorm
+		"", // 13d - Snow
+		"", // 13n - Snow
+		"", // 50d - Fog
+		""  // 50n - Fog
+	]
 
-	const weather = Variable({
-		icon: "",
-		temp: null,
-		description: ""
-	}).poll(60000, async () => {
+	const weather = createPoll(0, 60000, async () => {
 		const weather = {
 			token: "69c655f5c49d7a1612da1c5a0617d786",
 			units: 'metric',
@@ -114,17 +137,17 @@ function Weather() {
 
 	return (
 		<button
-			cssClasses={["Weather", "box"]}
+			class={"Weather box"}
 			hexpand
 		>
 			<box>
 				<label
-					cssClasses={["Weather", "icon"]}
-					label={bind(weather).as(value => value?.icon ?? "N/A")}
+					class={"Weather icon"}
+					label={weather(value => value?.icon ?? "N/A")}
 				/>
 				<label
-					cssClasses={["Weather", "temp"]}
-					label={bind(weather).as(value => value.temp ? `${value.temp.toString()}°` : "N/A")}
+					class={"Weather temp"}
+					label={weather(value => value.temp ? `${value.temp.toString()}°` : "N/A")}
 				/>
 			</box>
 		</button>
@@ -135,7 +158,7 @@ export default function Bar( gdkmonitor ) {
 	const { TOP, BOTTOM, LEFT, RIGHT } = Astal.WindowAnchor
 	const monitorName = getMonitorName(gdkmonitor)
 	const hyprMonitor = hypr.get_monitor_by_name(monitorName)
-	const mainMonitor = hyprMonitor.id == 0; // FIX: Hyprland sometimes change monitors
+	const mainMonitor = hyprMonitor.id == 1;
 
 	return (
 		<>
@@ -145,7 +168,7 @@ export default function Bar( gdkmonitor ) {
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
 				anchor={LEFT | TOP | RIGHT}
 			>
-				<box cssClasses={["Edge","", "topside"]}/>
+				<box class={"Edge topside"}/>
 			</window>
 			<window 
 				visible
@@ -153,7 +176,7 @@ export default function Bar( gdkmonitor ) {
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
 				anchor={TOP | BOTTOM | LEFT}
 			>
-				<box cssClasses={["Edge", "leftside"]}/>
+				<box class={"Edge leftside"}/>
 			</window>
 			<window 
 				visible
@@ -161,52 +184,51 @@ export default function Bar( gdkmonitor ) {
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
 				anchor={TOP | BOTTOM | RIGHT}
 			>
-				<box cssClasses={["Edge", "rightside"]}/>
+				<box class={"Edge rightside"}/>
 			</window>
 
 
 			<window
-				cssClasses={["Corner"]}
+				class={"Corner"}
 				visible
 				layer={Astal.Layer.BACKGROUND}
 				gdkmonitor={gdkmonitor}
 				anchor={BOTTOM | LEFT}
 			>
-				<box cssClasses={["bottom-left"]}/>
+				<box class={"bottom-left"}/>
 			</window>
 			<window
-				cssClasses={["Corner"]}
+				class={"Corner"}
 				visible
 				layer={Astal.Layer.BACKGROUND}
         gdkmonitor={gdkmonitor}
 				anchor={BOTTOM | RIGHT}
 			>
-				<box cssClasses={["bottom-right"]}/>
+				<box class={"bottom-right"}/>
 			</window>
 			<window
-				cssClasses={["Corner"]}
+				class={"Corner"}
 				visible
         layer={Astal.Layer.BACKGROUND}
 				gdkmonitor={gdkmonitor}
 				anchor={TOP | LEFT}
 			>
-				<box cssClasses={["top-left"]}/>
+				<box class={"top-left"}/>
 			</window>
 			<window
-				cssClasses={["Corner"]}
+				class={"Corner"}
 				visible
 				layer={Astal.Layer.BACKGROUND}
         gdkmonitor={gdkmonitor}
 				anchor={TOP | RIGHT}
 			>
-				<box cssClasses={["top-right"]}/>
+				<box class={"top-right"}/>
 			</window>
-
 
 			<window
 				visible
 				name="Bar"
-				cssClasses={["Bar"]}
+				class={"Bar"}
 				gdkmonitor={gdkmonitor}
 				exclusivity={Astal.Exclusivity.EXCLUSIVE}
 				anchor={LEFT | BOTTOM | RIGHT}
@@ -215,16 +237,18 @@ export default function Bar( gdkmonitor ) {
 				<centerbox>
 					<box
 						halign={Gtk.Align.START}
+						$type="start"
 					>
 						{!mainMonitor && <Avatar/>}
 						<Clock />
 						{!mainMonitor && <Weather/>}
 					</box>
-					<box>
+					<box $type="center">
 						<Workspaces hyprMonitor={hyprMonitor}/>
 					</box>
 					<box
 						halign={Gtk.Align.END}
+						$type="end"
 					>
 						{!mainMonitor && <VolumeIndicator />}
 						{/* {!mainMonitor && <SysTrayButton />} */}

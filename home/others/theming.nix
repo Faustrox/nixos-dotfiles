@@ -26,6 +26,11 @@ in
       };
     };
 
+    # Hide GTK Window Title Buttons
+    # dconf.settings = {
+    #   "org/gnome/desktop/wm/preferences".button-layout = "";
+    # };
+
     # Fix Catppuccin-cursor inconsistant size Hyprcursor (32) and XCursor (24)
     # gtk.cursorTheme = {
     #   name = "Simp1e-Catppuccin-Mocha";

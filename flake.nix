@@ -39,9 +39,21 @@
     # Multimedia & Gaming Flakes
     nix-gaming.url = "github:fufexan/nix-gaming";
     umu.url = "github:Open-Wine-Components/umu-launcher?dir=packaging/nix";
-    freesmlauncher.url = "github:FreesmTeam/FreesmLauncher";
+    # freesmlauncher.url = "github:FreesmTeam/FreesmLauncher";
     nixcord.url = "github:kaylorben/nixcord";
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+
+    lsfg-vk-flake = {
+      url = "github:pabloaul/lsfg-vk-flake/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
+      # to have it up-to-date or simply don't specify the nixpkgs input  
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     
     # Developer Flakes
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
@@ -90,6 +102,7 @@
           inputs.disko.nixosModules.disko
           inputs.stylix.nixosModules.stylix
           inputs.nixai.nixosModules.default
+          inputs.lsfg-vk-flake.nixosModules.default
 
           {
             nixpkgs.config.allowUnfree = true;
@@ -108,16 +121,14 @@
                 inputs.spicetify-nix.homeManagerModules.default
                 inputs.ags.homeManagerModules.default
                 inputs.nixcord.homeModules.nixcord
+                inputs.zen-browser.homeModules.default
               ];
             };
 
             nix.settings = {
-              substituters = [ "https://nix-gaming.cachix.org" "https://nix-citizen.cachix.org" "https://hyprland.cachix.org" "https://freesmlauncher.cachix.org" ];
+              substituters = [ "https://nix-gaming.cachix.org" ];
               trusted-public-keys = [ 
                 "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
-                "nix-citizen.cachix.org-1:lPMkWc2X8XD4/7YPEEwXKKBg+SVbYTVrAaLA2wQTKCo="
-                "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-                "freesmlauncher.cachix.org-1:Jcp5Q9wiLL+EDv8Mh7c6L9xGk+lXr7/otpKxMOuBuDs="
               ];
             };
           }

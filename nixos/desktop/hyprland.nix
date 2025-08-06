@@ -1,8 +1,8 @@
-{ config, pkgs, lib, inputs, ... }:
-# let
-#   hyprPackages = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system};
-# in
-{
+{ config, pkgs, lib, inputs, ... }: let
+
+  hyprPackages = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system};
+
+in {
 
   options = {
     hyprland.enable = 
@@ -10,6 +10,8 @@
   };
 
   config = lib.mkIf config.hyprland.enable {
+
+    boot.initrd.systemd.enable = true;
 
     programs = {
       uwsm.enable = true;
@@ -20,8 +22,8 @@
         enable = true;
         withUWSM  = true;
         xwayland.enable = true;
-        package = pkgs.hyprland;
-        portalPackage = pkgs.xdg-desktop-portal-hyprland;
+        package = hyprPackages.hyprland;
+        portalPackage = hyprPackages.xdg-desktop-portal-hyprland;
       };
 
       nautilus-open-any-terminal = {
@@ -49,11 +51,9 @@
     };
 
     environment.systemPackages = with pkgs; [
-
-      (pkgs.writers.writeBashBin "app2unit" ''
-        ${builtins.readFile ./app2unit.sh}
-      '')
       
+      app2unit
+
       # Multimedia
       clipse
       playerctl
@@ -86,18 +86,18 @@
     ];
 
     services.gvfs.enable = true;
-    
-    # Hyprland VRAM usage fix
-
-    # boot.kernelParams = [
-    #   "video=DP-1:D"
-    #   "video=DP-2:D"
-    # ];
 
     # VRAM usage fix on Nvidia GPU procname
     environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool.json".text = ''
       {
         "rules": [
+          {
+            "pattern": {
+              "feature": "procname",
+              "matches": ".Hyprland-wrapp"
+            },
+            "profile": "Limit Free Buffer Pool On Hyprland"
+          },
           {
             "pattern": {
               "feature": "cmdline",
@@ -122,7 +122,7 @@
 
     environment.sessionVariables = {
       APP2UNIT_SLICES = "a=app-graphical.slice b=background-graphical.slice s=session-graphical.slice";
-      APP2UNIT_TYPE = "scope";
+      APP2UNIT_TYPE = "service";
 
       NIXOS_OZONE_WL = 1;
       # ELECTRON_OZONE_PLATFORM_HINT = "auto";
@@ -137,21 +137,19 @@
       QT_AUTO_SCREEN_SCALE_FACTOR = 1;
       QT_WAYLAND_DISABLE_WINDOWDECORATION = 1;
 
-      XDG_CURRENT_DESKTOP = "Hyprland";
+      # XDG_CURRENT_DESKTOP = "Hyprland";
       # XDG_SESSION_TYPE = "wayland";
-      XDG_SESSION_DESKTOP = "Hyprland";
+      # XDG_SESSION_DESKTOP = "Hyprland";
 
       # Using dbus-broker, won't need VARS and NOTIFY
-      HYPRLAND_NO_SD_VARS = 1;
-      HYPRLAND_NO_SD_NOTIFY = 1;
-      HYPRLAND_NO_RT = 1;
+      # HYPRLAND_NO_SD_VARS = 1;
+      # HYPRLAND_NO_SD_NOTIFY = 1;
+      # HYPRLAND_NO_RT = 1;
 
       # Nvidia Settings
       # AQ_NO_ATOMIC = 1;
       # AQ_NO_MODIFIERS = 1;
-      # __GL_VRR_ALLOWED = 1;
-      # __GL_GSYNC_ALLOWED = 1;
-      # __GL_MaxFramesAllowed = 1;
+      # __GL_VRR_ALLOWED = 0;
     };
     
   };

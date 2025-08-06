@@ -20,7 +20,7 @@
       (pkgs.writers.writeBashBin "ags-start" ''
         ${pkgs.procps}/bin/pkill gjs
         while ${pkgs.procps}/bin/pgrep gjs >/dev/null; do ${pkgs.coreutils}/bin/sleep 0.1; done
-        ${pkgs.uwsm}/bin/uwsm-app -- ags run --gtk4 &
+        ${pkgs.app2unit}/bin/app2unit -s s -- ags run --gtk 4 &
       '')
 
     ];

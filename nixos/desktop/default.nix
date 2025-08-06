@@ -1,8 +1,10 @@
-{ lib, ... }:
+{ lib, config, ... }:
 
 {
-  imports = [ 
+  imports = [
+    ./gnome.nix
     ./hyprland.nix
+    ./plasma.nix
   ];
 
 }

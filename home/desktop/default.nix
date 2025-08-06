@@ -7,4 +7,7 @@
     ./hyprland.nix
   ];
 
+
+  services.kdeconnect.enable = true;
+
 }

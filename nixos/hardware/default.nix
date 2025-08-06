@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
@@ -6,5 +6,7 @@
     ./nvidia.nix
     ./sound.nix
   ];
+
+  hardware.firmware = with pkgs; [ linux-firmware ];
 
 }

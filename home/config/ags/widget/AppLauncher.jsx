@@ -1,7 +1,10 @@
-import { App, Astal, Gdk, Gtk } from "astal/gtk4"
-import { Variable } from "astal"
-import Apps from "gi://AstalApps"
+import App from "ags/gtk4/app"
 import GLib from "gi://GLib"
+import Astal from "gi://Astal?version=4.0"
+import Gtk from "gi://Gtk?version=4.0"
+import Gdk from "gi://Gdk?version=4.0"
+import AstalApps from "gi://AstalApps"
+import { createState, For } from "ags"
 
 const MAX_ITEMS = 8
 
@@ -12,23 +15,22 @@ function hide() {
 function launchAppWithPrefix(app) {
   const executable = app.get_executable();
   if (executable) {
-      const command = `uwsm-app -- ${executable}`;
+    const command = `sh -c 'setsid app2unit -t scope -- ${executable} >/dev/null 2>&1 < /dev/null &'`;
 
       try {
-          GLib.spawn_command_line_async(command);
+        GLib.spawn_command_line_async(command);
       } catch (err) {
-          console.error('Error while launching app:', err);
+        console.error('Error while launching app:', err);
       }
   } else {
       console.error('Could not get app executable.');
   }
 }
 
-
 function LauncherItem({ app }) {
   return (
     <button
-      cssClasses={["Launcher", "item"]}
+      class={"Launcher item"}
       onClicked={() => { 
         hide(); 
         launchAppWithPrefix(app)
@@ -37,12 +39,15 @@ function LauncherItem({ app }) {
       <box>
         <image
           iconName={app.iconName}
-          cssClasses={["Launcher", "item-icon"]}
+          class={"Launcher item-icon"}
         />
-        <box valign={Gtk.Align.CENTER} vertical>
+        <box 
+          valign={Gtk.Align.CENTER} 
+          orientation={Gtk.Orientation.VERTICAL}
+        >
           <label
-            cssClasses={["Launcher", "item-name"]}
-            truncate
+            class={"Launcher item-name"}
+            // truncate
             xalign={0}
             label={app.name}
           />
@@ -54,10 +59,10 @@ function LauncherItem({ app }) {
 
 export default function Applauncher() {
   const { CENTER } = Gtk.Align
-  const apps = new Apps.Apps()
-  const width = Variable(1000)
+  const apps = new AstalApps.Apps()
+  const [width, setWidth] = createState(1000)
 
-  const text = Variable("")
+  const [text, setText] = createState("")
   const list = text(text => (apps.fuzzy_query(text) ?? []).slice(0, MAX_ITEMS))
   const onEnter = () => {
     apps.fuzzy_query(text.get())?.[0].launch()
@@ -76,48 +81,51 @@ export default function Applauncher() {
       keymode={Astal.Keymode.ON_DEMAND}
       application={App}
       onShow={(self) => {
-        text.set("")
+        setText("")
         if (searchRef) {
           searchRef.grab_focus();
         }
       }}
-      onKeyPressed={(self, event) => {
-        if (event === Gdk.KEY_Escape)
-          self.hide()
-      }}
+      // onKeyPressed={(self, event) => {
+      //   if (event === Gdk.KEY_Escape)
+      //     self.hide()
+      // }}
     >
-    <box cssClasses={["Launcher", "container"]}>
+    <box class={"Launcher container"}>
       <box 
         hexpand={false}
-        vertical
+        orientation={Gtk.Orientation.VERTICAL}
       >
-        <box widthRequest={500} heightRequest={600} cssClasses={["Launcher", "box"]} vertical >
+        <box widthRequest={500} heightRequest={600} class={"Launcher box"} orientation={Gtk.Orientation.VERTICAL} >
           <entry
-            setup={self => {
+            $={self => {
               searchRef = self;
             }}
             name="launcher-search"
             placeholderText="Search"
             primaryIconName="system-search"
-            cssClasses={["Launcher", "search"]}
-            text={text.get()}
-            onChanged={self => text.set(self.text)}
+            class={"Launcher search"}
+            text={text(text => text)}
+            onChanged={self => setText(self.text)}
             onActivate={onEnter}
           />
           <box
-            cssClasses={["Launcher", "items-holder"]}
+            class={"Launcher items-holder"}
             spacing={12}
-            vertical
+            orientation={Gtk.Orientation.VERTICAL}
           >
-            {list.as(list => list.map(app => (
+            <For each={list}>
+              {(app) => <LauncherItem app={app} />}
+            </For>
+            {/* {list.as(list => list.map(app => (
               <LauncherItem app={app} />
-            )))}
+            )))} */}
           </box>
           <box
             halign={CENTER}
-            cssClasses={["Launcher", "not-found"]}
-            vertical
-            visible={list.as(l => l.length === 0)}
+            class={"Launcher not-found"}
+            orientation={Gtk.Orientation.VERTICAL}
+            visible={list(l => l.length === 0)}
           >
             <image iconName="system-search-symbolic" />
             <label label="No match found" />

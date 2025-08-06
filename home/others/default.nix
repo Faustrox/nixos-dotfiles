@@ -8,5 +8,4 @@
     ./theming.nix
   ];
 
-  hyprclouds.enable = true;
 }

@@ -1,5 +1,8 @@
-import { App, Astal, Gtk, Gdk } from "astal/gtk4"
-import { GLib } from "astal"
+import App from "ags/gtk4/app"
+import Astal from "gi://Astal"
+import Gtk from "gi://Gtk"
+import Gdk from "gi://Gdk"
+import GLib from "gi://GLib"
 
 export default function RecorderStatus(monitor = 1) {
   const { TOP, RIGHT } = Astal.WindowAnchor

@@ -1,7 +1,12 @@
-import { App, Astal, Gtk, Gdk } from "astal/gtk4"
-import { bind, Variable, GLib } from "astal"
+import Gtk from "gi://Gtk"
+import Gdk from "gi://Gdk"
+import GLib from "gi://GLib"
+import Astal from "gi://Astal"
+import App from "ags/gtk4/app"
+import { createBinding, createState } from "ags"
+import { createPoll } from "ags/time"
 
-import { open_calendar } from '../variables'
+import { calendar, setCalendar } from '../variables'
 
 function CalendarBox() {
 
@@ -24,10 +29,10 @@ function CalendarBox() {
           const isToday = currentDate.toLocaleDateString("en-us",) == holderDate.toLocaleDateString("en-us");
           const isCurrentMonth = currentDate.getMonth() == holderDate.getMonth();
 
-          const calendarClasses = ["Calendar", "day", isToday ? "active" : !isCurrentMonth ? "unactive" : ""]
+          const calendarClasses = `Calendar day ${isToday ? "active" : !isCurrentMonth ? "unactive" : ""}`
 
           return <label
-            cssClasses={calendarClasses}
+            class={calendarClasses}
             label={holderDate.getDate().toString()}
           />
         })}
@@ -38,11 +43,11 @@ function CalendarBox() {
   }
 
   return (
-    <box vertical cssClasses={["Calendar", "days"]}>
+    <box vertical class={"Calendar days"}>
       <box halign={CENTER}>
         {days.map(day => 
           <label
-            cssClasses={["Calendar", "day-indicator"]}
+            class={"Calendar day-indicator"}
             label={day}
           />
         )}
@@ -58,7 +63,7 @@ export default function Calendar(monitor = 1) {
   const { BOTTOM, LEFT } = Astal.WindowAnchor
   const { CENTER, START, END } = Gtk.Align;
 
-  const time = Variable("").poll(1000, () => GLib.DateTime.new_now_local().format("%I:%M"))
+  const time = createPoll(0, 1000, () => GLib.DateTime.new_now_local().format("%I:%M"))
   const currentDate = new Date();
 
   let widgetRef;
@@ -74,7 +79,7 @@ export default function Calendar(monitor = 1) {
       }}
       onKeyPressed={(self, event) => {
         if (event === Gdk.KEY_Escape)
-          open_calendar.set(!open_calendar.get())
+          setCalendar(!calendar)
       }}
     >
       {/* <box> */}
@@ -90,38 +95,38 @@ export default function Calendar(monitor = 1) {
           <centerbox>
             <box vertical>
               <box 
-                cssClasses={["Calendar", "corner"]}
+                class={"Calendar corner"}
                 halign={START}
               />
               <box
-                cssClasses={["Calendar", "box"]}
+                class={"Calendar box"}
                 vertical
               >
                 <box vertical halign={CENTER}>
                   {/* Clock and Date Box */}
                   <box 
-                    cssClasses={["Calendar", "clock-box"]}
+                    class={"Calendar clock-box"}
                     vertical
                   >
                     <label 
-                      cssClasses={["Calendar", "clock-time"]}
+                      class={"Calendar clock-time"}
                       label={time()}
                     />
                     <label
-                      cssClasses={["Calendar", "clock-date"]}
+                      class={"Calendar clock-date"}
                       label={currentDate.toLocaleDateString("en-us", { month: "long", day: "numeric" })}
                     />
                   </box>
 
                   {/* Calendar Box */}
-                  <box cssClasses={["Calendar", "container"]}>
+                  <box class={"Calendar container"}>
                     <CalendarBox />
                   </box>
                 </box>
               </box>
             </box>
           <box 
-            cssClasses={["Calendar", "corner"]}
+            class={"Calendar corner"}
             valign={END}
           />
           </centerbox>

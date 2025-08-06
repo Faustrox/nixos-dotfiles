@@ -92,7 +92,7 @@ window.Bar {
 	margin: 0 0.25rem;
 	padding: 0 0.3rem;
 	transition: 0.3s;
-
+	
 	&.current {
 		background-color: colors.$primary;
 		padding: 0 1.8rem;
@@ -162,7 +162,7 @@ window.Bar {
 	background-color: colors.$primary;
 	color: colors.$text;
 	border-radius: 2rem;
-	padding: 0 0.6rem;
+	padding: 0.3rem 0.6rem;
 	margin: 0.2rem 1rem;
 	transition: 0.3s;
 

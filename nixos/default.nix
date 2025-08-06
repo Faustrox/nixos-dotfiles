@@ -6,7 +6,6 @@
     ./desktop
     ./hardware
     ./others
-    ./programs
     ./system
   ];
 

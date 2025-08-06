@@ -32,14 +32,14 @@
   virtualisation.libvirtd.enable = true;
 
   # ---!
-  systemd.extraConfig = ''
-    DefaultLimitNOFILE=524288
-
-    DefaultTimeoutStopSec=10s
-  '';
+  systemd.settings.Manager = {
+    DefaultLimitNOFILE = 524288;
+    DefaultTimeoutStartSec = "15s";
+    DefaultTimeoutStopSec = "10s";
+  };
   systemd.user.extraConfig = ''
     DefaultLimitNOFILE=524288
-  
+    DefaultTimeoutStartSec=15s
     DefaultTimeoutStopSec=10s
   '';
   security.pam.loginLimits = [
@@ -90,7 +90,10 @@
   # Enable Security Polkit
   security.polkit.enable = true;
   services.seatd.enable = true;
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    openFirewall = true;
+  };
 
   # Some programs need SUID wrappers, can be configured further or are started in user sessions.
   programs.mtr.enable = true;
@@ -143,6 +146,8 @@
     };
   };
 
+  services.journald.extraConfig = "SystemMaxUse=100M";
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
@@ -153,7 +158,7 @@
 
   # --- Hardware Settings ---
 
-  bluetooth.enable = true;
+  bluetooth.enable = false;
   hardware.sound.setup = true;
   hardware.enableRedistributableFirmware = false;
 
@@ -162,7 +167,8 @@
   # --- Desktop Settings ---
 
   # gnome.enable = false;
-  hyprland.enable = true;
+  # hyprland.enable = true;
+  plasma.enable = true;
 
   # --- System wide programs ---
 

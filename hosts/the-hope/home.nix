@@ -24,7 +24,7 @@
   # --- Desktop Settings ---
 
   dconf.setup = false;
-  hyprland.setup = true;
+  hyprland.setup = false;
 
   # --- Programs Settings ---
 
@@ -42,10 +42,16 @@
   };
 
   programs = {
-    floorp.enable = true;
+    floorp.enable = false;
     fastfetch.enable = true;
     fd.enable = true;
     bat.enable = true;
+
+    zen-browser = {
+      enable = true;
+      nativeMessagingHosts = [pkgs.firefoxpwa];
+      # Add any other native connectors here
+    };
 
     nix-index = {
       enable = true;
@@ -128,6 +134,7 @@
     tradingview
 
     # Others
+    calibre
     obsidian
     uget
     libnotify
@@ -169,20 +176,20 @@
       enable = true;
       defaultApplications = {
         "inode/directory" = "org.gnome.Nautilus.desktop";
-        "default-web-browser" = "floorp.desktop";
-        "application/pdf" = "floorp.desktop";
+        "default-web-browser" = "zen-beta.desktop";
+        "application/pdf" = "zen-beta.desktop";
         "application/vnd.apple.mpegurl" = "";
-        "application/x-extension-htm" = "floorp.desktop";
-        "application/x-extension-html" = "floorp.desktop";
-        "application/x-extension-shtml" = "floorp.desktop";
-        "application/x-extension-xht" = "floorp.desktop";
-        "application/x-extension-xhtml" = "floorp.desktop";
+        "application/x-extension-htm" = "zen-beta.desktop";
+        "application/x-extension-html" = "zen-beta.desktop";
+        "application/x-extension-shtml" = "zen-beta.desktop";
+        "application/x-extension-xht" = "zen-beta.desktop";
+        "application/x-extension-xhtml" = "zen-beta.desktop";
         "application/x-shellscript" = "";
-        "application/xhtml+xml" = "floorp.desktop";
-        "x-scheme-handler/http" = "floorp.desktop";
-        "x-scheme-handler/https" = "floorp.desktop";
-        "x-scheme-handler/about" = "floorp.desktop";
-        "x-scheme-handler/unknown" = "floorp.desktop";
+        "application/xhtml+xml" = "zen-beta.desktop";
+        "x-scheme-handler/http" = "zen-beta.desktop";
+        "x-scheme-handler/https" = "zen-beta.desktop";
+        "x-scheme-handler/about" = "zen-beta.desktop";
+        "x-scheme-handler/unknown" = "zen-beta.desktop";
 
         # Images
         "image/jpeg" = "loupe.desktop";
@@ -206,7 +213,7 @@
 
         "text/*" = "code.desktop";
         "text/css" = "code.desktop";
-        "text/html" = "floorp.desktop";
+        "text/html" = "zen-beta.desktop";
         "text/plain" = "code.desktop";
       };
       associations.added = {

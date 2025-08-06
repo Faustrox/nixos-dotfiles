@@ -5,43 +5,53 @@
   options = {
     gnome.enable = 
       lib.mkEnableOption "Enable Gnome wayland";
-    gnome.wayland =
-      lib.mkEnableOption "Use Wayland for GDM and Gnome";
   };
 
   config = lib.mkIf config.gnome.enable {
 
     # Enable the GNOME Desktop Environment.
-    services.xserver = {
+    services = {
+      desktopManager.gnome.enable = true;
       displayManager.gdm = {
         enable = true;
-        wayland = config.gnome.wayland;
+        wayland = true;
       };
-      desktopManager.gnome = {
+
+      displayManager.autoLogin = {
         enable = true;
-        # extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+        user = config.main-user.username;
       };
     };
 
     # Exclude base gnome packages
     services.xserver.desktopManager.xterm.enable = false;
     environment.gnome.excludePackages = (with pkgs; [
-      gnome-tour
-      gnome-console
-    ]) ++ (with pkgs.gnome; [
+      atomix # puzzle game
+      cheese # webcam tool
       epiphany # web browser
+      evince # document viewer
+      geary # email reader
+      gedit # text editor
+      gnome-characters
+      gnome-music
+      gnome-photos
+      gnome-terminal
+      gnome-tour
+      hitori # sudoku game
+      iagno # go game
+      tali # poker game
+      totem # video player
     ]);
 
     # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
     systemd.services."getty@tty1".enable = false;
     systemd.services."autovt@tty1".enable = false;
     
-    services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+    services.udev.packages = with pkgs; [ gnome-settings-daemon ];
 
     # Gnome Keyring
     services.gnome.gnome-keyring.enable = true;
     security.pam.services.gdm.enableGnomeKeyring = true;
-    programs.ssh.startAgent = true;
     
     # To Dynamic Triple Buffering to work
     # nixpkgs.config.allowAliases = false;
@@ -54,12 +64,17 @@
       menulibre
     ];
 
-    environment.sessionVariables = lib.mkMerge [
-      (lib.mkIf config.gnome.wayland {
-        MUTTER_DEBUG_DISABLE_HW_CURSORS = 1;
-        CLUTTER_PAINT = "disable-dynamic-max-render-time";
-      })
-    ]; 
+    environment.sessionVariables = {
+      NIXOS_OZONE_WL = 1;
+      # ELECTRON_OZONE_PLATFORM_HINT = "auto";
+      MOZ_ENABLE_WAYLAND = 1;
+      MOZ_DBUS_REMOTE = 1;
+
+      GDK_BACKEND = "wayland,x11,*";
+      QT_QPA_PLATFORM = "wayland;xcb";
+      SDL_VIDEODRIVER = "wayland";
+      CLUTTER_BACKEND = "wayland";
+    };
 
   };
 

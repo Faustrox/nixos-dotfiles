@@ -26,7 +26,7 @@ in {
 
     # Kernel settings
     boot = {
-      kernelPackages = pkgs.linuxPackages_cachyos-lto;
+      kernelPackages = pkgs.linuxPackages_cachyos;
       kernelModules = [ "ntsync" ];
     };
 
@@ -34,19 +34,20 @@ in {
     services.scx = {
       enable = true;
       package = pkgs.scx.rustscheds;
-      scheduler = "scx_bpfland";
+      scheduler = "scx_lavd";
       extraArgs = [
-        "--slice-us"
-        "3000"
-        "--primary-domain" 
-        "performance"
-        "--no-wake-sync"
+        "--performance"
       ];
+    };
+
+    services.lsfg-vk = {
+      enable = true;
+      ui.enable = true; # installs gui for configuring lsfg-vk
     };
     
     # Xbox controllers dongle
-    # hardware.xone.enable = true;
-    hardware.xpadneo.enable = true;
+    # hardware.xpadneo.enable = true;
+    hardware.xone.enable = true;
 
     # Setup Steam, Gamescope, gamemode
     programs = {
@@ -56,9 +57,9 @@ in {
       steam = {
         enable = true;
         protontricks.enable = true;
-        # remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-        # dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-        # localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+        remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+        dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+        localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
 
         package = pkgs.steam.override {
           extraEnv = gamingEnv // {};
@@ -66,7 +67,8 @@ in {
 
         extraCompatPackages = with pkgs; [ 
           proton-ge-custom
-          
+          proton-cachyos_x86_64_v3
+          proton-em-custom
         ];
       };
 
@@ -86,70 +88,32 @@ in {
           NIX_CFLAGS_COMPILE = ["-fno-fast-math"];
         });
         args = [
-          # "-f"
-          # "-e"
-          "-H 1440"
+          "-f"
+          "-w 2560"
+          "-h 1440"
           "-r 165"
-          # "--force-grab-cursor"
-          "--expose-wayland"
-          # "-F nearest"
-          # "--sharpness 10"
-          # "--rt"
+          # "-o 165"
+          # "-F nis"
+          # "--backend"
+          # "sdl"
+          # "--expose-wayland"
           "--adaptive-sync"
-          "--immediate-flips"
+          "--force-grab-cursor"
         ];
-        capSysNice = false;
       };
 
       gamemode = {
-        enable = false;
+        enable = true;
         enableRenice = true;
 
         settings = {
           general = {
-            renice = 10;
+            renice = 0;
             softrealtime = "auto";
           };
-          # custom = {
-          #   start = "${agsPkg}/bin/ags request 'Toggle Gamemode' --instance astal";
-          #   end = "${agsPkg}/bin/ags request 'Toggle Gamemode' --instance astal";
-          # };
         };
       };
     };
-
-    # services = {
-    #   ananicy = {
-
-    #     enable = if config.services.scx.enable then false else true;
-    #     package = pkgs.ananicy-cpp;
-    #     rulesProvider = pkgs.ananicy-rules-cachyos;
-
-    #     settings = {
-    #       check_freq = 15;
-    #       cgroup_load = true;
-    #       type_load = true;
-    #       rule_load = true;
-
-    #       apply_nice = true;
-    #       apply_latnice = true;
-    #       apply_ionice = true;
-    #       apply_sched = true;
-    #       apply_oom_score_adj = true;
-    #       apply_cgroup = true;
-
-    #       loglevel = "info";
-
-    #       log_applied_rule = false;
-
-    #       cgroup_realtime_workaround = lib.mkForce false;
-
-    #     };
-
-    #     extraRules = [
-    #     ];
-    #   };
-    # };
 
     systemd.services."pci-latency" = {
       description = "Adjust latency timers for PCI peripherals";
@@ -160,6 +124,9 @@ in {
         # cycles. It also resets the default value of the latency timer for other PCI
         # devices, which can help prevent devices with high default latency timers from
         # causing gaps in sound.
+
+        ${pkgs.coreutils}/bin/echo 3072 > /sys/class/rtc/rtc0/max_user_freq
+        ${pkgs.coreutils}/bin/echo 3072 > /proc/sys/dev/hpet/max-user-freq
 
         # Check if the script is run with root privileges
         if [ "$(${pkgs.coreutils}/bin/id -u)" -ne 0 ]; then
@@ -183,74 +150,95 @@ in {
       kernelParams = [
         "idle=nomwait"
         "mitigations=off"
+        "vdso=off"
         "retbleed=off"
         "pti=off"
-        "amd_iommu=off"
-        "intel_iommu=off"
+        "split_lock_detect=off"
+        "split_lock_mitigate=0"
+        "sched_migration_cost=512"
+        "amd_iommu=pgtbl_v2"
+        "iommu=pt"
         # "random.trust_cpu=off"
         # "random.trust_bootloader=off"
         "tsc=reliable"
         "clocksource=tsc"
-        # "clearcpuid=514"
+        "clearcpuid=514"
         "preempt=full"
+        "processor.max_cstate=5"
+        "nokaslr"
         "threadirqs"
+        "ignore_rlimit_data"
+
+        "nohz=on"
+        "nohz_full=4-5"
+        "rcu_nocb_poll"
+        "rcu_nocbs=4-5"
+        "irqaffinity=0-3"
       ];
       kernel.sysctl = {
         
-        # Cachyos Kernel only
-        "kernel.sched_bore" = "1";
+        "kernel.sched_bore" = 1;
 
-        "kernel.sched_rt_runtime_us" = 980000;
+        "vm.compaction_proactiveness" = 0;
+        "vm.watermark_boost_factor" = 1;
+        "vm.watermark_scale_factor" = 500;
+        "vm.min_free_kbytes" = 1024;
+        "vm.zone_reclaim_mode" = 0;
+        "vm.page_lock_unfairness" = 1;
+        "kernel.sched_autogroup_enabled" = 1;
         "kernel.sched_cfs_bandwidth_slice_us" = 3000;
-        "kernel.sched_latency_ns" = 3000000;
-        "kernel.sched_min_granularity_ns" = 300000;
-        "kernel.sched_wakeup_granularity_ns" = 500000;
-        "kernel.sched_migration_cost_ns" = 50000;
-        "kernel.sched_nr_migrate" = 128;
+
+        # The sysctl swappiness parameter determines the kernel's preference for pushing anonymous pages or page cache to disk in memory-starved situations.
+        # A low value causes the kernel to prefer freeing up open files (page cache), a high value causes the kernel to try to use swap space,
+        # and a value of 100 means IO cost is assumed to be equal.
+        "vm.swappiness" = 10;
+
+        # The value controls the tendency of the kernel to reclaim the memory which is used for caching of directory and inode objects (VFS cache).
+        # Lowering it from the default value of 100 makes the kernel less inclined to reclaim VFS cache (do not set it to 0, this may produce out-of-memory conditions)
+        "vm.vfs_cache_pressure" = 50;
+
+        # Contains, as bytes, the number of pages at which a process which is
+        # generating disk writes will itself start writing out dirty data.
+        "vm.dirty_bytes" = 268435456;
+
+        # page-cluster controls the number of pages up to which consecutive pages are read in from swap in a single attempt.
+        # This is the swap counterpart to page cache readahead. The mentioned consecutivity is not in terms of virtual/physical addresses,
+        # but consecutive on swap space - that means they were swapped out together. (Default is 3)
+        # increase this value to 1 or 2 if you are using physical swap (1 if ssd, 2 if hdd)
+        "vm.page-cluster" = 0;
+
+        # Contains, as bytes, the number of pages at which the background kernel
+        # flusher threads will start writing out dirty data.
+        "vm.dirty_background_bytes" = 67108864;
+
+        # The kernel flusher threads will periodically wake up and write old data out to disk.  This
+        # tunable expresses the interval between those wakeups, in 100'ths of a second (Default is 500).
+        "vm.dirty_writeback_centisecs" = 1500;
+
+        # This action will speed up your boot and shutdown, because one less module is loaded. Additionally disabling watchdog timers increases performance and lowers power consumption
+        # Disable NMI watchdog
+        "kernel.nmi_watchdog" = 0;
 
         # Enable the sysctl setting kernel.unprivileged_userns_clone to allow normal users to run unprivileged containers.
         "kernel.unprivileged_userns_clone" = 1;
 
-        # This action will speed up = yes;our boot and shutdown, because one less module is loaded. Additionally disabling watchdog timers increases performance and lowers power consumption
-        # Disable NMI watchdog
-        "kernel.nmi_watchdog" = 0;
         # To hide any kernel messages from the console
         "kernel.printk" = "3 3 3 3";
+
         # Restricting access to kernel pointers in the proc filesystem
         "kernel.kptr_restrict" = 2;
 
         # Disable Kexec, which allows replacing the current running kernel.
         "kernel.kexec_load_disabled" = 1;
-        "kernel.split_lock_mitigate" = 0;
-        # Internet
-        "net.ipv4.tcp_fastopen" = 3;
-        "net.ipv4.tcp_low_latency" = 1;
-        "net.ipv4.tcp_ecn" = 1;
-        "net.ipv4.tcp_congestion_control" = "bbr";
-        "net.ipv4.tcp_fin_timeout" = 5;
-        # Disable TCP slow start after idle
-        # Helps kill persistent single connection performance
-        "net.ipv4.tcp_slow_start_after_idle" = 0;
-        # Protect against tcp time-wait assassination hazards, drop RST packets for sockets in the time-wait state. Not widely supported outside of Linux, but conforms to RFC:
-        "net.ipv4.tcp_rfc1337" = 1;
+
         # Increase netdev receive queue
         # May help prevent losing packets
         "net.core.netdev_max_backlog" = 4096;
-        # Kernel delay task accounting
-        "kernel.task_delayacct" = 1;
 
-        # Increase the compaction activity slightly
-        "vm.compaction_proactiveness" = 0;
-
-        "vm.max_map_count" = 2147483642;
-
-        "vm.min_free_kbytes" = 1048576;
-        
         # Set size of file handles and inode cache
         "fs.file-max" = 2097152;
 
-        # Increase writeback interval  for xfs
-        "fs.xfs.xfssyncd_centisecs" = 10000;
+        "vm.max_map_count" = 2147483642;
       };
     };
 
@@ -270,6 +258,15 @@ in {
     systemd.tmpfiles.rules = [
       "d /home/${config.main-user.username}/.cache/dxvk 0770 ${config.main-user.username} users -"
       "d /home/${config.main-user.username}/.cache/vkd3d 0770 ${config.main-user.username} users -"
+
+      "w /sys/kernel/mm/lru_gen/enabled - - - - 5"
+      "w /sys/kernel/mm/transparent_hugepage/enabled - - - - madvise"
+      "w /sys/kernel/mm/transparent_hugepage/shmem_enabled - - - - advise"
+      "w /sys/kernel/mm/transparent_hugepage/defrag - - - - never"
+      "w /sys/kernel/debug/sched/base_slice_ns  - - - - 3000000"
+      "w /sys/kernel/debug/sched/migration_cost_ns - - - - 500000"
+      "w /sys/kernel/debug/sched/nr_migrate - - - - 8"
+      "w! /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none - - - - 409"
     ];
   };
 

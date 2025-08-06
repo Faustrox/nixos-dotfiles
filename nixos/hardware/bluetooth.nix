@@ -9,8 +9,6 @@
 
   config = lib.mkIf config.bluetooth.enable {
 
-    hardware.firmware = with pkgs; [ rtl8761b-firmware ];
-
     # Enable Bluetooth
     hardware.bluetooth = {
       enable = true;
@@ -37,6 +35,7 @@
     boot.extraModprobeConfig = ''
       options hid-xpadneo ff_connect_notify=0
       options bluetooth disable_ertm=Y
+      options btusb enable_autosuspend=0
     '';
 
     # services.blueman.enable = true;

@@ -37,7 +37,7 @@
   #   done
   # '');
 
-  freesmlauncher = inputs.freesmlauncher.packages.${pkgs.system}.default;
+  # freesmlauncher = inputs.freesmlauncher.packages.${pkgs.system}.default;
 
 in {
 
@@ -56,8 +56,7 @@ in {
 
         MANGOHUD=1
         SDL=1
-        FORCE_WAYLAND=0
-        USE_GAMESCOPE=0
+        USE_VKBASALT=1
         USE_UMU=0
         DEFAULT_PREFIX="$HOME/.umu-game"
         DEFAULT_PROTON="${pkgs.proton-ge-custom}/bin"
@@ -66,7 +65,7 @@ in {
         REMAINING_ARGS=()
 
         if [[ " $* " == *" --help "* ]]; then
-          echo "Use: gamix [--no-hud] [--no-sdl] [--wine-wayland] [--gamescope] [--umu] [--prefix] [--proton] [--opengl] %command%"
+          echo "Use: gamix [--no-hud] [--no-sdl] [--way] [--gamescope] [--umu] [--prefix] [--proton] [--opengl] %command%"
           exit 0
         fi
 
@@ -75,14 +74,21 @@ in {
             --no-hud)
               MANGOHUD=0
             ;;
-            --wine-wayland)
-              FORCE_WAYLAND=1
+            --way)
+              DEFAULT_PROTON="$HOME/.steam/steam/compatibilitytools.d/Proton-EM"
+
+              export WAYLANDDRV_RAWINPUT=0
+              export WAYLANDDRV_PRIMARY_MONITOR=DP-2
+              export PROTON_ENABLE_WAYLAND=1
+            ;;
+            --ntsync)
+              export PROTON_USE_NTSYNC=1
             ;;
             --no-sdl)
-              SDL=0
+              unset SDL_VIDEODRIVER
             ;;
-            --gamescope)
-              USE_GAMESCOPE=1
+            --no-vkbasalt)
+              USE_VKBASALT=0
             ;;
             --umu)
               USE_UMU=1
@@ -97,6 +103,12 @@ in {
             ;;
             --opengl)
               OPENGL=1
+
+              export __GLX_VENDOR_LIBRARY_NAME="mesa"
+              export __EGL_VENDOR_LIBRARY_FILENAMES="${pkgs.mesa}/share/glvnd/egl_vendor.d/50_mesa.json" 
+              export MESA_LOADER_DRIVER_OVERRIDE="zink"
+              export GALLIUM_DRIVER="zink" 
+              export LIBGL_KOPPER_DRI2=1
             ;;
             *)
               REMAINING_ARGS+=("$1")
@@ -105,22 +117,11 @@ in {
           shift
         done
 
-        export ENABLE_VKBASALT=1
+        export ENABLE_VKBASALT="$USE_VKBASALT"
         export __GL_SHADER_DISK_CACHE=1
-        export PROTON_ENABLE_WAYLAND="$FORCE_WAYLAND"
 
         export DXVK_CONFIG_FILE="$HOME/Games/dxvk.conf"
         export __GL_THREADED_OPTIMIZATIONS=$((1 - OPENGL))
-
-        if [ "$SDL" -eq 0 ]; then
-          unset SDL_VIDEODRIVER
-        fi
-
-        CMD=("${pkgs.uwsm}/bin/uwsm-app" "--")
-
-        if [ "$USE_GAMESCOPE" -eq 1 ]; then
-          CMD+=("${pkgs.gamescope}/bin/gamescope" "--force-grab-cursor" "--")
-        fi
 
         if [ "$MANGOHUD" -eq 1 ]; then
           export MANGOHUD=1
@@ -133,6 +134,8 @@ in {
             CMD+=("${pkgs.mangohud}/bin/mangohud")
           fi
         fi
+
+        CMD+=("gamemoderun")
 
         if [ "$USE_UMU" -eq 1 ]; then
           export WINEPREFIX="$DEFAULT_PREFIX"
@@ -152,9 +155,10 @@ in {
       # vesktop
 
       # Emulators
-      ryubing
-      # suyu
-      # rpcs3
+      torzu_git
+      rpcs3
+      duckstation
+      pcsx2
 
       # Launchers
       # (lutris.override {
@@ -162,8 +166,9 @@ in {
       #     wineWowPackages.stableFull
       #   ];
       # })
-      mcpelauncher-client
-      freesmlauncher
+      # mcpelauncher-client
+      prismlauncher
+      # freesmlauncher
       heroic-unwrapped
       umu-launcher
       cartridges
@@ -176,7 +181,6 @@ in {
       nvibrant_git
       gamepad-tool
       antimicrox
-      glfw3-minecraft
       exiftool
       goverlay
       protonplus
@@ -195,8 +199,10 @@ in {
 
       nixcord = {
         enable = true;
-        discord.enable = false;
-        vesktop.enable = true;
+        discord = {
+          enable = true;
+          package = pkgs.discord-krisp;
+        };
 
         config = {
           frameless = true; # set some Vencord options
@@ -235,7 +241,7 @@ in {
           vram = true;
           ram = true;
           fps = true;
-          fps_value = "60,144";
+          fps_value = "60,90,120";
           fps_color_change = true;
           fps_color = lib.mkForce "f38ba8,f9e2af,a6e3a1";
           fps_metrics = "avg,0.01";
@@ -246,15 +252,16 @@ in {
           fps_limit_method = "early";
           toggle_fps_limit = "Shift_R+F11";
           toggle_hud_position = "Shift_R+F10";
-          fps_limit = "165,120,90";
+          fps_limit = "160,120,90,80";
           show_fps_limit = true;
           
           winesync = true;
           vkbasalt = true;
-          # gamemode = true;
+          display_server = true;
+          gamemode = true;
           # offset=-3
-          vsync = 0;
-          gl_vsync = 1;
+          vsync = 1;
+          gl_vsync = 0;
         };
       };
     };
@@ -272,10 +279,17 @@ in {
     home = {
       file = {
         ".steam/steam/compatibilitytools.d/Proton-GE/".source = "${pkgs.proton-ge-custom}/bin";
+        ".steam/steam/compatibilitytools.d/Proton-CachyOS/".source = "${pkgs.proton-cachyos_x86_64_v3}/bin";
+        ".steam/steam/compatibilitytools.d/Proton-EM/".source = "${pkgs.proton-em-custom}/bin";
       };
       
       sessionVariables = {
         # WEBKIT_DISABLE_COMPOSITING_MODE = 1; # Fixes problems for logins in Lutris and other apps
+        _JAVA_OPTIONS = builtins.concatStringsSep " " [
+          "-Djava.util.prefs.userRoot='${config.xdg.configHome}'/java"
+          "-Djavafx.cachedir='${config.xdg.cacheHome}/openjfx'"
+          "-Dorg.lwjgl.glfw.libname='${pkgs.glfw-wayland-minecraft}/lib/libglfw.so'"
+        ];
       };
     };
   };

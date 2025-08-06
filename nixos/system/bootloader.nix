@@ -16,13 +16,13 @@
   config = lib.mkIf config.bootloader.enable {
 
     boot = {
+      tmp.cleanOnBoot = true;
+      consoleLogLevel = 0;
 
       plymouth = {
         enable = true;
       };
 
-      # Silent boot
-      consoleLogLevel = 0;
       kernelParams = [
         "quiet"
         "plymouth.use-simpledrm"

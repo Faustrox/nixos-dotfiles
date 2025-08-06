@@ -16,6 +16,7 @@
     # '';
 
     stylix.targets.hyprland.enable = false;
+    hyprclouds.enable = true;
 
     wayland.windowManager.hyprland = {
       
@@ -25,8 +26,8 @@
       portalPackage = null;
       
       plugins = with pkgs.hyprlandPlugins; [
-        hypr-dynamic-cursors
-        hyprsplit
+        inputs.hypr-dynamic-cursors.packages.${pkgs.system}.hypr-dynamic-cursors
+        inputs.split-monitor-workspaces.packages.${pkgs.system}.split-monitor-workspaces
       ];
 
       settings = {
@@ -44,19 +45,26 @@
           "$HOME/.config/hypr/config/rules.conf"
           "$HOME/.config/hypr/themes/mocha.conf"
         ];
+
         monitor = [
-          "DP-1, 2560x1440@164.64, 0x0, 1"
-          "DP-2, 1920x1080@143.99, -1920x360, 1"
+          "DP-2, 2560x1440@165, 0x0, 1"
+          "DP-1, 1920x1080@144, -1920x360, 1"
         ];
 
         # ... other settings ...
         exec-once = [
           "systemctl --user enable --now hyprpolkitagent"
+
+          "app2unit -s b -- swww-daemon"
+          "app2unit -s b -- clipse -listen"
+          "app2unit -s b -- wl-clip-persist --clipboard regular"
+          "app2unit -s b -- udiskie"
+
           "ags-start"
 
-          "[workspace 5 silent] app2unit -s a -- Telegram"
+          "[workspace 1 silent] app2unit -t scope -- Telegram"
           
-          "sleep 3 && xrandr --output DP-1 --primary"
+          "sleep 3 && xrandr --output DP-2 --primary"
         ];
 
         #####################
@@ -78,6 +86,8 @@
           resize_on_border = false;
           allow_tearing = true;
           layout = "master";
+          
+          snap.enabled = true;
 
         };
 
@@ -168,11 +178,11 @@
         cursor = {
 
           enable_hyprcursor = true;
-          default_monitor = "DP-1";
-          # inactive_timeout = 3;
+          default_monitor = "DP-2";
+          inactive_timeout = 3;
           no_break_fs_vrr = 1;
-          min_refresh_rate = 0;
-          no_hardware_cursors = 1;
+          min_refresh_rate = 48;
+          no_hardware_cursors = 0;
           use_cpu_buffer = 0;
 
         };
@@ -189,25 +199,24 @@
           vfr = true;
           vrr = 3;
           close_special_on_empty = false;
-          render_unfocused_fps = 60;
           enable_anr_dialog = false;
 
         };
 
         render = {
           
-          explicit_sync = 1;
-          explicit_sync_kms = 1;
-          direct_scanout = 1;
-          cm_fs_passthrough = 1;
+          direct_scanout = 2;
+          # cm_auto_hdr = 0;
+          # new_render_scheduling = true;
         
         };
-        # opengl.nvidia_anti_flicker = false;
-        # debug.damage_tracking = 1;
+        opengl.nvidia_anti_flicker = false;
 
         xwayland = {
-          force_zero_scaling = true;
-          # create_abstract_socket = true;
+
+          create_abstract_socket = true;
+          # force_zero_scaling = true;
+          
         };
 
         ecosystem = {
@@ -216,9 +225,9 @@
         };
 
         plugin = {
-          hyprsplit = {
-            num_workspaces = 4;
-            persistent_workspaces = true;
+          split-monitor-workspaces = {
+            count = 4;
+            enable_persistent_workspaces = true;
           };
 
           dynamic-cursors = {
@@ -234,11 +243,6 @@
         };
 
       };
-    };
-
-    # Hide GTK Window Title Buttons
-    dconf.settings = {
-      "org/gnome/desktop/wm/preferences".button-layout = "";
     };
 
     xdg = {

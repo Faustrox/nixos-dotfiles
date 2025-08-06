@@ -1,4 +1,4 @@
-import { Gdk } from "astal/gtk4"
+import Gdk from "gi://Gdk"
 
 export function getMonitorName(gdkmonitor) {
   const display = Gdk.Display.get_default();

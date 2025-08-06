@@ -32,6 +32,7 @@
         ATTR{link_power_management_policy}=="*", \
         ATTR{link_power_management_policy}="max_performance"
     
+    RUN+="/bin/sh -c 'echo N > /sys/module/zswap/parameters/enabled'"
   '';
 
   # NO TPM
@@ -40,51 +41,16 @@
   boot.initrd.systemd.tpm2.enable = lib.mkDefault false;
 
   boot = {
+    tmp.useTmpfs = true;
 
     supportedFilesystems = [ "ntfs" ];
     
     initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
     kernelModules = [ "kvm-amd" "k10temp" ];
-    extraModulePackages = [ config.boot.kernelPackages.zenergy ];
+    extraModulePackages = [ ];
     blacklistedKernelModules = [ ];
 
     kernelParams = [ "amd_pstate=active" ];
-
-    kernel.sysctl = {
-
-      # Memory
-			# Disable swap read ahead, increases latency when dealing with swap and it's rather meaningless when using zram+zstd anyway
-			"vm.page-cluster" = 0;
-			# Hugepages configuration, mostly for xmrig
-			# Not needed anymore
-			# "vm.nr_hugepages" = 25;
-			# "vm.nr_overcommit_hugepages" = 150;
-			# Prefer to keep filesystem cache memory over application memory
-			"vm.vfs_cache_pressure" = 200;
-			# Proper swappiness
-			"vm.swappiness" = 10;
-      # Contains, as bytes, the number of pages at which a process which is
-      # generating disk writes will itself start writing out dirty data.
-      # "vm.dirty_bytes" = 268435456;
-      # Contains, as bytes, the number of pages at which the background kernel
-      # flusher threads will start writing out dirty data.
-      # "vm.dirty_background_bytes" = 67108864;
-      # The kernel flusher threads will periodically wake up and write old data out to disk.  This
-      # tunable expresses the interval between those wakeups, in 100'ths of a second (Default is 500).
-      # "vm.dirty_writeback_centisecs" = 1500;
-			# Best value, according to phoronix
-			# "vm.page_lock_unfairness" = 1;
-			# Disable watermark boosting
-			"vm.watermark_boost_factor" = 0; # Needed when not using the zen-kernel
-			# Increase kswapd activity
-			# When free memory is less than 1.5%, make kswapd kick in.
-			# https://unix.stackexchange.com/a/679203
-			"vm.watermark_scale_factor" = 500;
-
-      "vm.dirty_background_ratio" = 5;
-      "vm.dirty_ratio" = 10;
-
-    };
   };
 
   powerManagement.cpuFreqGovernor = "performance";
